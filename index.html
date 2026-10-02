@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Tabungan Faris & Saiba</title>
   <link rel="manifest" href="./manifest.json">
   <link rel="apple-touch-icon" href="./icons/icon-180.png">
@@ -14,31 +14,28 @@
   <meta name="theme-color" content="#FAFAFC">
   <style>
     *, *::before, *::after { box-sizing: border-box; }
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      height: -webkit-fill-available;
-      background: #000000;
-      overflow: hidden;
-      overscroll-behavior: none;
-      touch-action: manipulation;
-      -webkit-text-size-adjust: 100%;
-    }
-    iframe {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      width: 100%;
-      height: 100%;
-      height: -webkit-fill-available;
-      border: 0;
-      display: block;
-      background: #FAFAFC;
-    }
+    /* ponytail: 100dvh only — -webkit-fill-available shrinks the iframe under
+           black-translucent and leaves a black band above the home indicator */
+        html, body {
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          height: 100%;
+          background: #000000;
+          overflow: hidden;
+          overscroll-behavior: none;
+          touch-action: manipulation;
+          -webkit-text-size-adjust: 100%;
+        }
+        iframe {
+          position: fixed;
+          inset: 0;
+          width: 100%;
+          height: 100dvh;
+          border: 0;
+          display: block;
+          background: #000000;
+        }
   </style>
 </head>
 <body>
