@@ -57,8 +57,10 @@
         padding-bottom: max(3.5rem, calc(env(safe-area-inset-bottom) + 2.25rem)) !important;
       }
       nav {
-        padding-bottom: max(0.5rem, env(safe-area-inset-bottom)) !important;
-        height: calc(4rem + env(safe-area-inset-bottom)) !important;
+        padding-top: 0.75rem !important;
+        padding-bottom: max(1.5rem, calc(env(safe-area-inset-bottom) + 0.75rem)) !important;
+        height: auto !important;
+        min-height: calc(4.25rem + env(safe-area-inset-bottom)) !important;
       }
       .sheet-content {
         padding-bottom: max(1.5rem, calc(env(safe-area-inset-bottom) + 1rem)) !important;
@@ -300,7 +302,7 @@
     <!-- ====================================================================== -->
     <!-- DOCK NAVIGASI BAWAH: HANYA 2 MENU (HOME & RIWAYAT)                     -->
     <!-- ====================================================================== -->
-    <nav class="h-16 px-12 md:px-24 border-t border-neutral-100 flex items-center justify-around bg-[#FAFAFC] z-20">
+    <nav class="shrink-0 px-12 md:px-24 border-t border-neutral-100 flex items-start justify-around bg-[#FAFAFC] z-20">
       
       <!-- 1. Menu Home (Tracking Lingkaran Mingguan) -->
       <button onclick="switchTab('home')" id="navHomeBtn" title="Beranda Tracking" class="btn-press flex flex-col items-center justify-center text-neutral-900 transition">

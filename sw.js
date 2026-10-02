@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tabungan-v1';
+const CACHE_NAME = 'tabungan-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -25,10 +25,25 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-  // Hanya cache asset lokal shell, bypass request ke Google Script backend
+  // Lewati call API GAS
   if (e.request.url.includes('script.google.com') || e.request.url.includes('script.googleusercontent.com')) {
     return;
   }
+  
+  // Network-first untuk halaman utama/dokumen agar update instan muncul
+  if (e.request.mode === 'navigate' || e.request.destination === 'document') {
+    e.respondWith(
+      fetch(e.request)
+        .then((res) => {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone));
+          return res;
+        })
+        .catch(() => caches.match(e.request))
+    );
+    return;
+  }
+
   e.respondWith(
     caches.match(e.request).then((res) => res || fetch(e.request))
   );
