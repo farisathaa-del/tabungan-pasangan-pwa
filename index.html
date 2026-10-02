@@ -2,39 +2,47 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Tabungan Faris & Saiba</title>
   <link rel="manifest" href="./manifest.json">
   <link rel="apple-touch-icon" href="./icons/icon-180.png">
+  <link rel="icon" sizes="192x192" href="./icons/icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Tabungan">
-  <meta name="theme-color" content="#111114">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#FAFAFC">
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     html, body {
-      margin: 0; padding: 0; height: 100%; height: -webkit-fill-available;
-      background: #111114; overflow: hidden;
+      margin: 0; padding: 0;
+      width: 100%; height: 100%; height: 100dvh;
+      background: #FAFAFC;
+      overflow: hidden;
+      overscroll-behavior: none;
+      touch-action: manipulation;
+      -webkit-text-size-adjust: 100%;
     }
     iframe {
-      /* replaced element: left/right TIDAK melebar — width/height harus eksplisit */
-      position: fixed;
-      top: env(safe-area-inset-top, 0px);
-      left: 0;
+      position: absolute;
+      inset: 0;
       width: 100%;
-      height: calc(100% - env(safe-area-inset-top, 0px));
-      border: 0; display: block; background: #111114;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #FAFAFC;
     }
   </style>
 </head>
 <body>
-  <!-- ponytail: iframe full-bleed; app GAS sendiri yg handle notch + full-bleed (border & 100dvh dipindah ke md:) -->
+  <!-- ponytail: clean iframe wrapper pattern copied from pidum-sbs-pwa; no letterboxing, seamless #FAFAFC -->
   <iframe src="https://script.google.com/macros/s/AKfycbzFL7OpHVTdM2JBaZtQrwsSQ6f1V6mqCaLCBe92uP9LJPIObS_0vWxVVB_d_qsD6zbD/exec"
           allow="clipboard-write" referrerpolicy="no-referrer-when-downgrade"></iframe>
   <script>
-    // prevent double-tap zoom inside iframe on iOS
-    document.addEventListener('gesturestart', e => e.preventDefault());
+    ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (ev) {
+      document.addEventListener(ev, function (e) { e.preventDefault(); }, { passive: false });
+    });
   </script>
 </body>
 </html>
