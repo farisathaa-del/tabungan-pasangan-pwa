@@ -2,50 +2,1486 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Tabungan Faris & Saiba</title>
+  <title>Checklist Tabungan Mingguan — Faris & Saiba</title>
+
+    <!-- PWA & Mobile Web App Standalone Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" id="themeColorMeta" content="#111114">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Tabungan">
+
+  <!-- PWA Manifest & Icons -->
   <link rel="manifest" href="./manifest.json">
-  <link rel="apple-touch-icon" href="./icons/icon-180.png">
-  <link rel="icon" sizes="192x192" href="./icons/icon-192.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Tabungan">
-  <meta name="theme-color" content="#FAFAFC">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-180.png">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
   <style>
-    *, *::before, *::after { box-sizing: border-box; }
-    /* ponytail: 100dvh only — -webkit-fill-available shrinks the iframe under
-           black-translucent and leaves a black band above the home indicator */
-        html, body {
-          margin: 0;
-          padding: 0;
-          width: 100%;
-          height: 100%;
-          background: #000000;
-          overflow: hidden;
-          overscroll-behavior: none;
-          touch-action: manipulation;
-          -webkit-text-size-adjust: 100%;
-        }
-        iframe {
-          position: fixed;
-          inset: 0;
-          width: 100%;
-          height: 100dvh;
-          border: 0;
-          display: block;
-          background: #000000;
-        }
+    /* tinggi berbasis % — 100vh/100dvh di dalam iframe iOS = viewport parent (bug), salah tinggi */
+    html, body { height: 100%; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .font-mono {
+      font-family: 'Space Grotesk', monospace;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .btn-press:active {
+      transform: scale(0.97);
+      transition: transform 0.1s ease;
+    }
+    /* iOS Safe Area & Native app feel */
+    @supports (padding-top: env(safe-area-inset-top)) {
+      header {
+        padding-top: max(1.5rem, calc(env(safe-area-inset-top) + 0.5rem)) !important;
+      }
+      #darkLockScreen {
+        padding-top: max(1.5rem, calc(env(safe-area-inset-top) + 0.75rem)) !important;
+        padding-bottom: max(1.5rem, calc(env(safe-area-inset-bottom) + 0.75rem)) !important;
+      }
+      nav {
+        padding-bottom: max(0.5rem, env(safe-area-inset-bottom)) !important;
+        height: calc(4rem + env(safe-area-inset-bottom)) !important;
+      }
+      .sheet-content {
+        padding-bottom: max(1.5rem, calc(env(safe-area-inset-bottom) + 1rem)) !important;
+      }
+    }
+    @keyframes pulse-ring {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(24, 24, 27, 0.4);
+      }
+      50% {
+        box-shadow: 0 0 0 5px rgba(24, 24, 27, 0.1);
+      }
+    }
+    .ring-active-week {
+      animation: pulse-ring 2.5s infinite;
+    }
   </style>
 </head>
-<body>
-  <!-- ponytail: full bleed iOS standalone wrapper; safe area handled inside GAS -->
-  <iframe src="https://script.google.com/macros/s/AKfycbzFL7OpHVTdM2JBaZtQrwsSQ6f1V6mqCaLCBe92uP9LJPIObS_0vWxVVB_d_qsD6zbD/exec?v=12"
-          allow="clipboard-write" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+<body class="bg-[#0B0B0E] flex h-full min-h-screen p-0 text-neutral-900 font-sans antialiased selection:bg-rose-500/20">
+
+  <!-- SINGLE UNIFIED CONTAINER: Fleksibel Mobile Layar Penuh hingga Desktop Lapang -->
+  <div class="relative w-full h-full bg-[#FAFAFC] overflow-hidden flex flex-col">
+
+    <!-- ====================================================================== -->
+    <!-- HALAMAN PEMBUKA APLIKASI (OVERLAY GELAP DENGAN AMBIENT PINK GLOW)      -->
+    <!-- ====================================================================== -->
+    <div id="darkLockScreen" class="absolute inset-0 z-40 bg-[#111114] text-white flex flex-col justify-between p-6 md:p-12 overflow-hidden transition-transform duration-500 ease-in-out">
+      
+      <!-- Lapisan Cahaya Ambient Pink Elegan -->
+      <div class="absolute -top-24 -right-20 w-80 md:w-96 h-80 md:h-96 bg-gradient-to-br from-rose-500/25 via-pink-600/15 to-transparent rounded-full blur-3xl pointer-events-none animate-pulse" style="animation-duration: 6s;"></div>
+      <div class="absolute top-1/3 -left-28 w-80 h-80 bg-gradient-to-tr from-pink-500/15 via-rose-500/10 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-20 right-0 w-80 h-80 bg-gradient-to-t from-rose-950/30 to-pink-900/10 rounded-full blur-2xl pointer-events-none"></div>
+
+      <!-- Header Pembuka Bersih Minimalis -->
+      <div class="relative z-10 pt-2 md:pt-4 flex items-center justify-between">
+        <span class="text-xs font-mono text-neutral-400 tracking-wider">tabungan berdua</span>
+        <span class="w-2 h-2 rounded-full bg-rose-400/80 shadow-[0_0_10px_rgba(251,113,133,0.8)]"></span>
+      </div>
+
+      <!-- Ilustrasi Jalur Konstelasi Minimalis -->
+      <div class="relative z-10 w-full py-8 md:py-14 flex items-center justify-center cursor-pointer select-none" onclick="enterAppWithDefault()">
+        <svg class="w-full max-w-md h-36 md:h-44 overflow-visible" viewBox="0 0 320 120" fill="none">
+          <path d="M 0 35 Q 90 45, 130 75 T 230 80 T 320 95" stroke="#37323b" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="35" cy="38" r="3" fill="#6d6371"/>
+          <circle cx="225" cy="80" r="3" fill="#6d6371"/>
+          <circle cx="285" cy="90" r="2.5" fill="#584e5b"/>
+
+          <circle cx="130" cy="75" r="18" fill="none" stroke="#fb7185" stroke-opacity="0.3" stroke-width="1.5"/>
+          <circle cx="130" cy="75" r="6" fill="#FFFFFF" class="shadow-lg shadow-rose-500/60 animate-pulse"/>
+        </svg>
+      </div>
+
+      <!-- Headline & Pemilihan Pengguna Pembuka -->
+      <div class="relative z-10 pb-4 md:pb-6 space-y-5 max-w-md mx-auto w-full">
+        <div>
+          <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-neutral-500 leading-none">
+            track
+          </h1>
+          <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-white mt-1 leading-none">
+            ours saving.
+          </h1>
+        </div>
+
+        <div class="pt-1">
+          <p class="text-[11px] text-neutral-400 mb-2.5 font-medium">pilih pengguna untuk masuk:</p>
+          <div class="grid grid-cols-2 gap-3">
+            <button onclick="selectUserAndEnter('A', 'faris')" class="btn-press py-3.5 px-4 rounded-2xl bg-neutral-900/80 backdrop-blur-md border border-neutral-800 text-center hover:border-neutral-600 hover:bg-neutral-800/80 transition shadow-sm">
+              <span class="text-xs font-bold text-white lowercase">faris</span>
+            </button>
+            <button onclick="selectUserAndEnter('B', 'saiba <3')" class="btn-press py-3.5 px-4 rounded-2xl bg-neutral-900/80 backdrop-blur-md border border-neutral-800 text-center hover:border-rose-900/60 hover:bg-neutral-800/80 transition shadow-sm">
+              <span class="text-xs font-bold text-white lowercase">saiba <span class="text-rose-400">♥</span></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- TOP BAR (TOMBOL PROFIL PENGGUNA, NAVIGASI BULAN, AKSI TAMBAH SETORAN) -->
+    <!-- ====================================================================== -->
+    <header class="pt-6 md:pt-8 px-6 md:px-10 pb-3 flex items-center justify-between bg-[#FAFAFC] z-20 border-b border-neutral-100/60">
+      <!-- Tombol Profil Pengguna: Klik untuk kembali ke Layar Pembuka -->
+      <button onclick="openOpeningScreen()" title="Ganti Pengguna / Buka Layar Pembuka" class="btn-press flex items-center space-x-2.5 py-1.5 px-3.5 rounded-full bg-neutral-200/60 hover:bg-neutral-200 transition">
+        <span id="activeUserIndicator" class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span id="activeUserLabel" class="text-xs md:text-sm font-bold text-neutral-900 lowercase">
+          faris
+        </span>
+        <svg class="w-3.5 h-3.5 text-neutral-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+        </svg>
+      </button>
+
+      <!-- Navigasi Pemilih Bulan Minimalis: < Bulan Tahun > -->
+      <div class="flex items-center space-x-1.5 bg-neutral-100/80 rounded-full px-2 py-1 border border-neutral-200/40">
+        <button onclick="changeMonth(-1)" title="Bulan Sebelumnya" class="w-6 h-6 rounded-full hover:bg-white text-neutral-600 flex items-center justify-center transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+          </svg>
+        </button>
+        <span id="navMonthYearLabel" class="text-xs font-bold text-neutral-800 lowercase px-1.5 font-mono">
+          -- ----
+        </span>
+        <button onclick="changeMonth(1)" title="Bulan Berikutnya" class="w-6 h-6 rounded-full hover:bg-white text-neutral-600 flex items-center justify-center transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Tombol '+' Minimalis untuk Setor Minggu Ini -->
+      <button onclick="openUploadSheet()" title="Setor Minggu Ini" class="btn-press w-9 h-9 md:w-10 md:h-10 rounded-full bg-neutral-900 text-white flex items-center justify-center hover:bg-neutral-800 transition shadow-sm">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
+      </button>
+    </header>
+
+    <!-- KEHADIRAN PASANGAN (PARTNER PRESENCE PULSE) -->
+    <div id="partnerPresenceBar" class="hidden px-6 md:px-10 py-1.5 bg-rose-50/70 border-b border-rose-100/60 flex items-center justify-between text-[11px] text-rose-800 font-medium">
+      <div class="flex items-center space-x-2">
+        <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+        <span id="partnerPresenceText">pasangan baru saja setor ✨</span>
+      </div>
+      <span class="text-[10px] text-rose-400 font-mono">aktif</span>
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- TAB 1: HOME (TRACKING PER MINGGU & TOTAL TABUNGAN BERSAMA)             -->
+    <!-- ====================================================================== -->
+    <main id="tabViewHome" class="flex-1 overflow-y-auto no-scrollbar px-6 md:px-10 py-4 md:py-5 space-y-6 md:space-y-7">
+      
+      <!-- BANNER SELEBRASI BULAN PENUH (Jika 100% minggu berdua terisi) -->
+      <div id="celebrationBanner" class="hidden bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 text-white rounded-2xl p-4 border border-neutral-700 shadow-md">
+        <div class="flex items-center space-x-3">
+          <span class="text-2xl">✨</span>
+          <div class="flex-1">
+            <h4 class="text-xs md:text-sm font-bold tracking-tight text-rose-300 lowercase">bulan ini komplit 100%!</h4>
+            <p id="celebrationText" class="text-[11px] md:text-xs text-neutral-300 mt-0.5">
+              faris & saiba berhasil mengumpulkan tabungan penuh bersama.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- BARIS 1: FARIS -->
+      <section class="space-y-3.5 bg-white md:bg-transparent p-4 md:p-0 rounded-2xl md:rounded-none border border-neutral-100 md:border-0 shadow-sm md:shadow-none">
+        <div class="flex items-baseline justify-between">
+          <h2 class="text-xl md:text-2xl font-bold tracking-tight text-neutral-900 lowercase">
+            faris
+          </h2>
+          <span class="text-xs font-semibold text-neutral-400 tracking-wide lowercase">
+            mingguan · rp100.000 / minggu
+          </span>
+        </div>
+
+        <!-- Deretan Lingkaran Minggu Faris -->
+        <div id="timelineUserA" class="flex items-center justify-between md:justify-start md:space-x-8 pt-1">
+          <!-- Dinamis diisi JavaScript -->
+        </div>
+      </section>
+
+      <!-- BARIS 2: SAIBA -->
+      <section class="space-y-3.5 bg-white md:bg-transparent p-4 md:p-0 rounded-2xl md:rounded-none border border-neutral-100 md:border-0 shadow-sm md:shadow-none">
+        <div class="flex items-baseline justify-between">
+          <h2 class="text-xl md:text-2xl font-bold tracking-tight text-neutral-900 lowercase">
+            saiba <span class="text-rose-500 text-lg">♥</span>
+          </h2>
+          <span class="text-xs font-semibold text-neutral-400 tracking-wide lowercase">
+            mingguan · rp100.000 / minggu
+          </span>
+        </div>
+
+        <!-- Deretan Lingkaran Minggu Saiba -->
+        <div id="timelineUserB" class="flex items-center justify-between md:justify-start md:space-x-8 pt-1">
+          <!-- Dinamis diisi JavaScript -->
+        </div>
+      </section>
+
+      <!-- BARIS 3: TOTAL TABUNGAN BERSAMA (MURNI TOTAL TERKUMPUL) -->
+      <section class="space-y-2.5 pt-1">
+        <h2 class="text-lg md:text-xl font-bold tracking-tight text-neutral-900 lowercase">
+          tabungan bersama
+        </h2>
+
+        <div class="bg-neutral-100/90 rounded-2xl p-5 flex items-center justify-between border border-neutral-200/50">
+          <div>
+            <span class="text-[10px] md:text-xs uppercase font-bold tracking-wider text-neutral-400 block">Total Terkumpul</span>
+            <span id="totalSavingsValue" class="text-2xl md:text-3xl font-extrabold text-neutral-900 tracking-tight">Rp0</span>
+          </div>
+          <span id="activeMonthBadge" class="text-xs md:text-sm font-semibold text-neutral-500 lowercase bg-white/70 px-3 py-1.5 rounded-full border border-neutral-200/60 shadow-xs">
+            -- ----
+          </span>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ====================================================================== -->
+    <!-- TAB 2: RIWAYAT SETORAN (DIKELOMPOKKAN PER BULAN)                       -->
+    <!-- ====================================================================== -->
+    <main id="tabViewRiwayat" class="hidden flex-1 overflow-y-auto no-scrollbar px-6 md:px-10 py-4 md:py-5 space-y-4">
+      
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-xl md:text-2xl font-bold tracking-tight text-neutral-900 lowercase">
+            riwayat setoran
+          </h2>
+          <p class="text-xs font-semibold text-neutral-400 tracking-wide mt-0.5 lowercase">
+            dikelompokkan rapi per bulan
+          </p>
+        </div>
+        <span id="historyCountBadge" class="text-xs font-mono font-bold px-3 py-1 rounded-full bg-neutral-200/70 text-neutral-700">
+          0 data
+        </span>
+      </div>
+
+      <!-- Filter Kapsul Sederhana -->
+      <div class="flex items-center space-x-2 pt-1 pb-1">
+        <button onclick="setHistoryFilter('all')" id="filterBtnAll" class="btn-press px-4 py-1.5 rounded-full text-xs font-semibold bg-neutral-900 text-white transition">
+          semua
+        </button>
+        <button onclick="setHistoryFilter('A')" id="filterBtnA" class="btn-press px-4 py-1.5 rounded-full text-xs font-semibold bg-neutral-100 text-neutral-600 hover:bg-neutral-200 transition">
+          faris
+        </button>
+        <button onclick="setHistoryFilter('B')" id="filterBtnB" class="btn-press px-4 py-1.5 rounded-full text-xs font-semibold bg-neutral-100 text-neutral-600 hover:bg-neutral-200 transition">
+          saiba <span class="text-rose-500">♥</span>
+        </button>
+      </div>
+
+      <!-- Kontainer Riwayat Dikelompokkan per Bulan -->
+      <div id="fullHistoryList" class="space-y-5 pb-8">
+        <!-- Dinamis diisi JavaScript -->
+      </div>
+
+    </main>
+
+    <!-- ====================================================================== -->
+    <!-- DOCK NAVIGASI BAWAH: HANYA 2 MENU (HOME & RIWAYAT)                     -->
+    <!-- ====================================================================== -->
+    <nav class="h-16 px-12 md:px-24 border-t border-neutral-100 flex items-center justify-around bg-[#FAFAFC] z-20">
+      
+      <!-- 1. Menu Home (Tracking Lingkaran Mingguan) -->
+      <button onclick="switchTab('home')" id="navHomeBtn" title="Beranda Tracking" class="btn-press flex flex-col items-center justify-center text-neutral-900 transition">
+        <svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 3.172l8 6.4V20a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4h-4v4a1 1 0 01-1 1H5a1 1 0 01-1-1V9.572l8-6.4z"/>
+        </svg>
+        <span id="navHomeIndicator" class="w-1.5 h-1.5 rounded-full bg-neutral-900 mt-1"></span>
+      </button>
+
+      <!-- 2. Menu Riwayat (Daftar Riwayat Bukti Setoran) -->
+      <button onclick="switchTab('riwayat')" id="navRiwayatBtn" title="Riwayat Setoran" class="btn-press flex flex-col items-center justify-center text-neutral-400 hover:text-neutral-900 transition">
+        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+        <span id="navRiwayatIndicator" class="w-1.5 h-1.5 rounded-full bg-transparent mt-1"></span>
+      </button>
+
+    </nav>
+
+    <!-- ====================================================================== -->
+    <!-- DRAWER: UPLOAD BUKTI SETORAN (DENGAN LOVE NOTE SINGKAT)               -->
+    <!-- ====================================================================== -->
+    <div id="uploadSheet" class="absolute inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex flex-col justify-end transition-opacity">
+      <div class="bg-white rounded-t-3xl p-6 md:p-8 space-y-3.5 max-h-[90%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-base md:text-lg font-bold text-neutral-900 lowercase">setor bukti minggu</h3>
+            <p id="uploadSheetWeekLabel" class="text-xs text-neutral-400">minggu berjalan · faris</p>
+          </div>
+          <button onclick="closeUploadSheet()" class="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 hover:bg-neutral-200 transition">
+            ✕
+          </button>
+        </div>
+
+        <!-- Kolom Upload Screenshot -->
+        <div onclick="document.getElementById('fileInputProof').click()" class="border border-dashed border-neutral-300 hover:border-neutral-900 rounded-2xl p-5 text-center cursor-pointer transition bg-neutral-50/50">
+          <input type="file" id="fileInputProof" accept="image/*" class="hidden" onchange="handleFileSelected(event, 'setoran')">
+          <div id="uploadPrompt" class="space-y-1.5">
+            <svg class="w-7 h-7 mx-auto text-neutral-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+            </svg>
+            <p class="text-xs font-semibold text-neutral-700">pilih screenshot transfer</p>
+            <p class="text-[10px] text-neutral-400">otomatis dioptimalkan (maks 1080px)</p>
+          </div>
+          <img id="imageProofPreview" class="hidden w-full max-h-48 object-cover rounded-xl mt-1 mx-auto" alt="Preview Bukti">
+        </div>
+
+        <!-- Kolom Catatan Opsional -->
+        <div class="space-y-1 pt-0.5">
+          <div class="flex items-center justify-between text-[11px] font-semibold text-neutral-600">
+            <span class="flex items-center space-x-1">
+              <span>💌</span>
+              <span>catatan <span class="text-neutral-400 font-normal">(opsional)</span></span>
+            </span>
+            <span id="noteCharCounter" class="text-neutral-400 font-mono text-[10px]">0/40</span>
+          </div>
+          <input type="text" id="inputDepositNote" maxlength="40" placeholder="" class="w-full px-4 py-2.5 rounded-2xl bg-neutral-50 border border-neutral-200 text-xs text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 transition" oninput="updateNoteCounter(this)">
+        </div>
+
+        <!-- Tombol Aksi -->
+        <div class="pt-2 flex items-center space-x-3">
+          <button onclick="closeUploadSheet()" class="btn-press flex-1 py-3 rounded-full bg-neutral-100 text-xs md:text-sm font-semibold text-neutral-600 hover:bg-neutral-200 transition">
+            batal
+          </button>
+          <button id="btnSubmitProof" onclick="executeSetoranSubmission()" disabled class="btn-press flex-1 py-3 rounded-full bg-neutral-900 text-xs md:text-sm font-semibold text-white hover:bg-neutral-800 disabled:opacity-40 transition flex items-center justify-center space-x-2">
+            <span id="submitBtnSpinner" class="hidden w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+            <span id="submitBtnText">kirim bukti</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- DRAWER: DETAIL BUKTI TRANSFER & REVIEW KOREKSI PASANGAN               -->
+    <!-- ====================================================================== -->
+    <div id="detailSheet" class="absolute inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex flex-col justify-end transition-opacity">
+      <div class="bg-white rounded-t-3xl p-6 md:p-8 space-y-3.5 max-h-[92%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 id="detailSheetTitle" class="text-base md:text-lg font-bold text-neutral-900 lowercase">bukti setoran</h3>
+            <p id="detailSheetSubtitle" class="text-xs text-neutral-400">minggu 01 · faris</p>
+          </div>
+          <button onclick="closeDetailSheet()" class="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 hover:bg-neutral-200 transition">
+            ✕
+          </button>
+        </div>
+
+        <!-- Kotak Catatan (Jika Ada) -->
+        <div id="detailLoveNoteBox" class="hidden bg-neutral-50 border border-neutral-200/70 rounded-2xl p-3.5 space-y-1">
+          <div class="flex items-center space-x-1.5 text-neutral-600 text-[11px] font-bold">
+            <span>📝</span>
+            <span>catatan dari pasangan</span>
+          </div>
+          <p id="detailLoveNoteText" class="text-xs text-neutral-800 font-medium italic">
+            "--"
+          </p>
+        </div>
+
+        <!-- Wadah Gambar dengan Indikator Ketuk Layar Penuh -->
+        <div onclick="openFullscreenProof()" class="group relative rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-100 max-h-56 flex items-center justify-center cursor-zoom-in">
+          <img id="detailSheetImg" src="" alt="Detail Bukti Transfer" class="w-full h-full object-contain">
+          <div class="absolute bottom-2.5 right-2.5 bg-black/60 backdrop-blur-md text-white text-[10px] font-medium px-2.5 py-1 rounded-full flex items-center space-x-1 opacity-90 group-hover:opacity-100 transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" />
+            </svg>
+            <span>layar penuh</span>
+          </div>
+        </div>
+
+        <!-- Info Ringkas Setoran -->
+        <div class="bg-neutral-50 rounded-2xl p-3.5 space-y-2 text-xs text-neutral-600">
+          <div class="flex justify-between">
+            <span class="text-neutral-400">status</span>
+            <span id="detailSheetStatus" class="font-semibold text-neutral-900">tepat waktu</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-neutral-400">waktu</span>
+            <span id="detailSheetTime" class="font-mono text-neutral-900">--</span>
+          </div>
+        </div>
+
+        <!-- KOTAK KHUSUS PERSETUJUAN KOREKSI OLEH PASANGAN (JIKA ADA) -->
+        <div id="correctionReviewBox" class="hidden bg-amber-50/80 border border-amber-200 rounded-2xl p-4 space-y-3">
+          <div class="flex items-center space-x-2 text-amber-900 font-bold text-xs">
+            <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+            <span>Pengajuan Koreksi Menunggu Ulasan</span>
+          </div>
+          <div class="text-xs text-neutral-700 bg-white/80 p-3 rounded-xl border border-amber-100">
+            <p class="font-medium text-neutral-500 text-[11px]">Alasan dari pasangan:</p>
+            <p id="correctionReviewReason" class="font-semibold text-neutral-800 mt-0.5">--</p>
+          </div>
+          <div>
+            <p class="font-medium text-neutral-500 text-[11px] mb-1.5">Bukti transfer baru:</p>
+            <div onclick="openFullscreenNewProof()" class="rounded-xl overflow-hidden border border-amber-200 bg-neutral-900 max-h-40 flex items-center justify-center cursor-zoom-in">
+              <img id="correctionReviewImg" src="" alt="Bukti Baru" class="max-h-40 object-contain">
+            </div>
+          </div>
+          <div class="flex items-center space-x-2 pt-1">
+            <button onclick="respondToCorrection('ditolak')" class="btn-press flex-1 py-2.5 rounded-full bg-neutral-200 hover:bg-neutral-300 text-neutral-800 text-xs font-bold transition">
+              Tolak
+            </button>
+            <button onclick="respondToCorrection('disetujui')" class="btn-press flex-1 py-2.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold transition">
+              Setujui Koreksi
+            </button>
+          </div>
+        </div>
+
+        <!-- Tombol Aksi Bawah -->
+        <div class="pt-1 flex items-center space-x-3">
+          <button onclick="closeDetailSheet()" class="btn-press flex-1 py-3 rounded-full bg-neutral-100 text-xs md:text-sm font-semibold text-neutral-600 hover:bg-neutral-200 transition">
+            tutup
+          </button>
+          <button id="btnRequestCorrection" onclick="openKoreksiSheet()" class="btn-press flex-1 py-3 rounded-full bg-neutral-900 text-xs md:text-sm font-semibold text-white hover:bg-neutral-800 transition">
+            ajukan koreksi
+          </button>
+          <div id="badgePendingCorrection" class="hidden flex-1 py-3 text-center rounded-full bg-amber-100 text-amber-800 text-xs font-bold">
+            koreksi diproses
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- DRAWER: FORM PENGAJUAN KOREKSI (ALASAN + SCREENSHOT BARU)             -->
+    <!-- ====================================================================== -->
+    <div id="koreksiSheet" class="absolute inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex flex-col justify-end transition-opacity">
+      <div class="bg-white rounded-t-3xl p-6 md:p-8 space-y-4 max-h-[90%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-base md:text-lg font-bold text-neutral-900 lowercase">ajukan koreksi bukti</h3>
+            <p id="koreksiSheetWeekLabel" class="text-xs text-neutral-400">minggu 01 · faris</p>
+          </div>
+          <button onclick="closeKoreksiSheet()" class="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 hover:bg-neutral-200 transition">
+            ✕
+          </button>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-neutral-700">alasan koreksi</label>
+          <input type="text" id="koreksiReasonInput" placeholder="Contoh: salah screenshot / struk buram" class="w-full px-4 py-3 rounded-2xl bg-neutral-50 border border-neutral-200 text-xs md:text-sm text-neutral-900 focus:outline-none focus:border-neutral-900 transition">
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-neutral-700">screenshot bukti baru</label>
+          <div onclick="document.getElementById('fileInputKoreksi').click()" class="border border-dashed border-neutral-300 hover:border-neutral-900 rounded-2xl p-5 text-center cursor-pointer transition bg-neutral-50/50">
+            <input type="file" id="fileInputKoreksi" accept="image/*" class="hidden" onchange="handleFileSelected(event, 'koreksi')">
+            <div id="koreksiUploadPrompt" class="space-y-1.5">
+              <svg class="w-7 h-7 mx-auto text-neutral-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+              </svg>
+              <p class="text-xs font-semibold text-neutral-700">pilih screenshot transfer baru</p>
+              <p class="text-[10px] text-neutral-400">otomatis dioptimalkan (maks 1080px)</p>
+            </div>
+            <img id="imageKoreksiPreview" class="hidden w-full max-h-48 object-cover rounded-xl mt-2 mx-auto" alt="Preview Bukti Baru">
+          </div>
+        </div>
+
+        <div class="pt-2 flex items-center space-x-3">
+          <button onclick="closeKoreksiSheet()" class="btn-press flex-1 py-3.5 rounded-full bg-neutral-100 text-xs md:text-sm font-semibold text-neutral-600 hover:bg-neutral-200 transition">
+            batal
+          </button>
+          <button id="btnSubmitKoreksi" onclick="executeKoreksiSubmission()" disabled class="btn-press flex-1 py-3.5 rounded-full bg-neutral-900 text-xs md:text-sm font-semibold text-white hover:bg-neutral-800 disabled:opacity-40 transition flex items-center justify-center space-x-2">
+            <span id="koreksiBtnSpinner" class="hidden w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+            <span id="koreksiBtnText">kirim pengajuan</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- MODAL LIGHTBOX FULLSCREEN BUKTI TRANSFER (ZOOM VIEWER)                 -->
+    <!-- ====================================================================== -->
+    <div id="fullscreenModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md hidden flex flex-col items-center justify-between p-4 md:p-8" onclick="closeFullscreenProof()">
+      <div class="w-full flex justify-between items-center text-white/80 pt-2 px-2">
+        <span id="fullscreenTitle" class="text-xs font-mono">bukti transfer</span>
+        <button onclick="closeFullscreenProof()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition">
+          ✕
+        </button>
+      </div>
+      <div class="flex-1 w-full max-w-4xl flex items-center justify-center p-2" onclick="event.stopPropagation()">
+        <img id="fullscreenImg" src="" alt="Bukti Transfer Penuh" class="max-w-full max-h-[82vh] object-contain rounded-lg shadow-2xl">
+      </div>
+      <p class="text-neutral-400 text-xs pb-3">ketuk di luar gambar untuk menutup</p>
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- TOAST NOTIFICATION DINAMIS (NETRAL UNTUK FARIS, PINK CINTA UNTUK SAIBA)-->
+    <!-- ====================================================================== -->
+    <div id="toastMessage" class="absolute top-5 left-1/2 -translate-x-1/2 px-5 py-2.5 rounded-full shadow-xl pointer-events-none opacity-0 transition-all duration-300 z-50 text-xs md:text-sm font-medium">
+      pesan
+    </div>
+
+  </div>
+
   <script>
-    ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (ev) {
-      document.addEventListener(ev, function (e) { e.preventDefault(); }, { passive: false });
+    /**
+     * STATE MANAGEMENT & REAL PRODUCTION SYNC
+     */
+    let currentUser = { role: 'A', name: 'faris' };
+    let currentTab = 'home';
+    let currentHistoryFilter = 'all';
+    let targetUploadWeekId = null;
+    let selectedImageBase64 = null;
+    let selectedImageMime = 'image/jpeg';
+    
+    // Koreksi State
+    let koreksiImageBase64 = null;
+    let koreksiImageMime = 'image/jpeg';
+    let activeRecordInDetail = null;
+
+    // State Navigasi Bulan
+    const today = new Date();
+    let viewYear = today.getFullYear();
+    let viewMonth = today.getMonth();
+
+    const MONTH_SHORT_NAMES = ['jan', 'feb', 'mar', 'apr', 'mei', 'jun', 'jul', 'agu', 'sep', 'okt', 'nov', 'des'];
+    const MONTH_FULL_NAMES = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+    const APP_DATABASE = {
+      config: {
+        nominal: 100000,
+        namaA: 'faris',
+        namaB: 'saiba <3'
+      },
+      records: [],
+      koreksiList: []
+    };
+
+    /**
+     * INISIALISASI SAAT DOM SIAP
+     */
+    document.addEventListener('DOMContentLoaded', () => {
+      loadCachedData();
+      updateMonthDisplay();
+      renderAllTimelines();
+      renderSummary();
+      renderFullHistory();
+      checkPartnerPresence();
+      syncWithGoogleBackend();
+
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').catch((err) => console.warn('SW:', err));
+      }
     });
+
+    /**
+     * SINKRONISASI DATA DARI GOOGLE APPS SCRIPT / LOCAL CACHE
+     */
+    function loadCachedData() {
+      try {
+        const cached = localStorage.getItem('tabungan_real_records');
+        if (cached) {
+          APP_DATABASE.records = JSON.parse(cached);
+        }
+        const cachedKor = localStorage.getItem('tabungan_real_koreksi');
+        if (cachedKor) {
+          APP_DATABASE.koreksiList = JSON.parse(cachedKor);
+        }
+      } catch (e) {
+        console.warn('Gagal membaca cache lokal:', e);
+      }
+    }
+
+    function saveToLocalStorage() {
+      try {
+        localStorage.setItem('tabungan_real_records', JSON.stringify(APP_DATABASE.records));
+        localStorage.setItem('tabungan_real_koreksi', JSON.stringify(APP_DATABASE.koreksiList));
+      } catch (e) {
+        console.warn('Gagal menyimpan cache:', e);
+      }
+    }
+
+    const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbzFL7OpHVTdM2JBaZtQrwsSQ6f1V6mqCaLCBe92uP9LJPIObS_0vWxVVB_d_qsD6zbD/exec';
+
+    function updateThemeColor(color) {
+      const meta = document.getElementById('themeColorMeta') || document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', color);
+    }
+
+    function callBackend(action, payload, onSuccess, onFailure) {
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        if (payload === undefined || payload === null) {
+          google.script.run
+            .withSuccessHandler(onSuccess)
+            .withFailureHandler(onFailure)
+            [action]();
+        } else {
+          google.script.run
+            .withSuccessHandler(onSuccess)
+            .withFailureHandler(onFailure)
+            [action](payload);
+        }
+        return;
+      }
+
+      // Standalone / PWA Decoupled fetch
+      if (action === 'getDashboardData') {
+        fetch(GAS_API_URL + '?action=getDashboardData')
+          .then(res => res.json())
+          .then(onSuccess)
+          .catch(onFailure);
+        return;
+      }
+
+      fetch(GAS_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: action, ...(payload || {}) }),
+        redirect: 'follow'
+      })
+        .then(res => res.json())
+        .then(onSuccess)
+        .catch(onFailure);
+    }
+
+    function syncWithGoogleBackend() {
+      callBackend('getDashboardData', null,
+        function(response) {
+          if (response && response.success) {
+            APP_DATABASE.records = response.records || [];
+            APP_DATABASE.koreksiList = response.koreksiList || [];
+            if (response.config) {
+              APP_DATABASE.config = response.config;
+            }
+            saveToLocalStorage();
+            renderAllTimelines();
+            renderSummary();
+            renderFullHistory();
+            checkPartnerPresence();
+          }
+        },
+        function(err) {
+          console.error('Koneksi backend gagal:', err);
+        }
+      );
+    }
+
+    /**
+     * KALKULASI MINGGU DALAM BULAN
+     */
+    function getMonthTimeline(year, month) {
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const totalWeeks = Math.min(5, Math.ceil(daysInMonth / 7));
+      const monthShort = MONTH_SHORT_NAMES[month];
+
+      const isCurrentCalendarMonth = (today.getFullYear() === year && today.getMonth() === month);
+      const currentDay = today.getDate();
+      const activeWeekIndex = isCurrentCalendarMonth ? Math.min(totalWeeks, Math.ceil(currentDay / 7)) : -1;
+
+      const weeks = [];
+      for (let i = 1; i <= totalWeeks; i++) {
+        weeks.push({
+          id: i,
+          weekNum: (i < 10 ? '0' : '') + i,
+          weekLabel: 'M' + i,
+          isCurrentActiveWeek: (i === activeWeekIndex),
+          fullDate: `Minggu ${i} (${monthShort} ${year})`
+        });
+      }
+      return weeks;
+    }
+
+    /**
+     * SAPAAN WAKTU ADAPTIF (WIB)
+     */
+    function getTimeGreeting() {
+      const hour = new Date().getHours();
+      if (hour >= 4 && hour < 11) return 'selamat pagi';
+      if (hour >= 11 && hour < 15) return 'selamat siang';
+      if (hour >= 15 && hour < 18) return 'selamat sore';
+      return 'selamat malam';
+    }
+
+    /**
+     * NOTIFIKASI TOAST (POP-UP NETRAL UNTUK FARIS, POP-UP PINK CINTA UNTUK SAIBA)
+     */
+    function showToast(text, mode = 'normal') {
+      const toast = document.getElementById('toastMessage');
+      if (!toast) return;
+
+      toast.innerHTML = text;
+
+      if (mode === 'pink') {
+        toast.className = 'absolute top-5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-rose-500 to-pink-500 text-white text-xs md:text-sm font-semibold px-6 py-3 rounded-full shadow-2xl shadow-rose-500/40 ring-2 ring-rose-300 pointer-events-none opacity-100 transition-all duration-300 z-50 flex items-center space-x-1.5';
+      } else {
+        toast.className = 'absolute top-5 left-1/2 -translate-x-1/2 bg-neutral-900 text-white text-xs md:text-sm font-medium px-5 py-2.5 rounded-full shadow-xl pointer-events-none opacity-100 transition-all duration-300 z-50';
+      }
+
+      setTimeout(() => {
+        toast.classList.replace('opacity-100', 'opacity-0');
+      }, 2600);
+    }
+
+    /**
+     * HALAMAN PEMBUKA & PEMILIHAN PENGGUNA
+     */
+    function selectUserAndEnter(role, name) {
+      currentUser = { role: role, name: name };
+
+      const userLabel = document.getElementById('activeUserLabel');
+      const userDot = document.getElementById('activeUserIndicator');
+      if (userLabel) userLabel.textContent = name;
+      if (userDot) {
+        userDot.className = `w-2 h-2 rounded-full ${role === 'A' ? 'bg-emerald-500' : 'bg-rose-400'}`;
+      }
+
+      const lockScreen = document.getElementById('darkLockScreen');
+      if (lockScreen) {
+        lockScreen.classList.add('-translate-y-full');
+      }
+      updateThemeColor('#FAFAFC');
+
+      renderAllTimelines();
+      checkPartnerPresence();
+
+      // Eksekusi Pop-up Sapaan Waktu Sesuai Pengguna
+      const greeting = getTimeGreeting();
+      if (role === 'B') {
+        // Saiba masuk: Pop-up berwarna pink dengan "selamat [waktu] sayang ♥"
+        showToast(`${greeting} sayang <span class="text-base text-white ml-0.5">♥</span>`, 'pink');
+      } else {
+        // Faris masuk: Pop-up monokrom biasa
+        showToast(`${greeting}, faris`, 'normal');
+      }
+    }
+
+    function enterAppWithDefault() {
+      selectUserAndEnter('A', 'faris');
+    }
+
+    function openOpeningScreen() {
+      const lockScreen = document.getElementById('darkLockScreen');
+      if (lockScreen) {
+        lockScreen.classList.remove('-translate-y-full');
+      }
+      updateThemeColor('#111114');
+    }
+
+    /**
+     * KEHADIRAN PASANGAN (PARTNER PRESENCE PULSE)
+     */
+    function checkPartnerPresence() {
+      const bar = document.getElementById('partnerPresenceBar');
+      const textEl = document.getElementById('partnerPresenceText');
+      if (!bar) return;
+
+      const partnerRole = currentUser.role === 'A' ? 'B' : 'A';
+      const partnerName = partnerRole === 'A' ? 'faris' : 'saiba';
+
+      const partnerRecords = APP_DATABASE.records.filter(r => r.user === partnerRole);
+      if (partnerRecords.length > 0) {
+        const latest = partnerRecords[partnerRecords.length - 1];
+        bar.classList.remove('hidden');
+        if (textEl) {
+          textEl.textContent = `${partnerName} baru saja setor ${latest.labelMinggu.toLowerCase()} ✨`;
+        }
+      } else {
+        bar.classList.add('hidden');
+      }
+    }
+
+    /**
+     * NAVIGASI ANTAR BULAN
+     */
+    function changeMonth(direction) {
+      viewMonth += direction;
+      if (viewMonth > 11) {
+        viewMonth = 0;
+        viewYear += 1;
+      } else if (viewMonth < 0) {
+        viewMonth = 11;
+        viewYear -= 1;
+      }
+
+      updateMonthDisplay();
+      renderAllTimelines();
+      renderSummary();
+      checkFullMonthCelebration();
+    }
+
+    function updateMonthDisplay() {
+      const label = document.getElementById('navMonthYearLabel');
+      const badge = document.getElementById('activeMonthBadge');
+      const str = `${MONTH_SHORT_NAMES[viewMonth]} ${viewYear}`;
+      if (label) label.textContent = str;
+      if (badge) badge.textContent = str;
+    }
+
+    /**
+     * NAVIGASI TAB (HOME & RIWAYAT)
+     */
+    function switchTab(target) {
+      currentTab = target;
+      const homeView = document.getElementById('tabViewHome');
+      const riwayatView = document.getElementById('tabViewRiwayat');
+      const navHomeBtn = document.getElementById('navHomeBtn');
+      const navRiwayatBtn = document.getElementById('navRiwayatBtn');
+      const dotHome = document.getElementById('navHomeIndicator');
+      const dotRiwayat = document.getElementById('navRiwayatIndicator');
+
+      if (target === 'home') {
+        if (homeView) homeView.classList.remove('hidden');
+        if (riwayatView) riwayatView.classList.add('hidden');
+
+        if (navHomeBtn) {
+          navHomeBtn.classList.remove('text-neutral-400');
+          navHomeBtn.classList.add('text-neutral-900');
+        }
+        if (navRiwayatBtn) {
+          navRiwayatBtn.classList.remove('text-neutral-900');
+          navRiwayatBtn.classList.add('text-neutral-400');
+        }
+        if (dotHome) dotHome.classList.replace('bg-transparent', 'bg-neutral-900');
+        if (dotRiwayat) dotRiwayat.classList.replace('bg-neutral-900', 'bg-transparent');
+      } else {
+        if (homeView) homeView.classList.add('hidden');
+        if (riwayatView) riwayatView.classList.remove('hidden');
+
+        if (navHomeBtn) {
+          navHomeBtn.classList.remove('text-neutral-900');
+          navHomeBtn.classList.add('text-neutral-400');
+        }
+        if (navRiwayatBtn) {
+          navRiwayatBtn.classList.remove('text-neutral-400');
+          navRiwayatBtn.classList.add('text-neutral-900');
+        }
+        if (dotHome) dotHome.classList.replace('bg-neutral-900', 'bg-transparent');
+        if (dotRiwayat) dotRiwayat.classList.replace('bg-transparent', 'bg-neutral-900');
+
+        renderFullHistory();
+      }
+    }
+
+    /**
+     * RENDER LINGKARAN TRACKING MINGGUAN
+     */
+    function renderAllTimelines() {
+      const containerA = document.getElementById('timelineUserA');
+      const containerB = document.getElementById('timelineUserB');
+      const timeline = getMonthTimeline(viewYear, viewMonth);
+
+      if (containerA) containerA.innerHTML = renderCirclesForUser('A', timeline);
+      if (containerB) containerB.innerHTML = renderCirclesForUser('B', timeline);
+
+      checkFullMonthCelebration();
+    }
+
+    function renderCirclesForUser(role, timeline) {
+      return timeline.map(item => {
+        const record = APP_DATABASE.records.find(r => 
+          r.dayId === item.id && 
+          r.user === role && 
+          r.year === viewYear && 
+          r.monthIndex === viewMonth
+        );
+        const isDone = Boolean(record);
+        const isCurrentActiveRole = currentUser.role === role;
+
+        if (isDone) {
+          const pendingKor = APP_DATABASE.koreksiList.find(k => k.setoranId === record.id && k.status.toLowerCase() === 'menunggu');
+          const hasNote = Boolean(record.note && record.note.length > 0);
+
+          return `
+            <div class="relative flex flex-col items-center cursor-pointer btn-press" onclick="openDetailSheet('${record.id}')">
+              ${pendingKor ? `<span class="w-2 h-2 rounded-full bg-amber-400 absolute top-0 right-0"></span>` : ''}
+              ${hasNote ? `<span class="text-[9px] absolute -top-1.5 -left-1">💌</span>` : ''}
+              <div class="w-9 h-9 md:w-11 md:h-11 rounded-full bg-neutral-900 text-white flex items-center justify-center text-xs md:text-sm font-bold shadow-sm">
+                ${item.weekNum}
+              </div>
+              <span class="text-[10px] md:text-xs font-semibold text-neutral-400 mt-1.5 uppercase">
+                ${item.weekLabel}
+              </span>
+            </div>
+          `;
+        } else {
+          const activeRingClass = item.isCurrentActiveWeek ? 'ring-2 ring-neutral-900 ring-offset-2 ring-active-week' : '';
+          const clickAction = isCurrentActiveRole ? `openUploadSheet(${item.id})` : `showToast('ini slot setoran punya pasangan kamu ya')`;
+
+          return `
+            <div class="flex flex-col items-center cursor-pointer btn-press" onclick="${clickAction}">
+              <div class="w-9 h-9 md:w-11 md:h-11 rounded-full bg-neutral-100 text-neutral-500 flex items-center justify-center text-xs md:text-sm font-medium hover:bg-neutral-200/70 transition ${activeRingClass}">
+                ${item.weekNum}
+              </div>
+              <span class="text-[10px] md:text-xs font-semibold ${item.isCurrentActiveWeek ? 'text-neutral-800 font-bold' : 'text-neutral-300'} mt-1.5 uppercase">
+                ${item.weekLabel}
+              </span>
+            </div>
+          `;
+        }
+      }).join('');
+    }
+
+    function checkFullMonthCelebration() {
+      const banner = document.getElementById('celebrationBanner');
+      const bannerText = document.getElementById('celebrationText');
+      if (!banner) return;
+
+      const timeline = getMonthTimeline(viewYear, viewMonth);
+      const totalRequired = timeline.length * 2;
+      const filledCount = APP_DATABASE.records.filter(r => r.year === viewYear && r.monthIndex === viewMonth).length;
+
+      if (filledCount >= totalRequired && totalRequired > 0) {
+        banner.classList.remove('hidden');
+        const monthFull = MONTH_FULL_NAMES[viewMonth];
+        const totalRp = (totalRequired * APP_DATABASE.config.nominal).toLocaleString('id-ID');
+        if (bannerText) {
+          bannerText.textContent = `Bulan ${monthFull} komplit! Faris & Saiba berhasil mengumpulkan Rp${totalRp} bersama.`;
+        }
+      } else {
+        banner.classList.add('hidden');
+      }
+    }
+
+    function renderSummary() {
+      const monthRecords = APP_DATABASE.records.filter(r => r.year === viewYear && r.monthIndex === viewMonth);
+      const totalAmount = monthRecords.length * APP_DATABASE.config.nominal;
+      const valEl = document.getElementById('totalSavingsValue');
+      if (valEl) valEl.textContent = 'Rp' + totalAmount.toLocaleString('id-ID');
+    }
+
+    /**
+     * TAB RIWAYAT: PENGELOMPOKKAN PER BULAN (POIN 6)
+     */
+    function setHistoryFilter(filter) {
+      currentHistoryFilter = filter;
+      const btnAll = document.getElementById('filterBtnAll');
+      const btnA = document.getElementById('filterBtnA');
+      const btnB = document.getElementById('filterBtnB');
+
+      [btnAll, btnA, btnB].forEach(btn => {
+        if (btn) {
+          btn.className = 'btn-press px-4 py-1.5 rounded-full text-xs font-semibold bg-neutral-100 text-neutral-600 hover:bg-neutral-200 transition';
+        }
+      });
+
+      if (filter === 'all' && btnAll) {
+        btnAll.className = 'btn-press px-4 py-1.5 rounded-full text-xs font-semibold bg-neutral-900 text-white transition';
+      } else if (filter === 'A' && btnA) {
+        btnA.className = 'btn-press px-4 py-1.5 rounded-full text-xs font-semibold bg-neutral-900 text-white transition';
+      } else if (filter === 'B' && btnB) {
+        btnB.className = 'btn-press px-4 py-1.5 rounded-full text-xs font-semibold bg-neutral-900 text-white transition';
+      }
+
+      renderFullHistory();
+    }
+
+    function renderFullHistory() {
+      const container = document.getElementById('fullHistoryList');
+      const badge = document.getElementById('historyCountBadge');
+      if (!container) return;
+
+      let filtered = [...APP_DATABASE.records].reverse();
+      if (currentHistoryFilter === 'A') {
+        filtered = filtered.filter(r => r.user === 'A');
+      } else if (currentHistoryFilter === 'B') {
+        filtered = filtered.filter(r => r.user === 'B');
+      }
+
+      if (badge) badge.textContent = `${filtered.length} data`;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="py-12 text-center text-neutral-400">
+            <p class="text-xs md:text-sm">belum ada riwayat transfer</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Kelompokkan data berdasarkan Bulan dan Tahun
+      const groups = {};
+      filtered.forEach(item => {
+        const groupKey = `${MONTH_FULL_NAMES[item.monthIndex]} ${item.year}`;
+        if (!groups[groupKey]) {
+          groups[groupKey] = [];
+        }
+        groups[groupKey].push(item);
+      });
+
+      let htmlOutput = '';
+      for (const [groupName, groupItems] of Object.entries(groups)) {
+        htmlOutput += `
+          <div class="space-y-2.5">
+            <!-- Header Bulan -->
+            <div class="flex items-center justify-between px-1 pt-1">
+              <span class="text-xs font-bold text-neutral-900 lowercase tracking-wide">${groupName}</span>
+              <span class="text-[10px] font-mono text-neutral-400 bg-neutral-100 px-2 py-0.5 rounded-full">${groupItems.length} setoran</span>
+            </div>
+
+            <!-- Daftar Kartu Pada Bulan Ini -->
+            <div class="space-y-2.5">
+              ${groupItems.map(item => `
+                <div onclick="openDetailSheet('${item.id}')" class="bg-white rounded-2xl p-4 border border-neutral-100 flex flex-col space-y-2 cursor-pointer btn-press shadow-sm hover:border-neutral-200 transition">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                      <span class="w-8 h-8 rounded-full ${item.user === 'A' ? 'bg-neutral-900 text-white' : 'bg-neutral-200 text-neutral-800'} text-xs font-bold flex items-center justify-center">
+                        ${item.user}
+                      </span>
+                      <div>
+                        <p class="text-xs font-bold text-neutral-900 lowercase">${item.userName || (item.user === 'A' ? 'faris' : 'saiba <3')}</p>
+                        <p class="text-[10px] text-neutral-400">${item.labelMinggu} · ${item.timestamp}</p>
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <span class="text-xs font-bold text-neutral-900 font-mono block">Rp100.000</span>
+                      <span class="text-[10px] font-semibold text-emerald-600 lowercase bg-emerald-50 px-2 py-0.5 rounded-full">
+                        ${item.status.toLowerCase()}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Baris Love Note Mini di Kartu Riwayat (Jika Ada) -->
+                  ${item.note ? `
+                    <div class="bg-rose-50/60 rounded-xl px-2.5 py-1.5 text-[11px] text-rose-800 flex items-center space-x-1.5 border border-rose-100/50">
+                      <span>💌</span>
+                      <span class="truncate italic">"${item.note}"</span>
+                    </div>
+                  ` : ''}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = htmlOutput;
+    }
+
+    /**
+     * UNGGAH BUKTI & KOMPRESI CANVAS 1080P
+     */
+    function updateNoteCounter(input) {
+      const counter = document.getElementById('noteCharCounter');
+      if (counter) counter.textContent = `${input.value.length}/40`;
+    }
+
+    function handleFileSelected(e, mode) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const tempImg = new Image();
+        tempImg.onload = function() {
+          const canvas = document.createElement('canvas');
+          let width = tempImg.width;
+          let height = tempImg.height;
+          const maxDim = 1080;
+
+          if (width > height && width > maxDim) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else if (height > maxDim) {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(tempImg, 0, 0, width, height);
+
+          const compressed = canvas.toDataURL('image/jpeg', 0.78);
+
+          if (mode === 'setoran') {
+            selectedImageMime = file.type || 'image/jpeg';
+            selectedImageBase64 = compressed;
+
+            const previewEl = document.getElementById('imageProofPreview');
+            const promptEl = document.getElementById('uploadPrompt');
+            const btnSubmit = document.getElementById('btnSubmitProof');
+
+            if (previewEl) {
+              previewEl.src = selectedImageBase64;
+              previewEl.classList.remove('hidden');
+            }
+            if (promptEl) promptEl.classList.add('hidden');
+            if (btnSubmit) btnSubmit.removeAttribute('disabled');
+          } else if (mode === 'koreksi') {
+            koreksiImageMime = file.type || 'image/jpeg';
+            koreksiImageBase64 = compressed;
+
+            const previewEl = document.getElementById('imageKoreksiPreview');
+            const promptEl = document.getElementById('koreksiUploadPrompt');
+            const btnSubmit = document.getElementById('btnSubmitKoreksi');
+
+            if (previewEl) {
+              previewEl.src = koreksiImageBase64;
+              previewEl.classList.remove('hidden');
+            }
+            if (promptEl) promptEl.classList.add('hidden');
+            if (btnSubmit) btnSubmit.removeAttribute('disabled');
+          }
+        };
+        tempImg.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function openUploadSheet(targetWeekId) {
+      targetUploadWeekId = targetWeekId || null;
+      selectedImageBase64 = null;
+      const fileInput = document.getElementById('fileInputProof');
+      const noteInput = document.getElementById('inputDepositNote');
+      const noteCounter = document.getElementById('noteCharCounter');
+
+      if (fileInput) fileInput.value = '';
+      if (noteInput) noteInput.value = '';
+      if (noteCounter) noteCounter.textContent = '0/40';
+
+      const previewEl = document.getElementById('imageProofPreview');
+      const promptEl = document.getElementById('uploadPrompt');
+      const btnSubmit = document.getElementById('btnSubmitProof');
+      const spinnerText = document.getElementById('submitBtnText');
+      const spinner = document.getElementById('submitBtnSpinner');
+
+      if (previewEl) {
+        previewEl.src = '';
+        previewEl.classList.add('hidden');
+      }
+      if (promptEl) promptEl.classList.remove('hidden');
+      if (btnSubmit) {
+        btnSubmit.setAttribute('disabled', 'true');
+        if (spinnerText) spinnerText.textContent = 'kirim bukti';
+        if (spinner) spinner.classList.add('hidden');
+      }
+
+      const weekLabel = targetUploadWeekId ? `minggu ${targetUploadWeekId}` : 'minggu berjalan';
+      const labelEl = document.getElementById('uploadSheetWeekLabel');
+      if (labelEl) labelEl.textContent = `${weekLabel} (${MONTH_SHORT_NAMES[viewMonth]} ${viewYear}) · ${currentUser.name}`;
+
+      const sheet = document.getElementById('uploadSheet');
+      if (sheet) sheet.classList.remove('hidden');
+    }
+
+    function closeUploadSheet() {
+      const sheet = document.getElementById('uploadSheet');
+      if (sheet) sheet.classList.add('hidden');
+    }
+
+    function executeSetoranSubmission() {
+      if (!selectedImageBase64) return;
+
+      const noteText = document.getElementById('inputDepositNote').value.trim();
+      const btn = document.getElementById('btnSubmitProof');
+      const spinnerText = document.getElementById('submitBtnText');
+      const spinner = document.getElementById('submitBtnSpinner');
+
+      if (btn) {
+        btn.setAttribute('disabled', 'true');
+        if (spinnerText) spinnerText.textContent = 'mengirim...';
+        if (spinner) spinner.classList.remove('hidden');
+      }
+
+      const timeline = getMonthTimeline(viewYear, viewMonth);
+      let targetWeek = null;
+
+      if (targetUploadWeekId) {
+        targetWeek = timeline.find(d => d.id === targetUploadWeekId);
+      } else {
+        targetWeek = timeline.find(d => !APP_DATABASE.records.some(r => 
+          r.dayId === d.id && 
+          r.user === currentUser.role &&
+          r.year === viewYear &&
+          r.monthIndex === viewMonth
+        ));
+      }
+
+      if (!targetWeek) {
+        showToast('semua minggu pada bulan ini telah terisi');
+        resetSubmitBtn();
+        return;
+      }
+
+      const payload = {
+        year: viewYear,
+        monthIndex: viewMonth,
+        dayId: targetWeek.id,
+        userRole: currentUser.role,
+        imageBase64: selectedImageBase64,
+        mimeType: selectedImageMime,
+        note: noteText
+      };
+
+      callBackend('submitSetoran', payload,
+        function(response) {
+          resetSubmitBtn();
+          if (response && response.success) {
+            APP_DATABASE.records.push(response.record);
+            saveToLocalStorage();
+            closeUploadSheet();
+            renderAllTimelines();
+            renderSummary();
+            renderFullHistory();
+            checkPartnerPresence();
+            showToast('bukti transfer berhasil dicatat');
+          } else {
+            showToast(response.message || 'gagal menyimpan setoran');
+          }
+        },
+        function(err) {
+          resetSubmitBtn();
+          showToast('kesalahan jaringan: ' + err.toString());
+        }
+      );
+    }
+
+    function resetSubmitBtn() {
+      const btn = document.getElementById('btnSubmitProof');
+      const spinnerText = document.getElementById('submitBtnText');
+      const spinner = document.getElementById('submitBtnSpinner');
+      if (btn) btn.removeAttribute('disabled');
+      if (spinnerText) spinnerText.textContent = 'kirim bukti';
+      if (spinner) spinner.classList.add('hidden');
+    }
+
+    /**
+     * MODAL DETAIL BUKTI TRANSFER & REVIEW KOREKSI
+     */
+    function openDetailSheet(recordId) {
+      const record = APP_DATABASE.records.find(r => r.id === recordId);
+      if (!record) return;
+
+      activeRecordInDetail = record;
+      const timeline = getMonthTimeline(record.year, record.monthIndex);
+      const weekItem = timeline.find(d => d.id === record.dayId);
+      const titleEl = document.getElementById('detailSheetTitle');
+      const subEl = document.getElementById('detailSheetSubtitle');
+      const statEl = document.getElementById('detailSheetStatus');
+      const timeEl = document.getElementById('detailSheetTime');
+      const imgEl = document.getElementById('detailSheetImg');
+
+      // Tampilkan Love Note jika tersedia
+      const loveBox = document.getElementById('detailLoveNoteBox');
+      const loveText = document.getElementById('detailLoveNoteText');
+      if (record.note && record.note.length > 0) {
+        if (loveBox) loveBox.classList.remove('hidden');
+        if (loveText) loveText.textContent = `"${record.note}"`;
+      } else {
+        if (loveBox) loveBox.classList.add('hidden');
+      }
+
+      if (titleEl) titleEl.textContent = `bukti: ${record.userName || (record.user === 'A' ? 'faris' : 'saiba')}`;
+      if (subEl) subEl.textContent = weekItem ? weekItem.fullDate : `minggu ${record.dayId}`;
+      if (statEl) statEl.textContent = record.status.toLowerCase();
+      if (timeEl) timeEl.textContent = record.timestamp;
+      if (imgEl) imgEl.src = record.previewUrl;
+
+      // Cek Pengajuan Koreksi
+      const pendingKor = APP_DATABASE.koreksiList.find(k => k.setoranId === record.id && k.status.toLowerCase() === 'menunggu');
+      const btnKoreksi = document.getElementById('btnRequestCorrection');
+      const badgePending = document.getElementById('badgePendingCorrection');
+      const reviewBox = document.getElementById('correctionReviewBox');
+
+      if (pendingKor) {
+        if (currentUser.role === record.user) {
+          if (btnKoreksi) btnKoreksi.classList.add('hidden');
+          if (badgePending) badgePending.classList.remove('hidden');
+          if (reviewBox) reviewBox.classList.add('hidden');
+        } else {
+          if (btnKoreksi) btnKoreksi.classList.add('hidden');
+          if (badgePending) badgePending.classList.add('hidden');
+          if (reviewBox) {
+            reviewBox.classList.remove('hidden');
+            const reasonEl = document.getElementById('correctionReviewReason');
+            const newImgEl = document.getElementById('correctionReviewImg');
+            if (reasonEl) reasonEl.textContent = pendingKor.alasan || 'Tidak ada alasan';
+            if (newImgEl) newImgEl.src = pendingKor.newPreviewUrl;
+          }
+        }
+      } else {
+        if (reviewBox) reviewBox.classList.add('hidden');
+        if (badgePending) badgePending.classList.add('hidden');
+        if (btnKoreksi) {
+          if (currentUser.role === record.user) {
+            btnKoreksi.classList.remove('hidden');
+          } else {
+            btnKoreksi.classList.add('hidden');
+          }
+        }
+      }
+
+      const detailEl = document.getElementById('detailSheet');
+      if (detailEl) detailEl.classList.remove('hidden');
+    }
+
+    function closeDetailSheet() {
+      const detailEl = document.getElementById('detailSheet');
+      if (detailEl) detailEl.classList.add('hidden');
+    }
+
+    /**
+     * FORM PENGAJUAN KOREKSI
+     */
+    function openKoreksiSheet() {
+      if (!activeRecordInDetail) return;
+      closeDetailSheet();
+
+      koreksiImageBase64 = null;
+      const fileInput = document.getElementById('fileInputKoreksi');
+      const reasonInput = document.getElementById('koreksiReasonInput');
+      const previewEl = document.getElementById('imageKoreksiPreview');
+      const promptEl = document.getElementById('koreksiUploadPrompt');
+      const btnSubmit = document.getElementById('btnSubmitKoreksi');
+      const labelEl = document.getElementById('koreksiSheetWeekLabel');
+
+      if (fileInput) fileInput.value = '';
+      if (reasonInput) reasonInput.value = '';
+      if (previewEl) {
+        previewEl.src = '';
+        previewEl.classList.add('hidden');
+      }
+      if (promptEl) promptEl.classList.remove('hidden');
+      if (btnSubmit) btnSubmit.setAttribute('disabled', 'true');
+      if (labelEl) labelEl.textContent = `minggu ${activeRecordInDetail.dayId} · ${currentUser.name}`;
+
+      const kSheet = document.getElementById('koreksiSheet');
+      if (kSheet) kSheet.classList.remove('hidden');
+    }
+
+    function closeKoreksiSheet() {
+      const kSheet = document.getElementById('koreksiSheet');
+      if (kSheet) kSheet.classList.add('hidden');
+    }
+
+    function executeKoreksiSubmission() {
+      if (!activeRecordInDetail || !koreksiImageBase64) return;
+
+      const reason = document.getElementById('koreksiReasonInput').value.trim() || 'Salah unggah bukti transfer';
+      const btn = document.getElementById('btnSubmitKoreksi');
+      const spinnerText = document.getElementById('koreksiBtnText');
+      const spinner = document.getElementById('koreksiBtnSpinner');
+
+      if (btn) {
+        btn.setAttribute('disabled', 'true');
+        if (spinnerText) spinnerText.textContent = 'mengirim...';
+        if (spinner) spinner.classList.remove('hidden');
+      }
+
+      const payload = {
+        setoranId: activeRecordInDetail.id,
+        userRole: currentUser.role,
+        alasan: reason,
+        imageBase64: koreksiImageBase64,
+        mimeType: koreksiImageMime
+      };
+
+      callBackend('submitKoreksi', payload,
+        function(response) {
+          resetKoreksiBtn();
+          if (response && response.success) {
+            APP_DATABASE.koreksiList.push(response.koreksi);
+            saveToLocalStorage();
+            closeKoreksiSheet();
+            renderAllTimelines();
+            showToast('pengajuan koreksi berhasil dicatat');
+          } else {
+            showToast(response.message || 'gagal mengajukan koreksi');
+          }
+        },
+        function(err) {
+          resetKoreksiBtn();
+          showToast('kesalahan server: ' + err.toString());
+        }
+      );
+    }
+
+    function resetKoreksiBtn() {
+      const btn = document.getElementById('btnSubmitKoreksi');
+      const spinnerText = document.getElementById('koreksiBtnText');
+      const spinner = document.getElementById('koreksiBtnSpinner');
+      if (btn) btn.removeAttribute('disabled');
+      if (spinnerText) spinnerText.textContent = 'kirim pengajuan';
+      if (spinner) spinner.classList.add('hidden');
+    }
+
+    function respondToCorrection(action) {
+      if (!activeRecordInDetail) return;
+      const pendingKor = APP_DATABASE.koreksiList.find(k => k.setoranId === activeRecordInDetail.id && k.status.toLowerCase() === 'menunggu');
+      if (!pendingKor) return;
+
+      const payload = {
+        koreksiId: pendingKor.id,
+        action: action,
+        reviewerRole: currentUser.role
+      };
+
+      callBackend('resolveKoreksi', payload,
+        function(response) {
+          if (response && response.success) {
+            pendingKor.status = response.status;
+            if (action === 'disetujui') {
+              activeRecordInDetail.previewUrl = response.newPreviewUrl;
+            }
+            saveToLocalStorage();
+            closeDetailSheet();
+            renderAllTimelines();
+            renderFullHistory();
+            showToast(`koreksi berhasil di-${action}`);
+          } else {
+            showToast(response.message || 'gagal memperbarui koreksi');
+          }
+        },
+        function(err) {
+          showToast('kesalahan server: ' + err.toString());
+        }
+      );
+    }
+
+    /**
+     * LIGHTBOX VIEWER LAYAR PENUH
+     */
+    function openFullscreenProof() {
+      if (!activeRecordInDetail) return;
+      const fullModal = document.getElementById('fullscreenModal');
+      const fullImg = document.getElementById('fullscreenImg');
+      const fullTitle = document.getElementById('fullscreenTitle');
+
+      if (fullImg) fullImg.src = activeRecordInDetail.previewUrl;
+      if (fullTitle) fullTitle.textContent = `bukti: ${activeRecordInDetail.userName} (${activeRecordInDetail.labelMinggu})`;
+      if (fullModal) fullModal.classList.remove('hidden');
+    }
+
+    function openFullscreenNewProof() {
+      if (!activeRecordInDetail) return;
+      const pendingKor = APP_DATABASE.koreksiList.find(k => k.setoranId === activeRecordInDetail.id && k.status.toLowerCase() === 'menunggu');
+      if (!pendingKor) return;
+
+      const fullModal = document.getElementById('fullscreenModal');
+      const fullImg = document.getElementById('fullscreenImg');
+      const fullTitle = document.getElementById('fullscreenTitle');
+
+      if (fullImg) fullImg.src = pendingKor.newPreviewUrl;
+      if (fullTitle) fullTitle.textContent = `bukti koreksi baru (${activeRecordInDetail.labelMinggu})`;
+      if (fullModal) fullModal.classList.remove('hidden');
+    }
+
+    function closeFullscreenProof() {
+      const fullModal = document.getElementById('fullscreenModal');
+      if (fullModal) fullModal.classList.add('hidden');
+    }
   </script>
 </body>
 </html>
