@@ -9,35 +9,41 @@
   <link rel="icon" sizes="192x192" href="./icons/icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Tabungan">
-  <meta name="color-scheme" content="light">
-  <meta name="theme-color" content="#FAFAFC">
+  <meta name="theme-color" content="#111114">
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     html, body {
-      margin: 0; padding: 0;
-      width: 100%; height: 100%; height: 100dvh;
-      background: #FAFAFC;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      height: -webkit-fill-available;
+      background: #111114;
       overflow: hidden;
       overscroll-behavior: none;
       touch-action: manipulation;
       -webkit-text-size-adjust: 100%;
     }
     iframe {
-      position: absolute;
-      inset: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       width: 100%;
       height: 100%;
+      height: -webkit-fill-available;
       border: 0;
       display: block;
-      background: #FAFAFC;
+      background: #111114;
     }
   </style>
 </head>
 <body>
-  <!-- ponytail: clean iframe wrapper pattern copied from pidum-sbs-pwa; no letterboxing, seamless #FAFAFC -->
-  <iframe src="https://script.google.com/macros/s/AKfycbzFL7OpHVTdM2JBaZtQrwsSQ6f1V6mqCaLCBe92uP9LJPIObS_0vWxVVB_d_qsD6zbD/exec?v=10"
+  <!-- ponytail: full bleed iOS standalone wrapper; safe area handled inside GAS -->
+  <iframe src="https://script.google.com/macros/s/AKfycbzFL7OpHVTdM2JBaZtQrwsSQ6f1V6mqCaLCBe92uP9LJPIObS_0vWxVVB_d_qsD6zbD/exec?v=11"
           allow="clipboard-write" referrerpolicy="no-referrer-when-downgrade"></iframe>
   <script>
     ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (ev) {
