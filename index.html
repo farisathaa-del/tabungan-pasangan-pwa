@@ -70,7 +70,7 @@
         min-height: calc(4.25rem + env(safe-area-inset-bottom)) !important;
       }
       .sheet-content {
-        padding-bottom: max(1.5rem, calc(env(safe-area-inset-bottom) + 1rem)) !important;
+        padding-bottom: max(2.5rem, calc(env(safe-area-inset-bottom) + 1.75rem)) !important;
       }
     }
     @keyframes pulse-ring {
@@ -87,7 +87,7 @@
   </style>
 </head>
 
-<body class="bg-[#FAFAFC] h-full min-h-screen p-0 text-neutral-900 font-sans antialiased selection:bg-rose-500/20">
+<body class="bg-[#FAFAFC] h-full p-0 text-neutral-900 font-sans antialiased selection:bg-rose-500/20">
 
   <!-- SINGLE UNIFIED CONTAINER: Fleksibel Mobile Layar Penuh hingga Desktop Lapang -->
   <div class="relative w-full h-full bg-[#FAFAFC] overflow-hidden flex flex-col">
@@ -327,7 +327,7 @@
     <!-- DRAWER: UPLOAD BUKTI SETORAN (DENGAN LOVE NOTE SINGKAT)               -->
     <!-- ====================================================================== -->
     <div id="uploadSheet" class="absolute inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex flex-col justify-end transition-opacity">
-      <div class="bg-white rounded-t-3xl p-6 md:p-8 space-y-3.5 max-h-[90%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
+      <div class="sheet-content bg-white rounded-t-3xl px-6 pt-5 pb-8 md:p-8 space-y-3.5 max-h-[85%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
         <div class="flex items-center justify-between">
           <div>
             <h3 class="text-base md:text-lg font-bold text-neutral-900 lowercase">setor bukti minggu</h3>
@@ -380,7 +380,7 @@
     <!-- DRAWER: DETAIL BUKTI TRANSFER & REVIEW KOREKSI PASANGAN               -->
     <!-- ====================================================================== -->
     <div id="detailSheet" class="absolute inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex flex-col justify-end transition-opacity">
-      <div class="bg-white rounded-t-3xl p-6 md:p-8 space-y-3.5 max-h-[92%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
+      <div class="sheet-content bg-white rounded-t-3xl px-6 pt-5 pb-8 md:p-8 space-y-3.5 max-h-[85%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
         <div class="flex items-center justify-between">
           <div>
             <h3 id="detailSheetTitle" class="text-base md:text-lg font-bold text-neutral-900 lowercase">bukti setoran</h3>
@@ -470,7 +470,7 @@
     <!-- DRAWER: FORM PENGAJUAN KOREKSI (ALASAN + SCREENSHOT BARU)             -->
     <!-- ====================================================================== -->
     <div id="koreksiSheet" class="absolute inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex flex-col justify-end transition-opacity">
-      <div class="bg-white rounded-t-3xl p-6 md:p-8 space-y-4 max-h-[90%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
+      <div class="sheet-content bg-white rounded-t-3xl px-6 pt-5 pb-8 md:p-8 space-y-4 max-h-[85%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
         <div class="flex items-center justify-between">
           <div>
             <h3 class="text-base md:text-lg font-bold text-neutral-900 lowercase">ajukan koreksi bukti</h3>

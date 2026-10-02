@@ -19,11 +19,18 @@ assert(html.includes('touchend') && html.includes('lastTouchEnd'), 'Double-tap z
 assert(html.includes('header {') && html.includes('calc(env(safe-area-inset-top) + 0.25rem)'), 'Header must sit right below notch');
 assert(html.includes('id="themeColorMeta" content="#FAFAFC"'), 'themeColorMeta must be #FAFAFC to prevent top black bar');
 assert(html.includes('body class="bg-[#FAFAFC]'), 'body background must be #FAFAFC');
+assert(!html.includes('min-h-screen'), 'body must not have min-h-screen (causes 100vh overflow on iOS)');
 
 // 4. Hilangkan teks "mingguan · rp100.000 / minggu"
 assert(!html.includes('mingguan · rp100.000 / minggu'), 'Card subtitle "mingguan · rp100.000 / minggu" must be removed');
 
-// 5. Service worker version bump
-assert(sw.includes("CACHE_NAME = 'tabungan-v3'"), 'Service worker cache must be bumped to v3');
+// 5. Drawer sheet safe area & no submerged buttons
+assert(html.includes('.sheet-content {') && html.includes('calc(env(safe-area-inset-bottom)'), 'Sheet content must have safe area bottom padding');
+assert(html.includes('id="uploadSheet"') && html.includes('class="sheet-content bg-white'), 'Upload sheet must include .sheet-content');
+assert(html.includes('id="detailSheet"') && html.includes('class="sheet-content bg-white'), 'Detail sheet must include .sheet-content');
+assert(html.includes('id="koreksiSheet"') && html.includes('class="sheet-content bg-white'), 'Koreksi sheet must include .sheet-content');
 
-console.log('ALL PWA CHECKS PASSED (5/5)');
+// 6. Service worker version bump
+assert(sw.includes("CACHE_NAME = 'tabungan-v4'"), 'Service worker cache must be bumped to v4');
+
+console.log('ALL PWA CHECKS PASSED (6/6)');
