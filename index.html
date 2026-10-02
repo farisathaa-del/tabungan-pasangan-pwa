@@ -6,7 +6,7 @@
 
     <!-- PWA & Mobile Web App Standalone Meta Tags -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" id="themeColorMeta" content="#111114">
+    <meta name="theme-color" id="themeColorMeta" content="#FAFAFC">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -27,7 +27,14 @@
 
   <style>
     /* tinggi berbasis % — 100vh/100dvh di dalam iframe iOS = viewport parent (bug), salah tinggi */
-    html, body { height: 100%; }
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      overscroll-behavior: none;
+      touch-action: manipulation;
+      background-color: #FAFAFC;
+    }
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       -webkit-tap-highlight-color: transparent;
@@ -50,10 +57,10 @@
     /* iOS Safe Area & Native app feel */
     @supports (padding-top: env(safe-area-inset-top)) {
       header {
-        padding-top: max(1.5rem, calc(env(safe-area-inset-top) + 0.5rem)) !important;
+        padding-top: max(0.5rem, calc(env(safe-area-inset-top) + 0.25rem)) !important;
       }
       #darkLockScreen {
-        padding-top: max(1.5rem, calc(env(safe-area-inset-top) + 0.75rem)) !important;
+        padding-top: max(0.75rem, calc(env(safe-area-inset-top) + 0.25rem)) !important;
         padding-bottom: max(3.5rem, calc(env(safe-area-inset-bottom) + 2.25rem)) !important;
       }
       nav {
@@ -80,7 +87,7 @@
   </style>
 </head>
 
-<body class="bg-[#0B0B0E] h-full min-h-screen p-0 text-neutral-900 font-sans antialiased selection:bg-rose-500/20">
+<body class="bg-[#FAFAFC] h-full min-h-screen p-0 text-neutral-900 font-sans antialiased selection:bg-rose-500/20">
 
   <!-- SINGLE UNIFIED CONTAINER: Fleksibel Mobile Layar Penuh hingga Desktop Lapang -->
   <div class="relative w-full h-full bg-[#FAFAFC] overflow-hidden flex flex-col">
@@ -118,10 +125,10 @@
       <div class="relative z-10 pb-6 md:pb-8 space-y-5 max-w-md mx-auto w-full">
         <div>
           <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-neutral-500 leading-none">
-            pantau
+            track
           </h1>
           <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-white mt-1 leading-none">
-            tabungan kita.
+            ours saving.
           </h1>
         </div>
 
@@ -143,7 +150,7 @@
     <!-- ====================================================================== -->
     <!-- TOP BAR (TOMBOL PROFIL PENGGUNA, NAVIGASI BULAN, AKSI TAMBAH SETORAN) -->
     <!-- ====================================================================== -->
-    <header class="pt-6 md:pt-8 px-6 md:px-10 pb-3 flex items-center justify-between bg-[#FAFAFC] z-20 border-b border-neutral-100/60">
+    <header class="pt-3 md:pt-4 px-6 md:px-10 pb-2.5 flex items-center justify-between bg-[#FAFAFC] z-20 border-b border-neutral-100/60">
       <!-- Tombol Profil Pengguna: Klik untuk kembali ke Layar Pembuka -->
       <button onclick="openOpeningScreen()" title="Ganti Pengguna / Buka Layar Pembuka" class="btn-press flex items-center space-x-2.5 py-1.5 px-3.5 rounded-full bg-neutral-200/60 hover:bg-neutral-200 transition">
         <span id="activeUserIndicator" class="w-2 h-2 rounded-full bg-emerald-500"></span>
@@ -192,7 +199,7 @@
     <!-- ====================================================================== -->
     <!-- TAB 1: HOME (TRACKING PER MINGGU & TOTAL TABUNGAN BERSAMA)             -->
     <!-- ====================================================================== -->
-    <main id="tabViewHome" class="flex-1 overflow-y-auto no-scrollbar px-6 md:px-10 py-4 md:py-5 space-y-6 md:space-y-7">
+    <main id="tabViewHome" class="flex-1 overflow-hidden flex flex-col justify-start space-y-3.5 md:space-y-5 px-6 md:px-10 py-3 md:py-4">
       
       <!-- BANNER SELEBRASI BULAN PENUH (Jika 100% minggu berdua terisi) -->
       <div id="celebrationBanner" class="hidden bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 text-white rounded-2xl p-4 border border-neutral-700 shadow-md">
@@ -208,14 +215,11 @@
       </div>
 
       <!-- BARIS 1: FARIS -->
-      <section class="space-y-3.5 bg-white md:bg-transparent p-4 md:p-0 rounded-2xl md:rounded-none border border-neutral-100 md:border-0 shadow-sm md:shadow-none">
-        <div class="flex items-baseline justify-between">
+      <section class="space-y-2 bg-white md:bg-transparent p-3 md:p-0 rounded-2xl md:rounded-none border border-neutral-100 md:border-0 shadow-sm md:shadow-none">
+        <div>
           <h2 class="text-xl md:text-2xl font-bold tracking-tight text-neutral-900 lowercase">
             faris
           </h2>
-          <span class="text-xs font-semibold text-neutral-400 tracking-wide lowercase">
-            mingguan · rp100.000 / minggu
-          </span>
         </div>
 
         <!-- Deretan Lingkaran Minggu Faris -->
@@ -225,14 +229,11 @@
       </section>
 
       <!-- BARIS 2: SAIBA -->
-      <section class="space-y-3.5 bg-white md:bg-transparent p-4 md:p-0 rounded-2xl md:rounded-none border border-neutral-100 md:border-0 shadow-sm md:shadow-none">
-        <div class="flex items-baseline justify-between">
+      <section class="space-y-2 bg-white md:bg-transparent p-3 md:p-0 rounded-2xl md:rounded-none border border-neutral-100 md:border-0 shadow-sm md:shadow-none">
+        <div>
           <h2 class="text-xl md:text-2xl font-bold tracking-tight text-neutral-900 lowercase">
             saiba <span class="text-rose-500 text-lg">♥</span>
           </h2>
-          <span class="text-xs font-semibold text-neutral-400 tracking-wide lowercase">
-            mingguan · rp100.000 / minggu
-          </span>
         </div>
 
         <!-- Deretan Lingkaran Minggu Saiba -->
@@ -531,7 +532,7 @@
     <!-- ====================================================================== -->
     <!-- TOAST NOTIFICATION DINAMIS (NETRAL UNTUK FARIS, PINK CINTA UNTUK SAIBA)-->
     <!-- ====================================================================== -->
-    <div id="toastMessage" class="fixed top-20 left-1/2 -translate-x-1/2 px-5 py-2.5 rounded-full shadow-xl pointer-events-none opacity-0 transition-all duration-300 z-50 text-xs md:text-sm font-medium whitespace-nowrap">
+    <div id="toastMessage" class="fixed top-14 left-1/2 -translate-x-1/2 px-5 py-2.5 rounded-full shadow-xl pointer-events-none opacity-0 transition-all duration-300 z-50 text-xs md:text-sm font-medium whitespace-nowrap">
       pesan
     </div>
 
@@ -1484,6 +1485,19 @@
       const fullModal = document.getElementById('fullscreenModal');
       if (fullModal) fullModal.classList.add('hidden');
     }
+
+    // Cegah gesture pinch-to-zoom & double-tap zoom pada iOS
+    document.addEventListener('gesturestart', function(e) { e.preventDefault(); }, { passive: false });
+    document.addEventListener('gesturechange', function(e) { e.preventDefault(); }, { passive: false });
+    document.addEventListener('gestureend', function(e) { e.preventDefault(); }, { passive: false });
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function(e) {
+      const now = Date.now();
+      if (now - lastTouchEnd <= 300) {
+        e.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, false);
   </script>
 </body>
 </html>
