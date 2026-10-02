@@ -18,10 +18,12 @@
       background: #111114; overflow: hidden;
     }
     iframe {
+      /* replaced element: left/right TIDAK melebar — width/height harus eksplisit */
       position: fixed;
-      /* top offset saja — env() di top-level page ini jalan; isi app GAS sudah di-patch safe-area */
       top: env(safe-area-inset-top, 0px);
-      left: 0; right: 0; bottom: 0;
+      left: 0;
+      width: 100%;
+      height: calc(100% - env(safe-area-inset-top, 0px));
       border: 0; display: block; background: #111114;
     }
   </style>
