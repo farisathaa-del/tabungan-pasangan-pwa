@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Tabungan Faris & Saiba</title>
   <link rel="manifest" href="./manifest.json">
   <link rel="apple-touch-icon" href="./icons/icon-180.png">
@@ -12,38 +12,13 @@
   <meta name="apple-mobile-web-app-title" content="Tabungan">
   <meta name="theme-color" content="#111114">
   <style>
-    *, *::before, *::after { box-sizing: border-box; }
-    html {
-      margin: 0; padding: 0;
-      /* fill entire screen incl. notch/home-indicator areas */
-      height: 100%; height: -webkit-fill-available;
-      background: #111114;
-    }
-    body {
-      margin: 0; padding: 0;
-      width: 100%; height: 100%; height: -webkit-fill-available;
-      background: #111114; overflow: hidden;
-    }
-    iframe {
-      position: fixed;
-      /* push past notch/status bar */
-      top: env(safe-area-inset-top, 0px);
-      left: env(safe-area-inset-left, 0px);
-      right: env(safe-area-inset-right, 0px);
-      bottom: env(safe-area-inset-bottom, 0px);
-      width: calc(100% - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px));
-      height: calc(100% - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
-      border: 0; display: block; background: #111114;
-    }
+    html, body { margin:0; padding:0; height:100%; background:#111114; display:flex; align-items:center; justify-content:center; }
+    a { color:#fff; font-family:system-ui,sans-serif; font-size:1.1rem; text-decoration:none; padding:1rem 2rem; border:1px solid #444; border-radius:12px; }
   </style>
 </head>
 <body>
-  <!-- ponytail: iframe ke GAS, upgrade ke service-worker caching kalau butuh offline -->
-  <iframe src="https://script.google.com/macros/s/AKfycbzFL7OpHVTdM2JBaZtQrwsSQ6f1V6mqCaLCBe92uP9LJPIObS_0vWxVVB_d_qsD6zbD/exec"
-          allow="clipboard-write" referrerpolicy="no-referrer-when-downgrade"></iframe>
-  <script>
-    // prevent double-tap zoom inside iframe on iOS
-    document.addEventListener('gesturestart', e => e.preventDefault());
-  </script>
+  <!-- ponytail: redirect karena GAS set x-frame-options SAMEORIGIN, iframe tak bisa full-screen -->
+  <script>window.location.replace("https://script.google.com/macros/s/AKfycbzFL7OpHVTdM2JBaZtQrwsSQ6f1V6mqCaLCBe92uP9LJPIObS_0vWxVVB_d_qsD6zbD/exec");</script>
+  <a href="https://script.google.com/macros/s/AKfycbzFL7OpHVTdM2JBaZtQrwsSQ6f1V6mqCaLCBe92uP9LJPIObS_0vWxVVB_d_qsD6zbD/exec">Buka Aplikasi</a>
 </body>
 </html>
