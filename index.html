@@ -12,13 +12,27 @@
   <meta name="apple-mobile-web-app-title" content="Tabungan">
   <meta name="theme-color" content="#111114">
   <style>
-    html, body { margin:0; padding:0; height:100%; background:#111114; display:flex; align-items:center; justify-content:center; }
-    a { color:#fff; font-family:system-ui,sans-serif; font-size:1.1rem; text-decoration:none; padding:1rem 2rem; border:1px solid #444; border-radius:12px; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0; height: 100%; height: -webkit-fill-available;
+      background: #111114; overflow: hidden;
+    }
+    iframe {
+      position: fixed;
+      /* top offset saja — env() di top-level page ini jalan; isi app GAS sudah di-patch safe-area */
+      top: env(safe-area-inset-top, 0px);
+      left: 0; right: 0; bottom: 0;
+      border: 0; display: block; background: #111114;
+    }
   </style>
 </head>
 <body>
-  <!-- ponytail: redirect karena GAS set x-frame-options SAMEORIGIN, iframe tak bisa full-screen -->
-  <script>window.location.replace("https://script.google.com/macros/s/AKfycbzFL7OpHVTdM2JBaZtQrwsSQ6f1V6mqCaLCBe92uP9LJPIObS_0vWxVVB_d_qsD6zbD/exec");</script>
-  <a href="https://script.google.com/macros/s/AKfycbzFL7OpHVTdM2JBaZtQrwsSQ6f1V6mqCaLCBe92uP9LJPIObS_0vWxVVB_d_qsD6zbD/exec">Buka Aplikasi</a>
+  <!-- ponytail: iframe full-bleed; app GAS sendiri yg handle notch + full-bleed (border & 100dvh dipindah ke md:) -->
+  <iframe src="https://script.google.com/macros/s/AKfycbzFL7OpHVTdM2JBaZtQrwsSQ6f1V6mqCaLCBe92uP9LJPIObS_0vWxVVB_d_qsD6zbD/exec"
+          allow="clipboard-write" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  <script>
+    // prevent double-tap zoom inside iframe on iOS
+    document.addEventListener('gesturestart', e => e.preventDefault());
+  </script>
 </body>
 </html>
