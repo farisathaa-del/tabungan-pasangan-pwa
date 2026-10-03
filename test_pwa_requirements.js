@@ -31,7 +31,7 @@ assert(html.includes('id="detailSheet"') && html.includes('class="sheet-content 
 assert(html.includes('id="koreksiSheet"') && html.includes('class="sheet-content bg-white'), 'Koreksi sheet must include .sheet-content');
 
 // 6. Service worker version bump
-assert(sw.includes("CACHE_NAME = 'tabungan-v14'"), 'Service worker cache must be bumped to v14');
+assert(sw.includes("CACHE_NAME = 'tabungan-v15'"), 'Service worker cache must be bumped to v15');
 
 // 7. Plant visual & drawer integration
 assert(html.includes('id="plantSheet"') && html.includes('class="sheet-content bg-white'), 'Plant sheet must exist with safe area');
@@ -69,11 +69,16 @@ assert(html.includes('id="safaDetailBubble"'), 'Detail sheet must contain intera
 assert(html.includes('function tapSafaDetailMeow()'), 'tapSafaDetailMeow function must exist');
 assert(html.includes('viewBox="0 0 360 190"'), 'Detail sheet must feature panoramic garden backdrop');
 
-// 13. Strict JS syntax compilation check (prevent uncaught runtime breaks)
+// 13. Orbit pot 3D & unclipped speech bubble checks
+assert(!html.includes('onclick="openPlantSheet()" class="relative overflow-hidden rounded-3xl'), 'Home card must not clip overflow so bubble is unclipped');
+assert(html.includes('calc(-50% + 38px)'), 'safaOrbitMini must use exact calc(-50% + 38px) trajectory around pot');
+assert(html.includes('Bayangan kontak tanah tegas langsung di bawah pot'), 'renderPlantSvg must provide ground contact shadow');
+
+// 14. Strict JS syntax compilation check (prevent uncaught runtime breaks)
 const scriptMatch = html.match(/<script>([\s\S]*?)<\/script>/);
 assert(scriptMatch, 'Script tag must exist in index.html');
 assert.doesNotThrow(() => {
   new Function(scriptMatch[1]);
 }, 'JavaScript inside index.html must have valid syntax without duplicates or compilation errors');
 
-console.log('ALL PWA CHECKS PASSED (13/13)');
+console.log('ALL PWA CHECKS PASSED (14/14)');
