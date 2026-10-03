@@ -31,7 +31,7 @@ assert(html.includes('id="detailSheet"') && html.includes('class="sheet-content 
 assert(html.includes('id="koreksiSheet"') && html.includes('class="sheet-content bg-white'), 'Koreksi sheet must include .sheet-content');
 
 // 6. Service worker version bump
-assert(sw.includes("CACHE_NAME = 'tabungan-v22'"), 'Service worker cache must be bumped to v22');
+assert(sw.includes("CACHE_NAME = 'tabungan-v23'"), 'Service worker cache must be bumped to v23');
 
 // 7. Plant visual & drawer integration
 assert(html.includes('id="plantSheet"') && html.includes('class="sheet-content bg-white'), 'Plant sheet must exist with safe area');
@@ -96,4 +96,10 @@ assert(html.includes('mins >= 1110 || mins < 300'), 'Night mode threshold must s
 assert(html.includes('function applyDayNightTheme()') && html.includes('function isNightTime()'), 'Night theme toggle functions must exist');
 assert(html.includes('.garden-night-sky') && html.includes('.plant-detail-garden'), 'Night garden SVG starry sky elements must exist');
 
-console.log('ALL PWA CHECKS PASSED (17/17)');
+// 18. Safa Cat Ears Anatomy and Seamless Layering
+assert(html.includes('Symmetrical Sleeping Ears'), 'Safa sleeping mode must have symmetrical ears');
+assert(html.includes('M31 12 Q37 4 38 15'), 'Safa waiting mode must have symmetrical right ear around cx 26');
+assert(html.includes('Left Ear (back ear, layered behind head)'), 'Safa walking mode must layer back ear behind head');
+assert(html.includes('Right Ear (front ear, on top of head with seamless white patch and NO dividing line)'), 'Safa walking mode must seamlessly layer front ear');
+
+console.log('ALL PWA CHECKS PASSED (18/18)');
