@@ -31,7 +31,7 @@ assert(html.includes('id="detailSheet"') && html.includes('class="sheet-content 
 assert(html.includes('id="koreksiSheet"') && html.includes('class="sheet-content bg-white'), 'Koreksi sheet must include .sheet-content');
 
 // 6. Service worker version bump
-assert(sw.includes("CACHE_NAME = 'tabungan-v18'"), 'Service worker cache must be bumped to v18');
+assert(sw.includes("CACHE_NAME = 'tabungan-v19'"), 'Service worker cache must be bumped to v19');
 
 // 7. Plant visual & drawer integration
 assert(html.includes('id="plantSheet"') && html.includes('class="sheet-content bg-white'), 'Plant sheet must exist with safe area');
@@ -86,4 +86,8 @@ assert(html.includes('id="btnMusicToggle"'), 'Music toggle button must exist');
 assert(html.includes('id="bgMusic"') && html.includes('adele-lovesong.mp3'), 'Audio element for Adele - Lovesong must exist');
 assert(html.includes('function toggleMusic()') && html.includes('function playMusicOnGesture()'), 'Music toggle and gesture trigger must exist');
 
-console.log('ALL PWA CHECKS PASSED (15/15)');
+// 16. Lock screen header: Basmalah & dot on left, "tabungan berdua" removed
+assert(!html.includes('tabungan berdua'), '"tabungan berdua" label must be removed from lock screen');
+assert(html.includes('بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ'), 'Basmalah must exist on lock screen header');
+
+console.log('ALL PWA CHECKS PASSED (16/16)');
