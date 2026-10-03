@@ -31,6 +31,12 @@ assert(html.includes('id="detailSheet"') && html.includes('class="sheet-content 
 assert(html.includes('id="koreksiSheet"') && html.includes('class="sheet-content bg-white'), 'Koreksi sheet must include .sheet-content');
 
 // 6. Service worker version bump
-assert(sw.includes("CACHE_NAME = 'tabungan-v4'"), 'Service worker cache must be bumped to v4');
+assert(sw.includes("CACHE_NAME = 'tabungan-v5'"), 'Service worker cache must be bumped to v5');
 
-console.log('ALL PWA CHECKS PASSED (6/6)');
+// 7. Plant visual & drawer integration
+assert(html.includes('id="plantSheet"') && html.includes('class="sheet-content bg-white'), 'Plant sheet must exist with safe area');
+assert(html.includes('id="plantSvgMini"'), 'Mini plant SVG container must exist');
+assert(html.includes('openPlantSheet()'), 'openPlantSheet trigger must exist');
+assert(html.includes('renderPlantVisuals()'), 'renderPlantVisuals function must exist');
+
+console.log('ALL PWA CHECKS PASSED (7/7)');

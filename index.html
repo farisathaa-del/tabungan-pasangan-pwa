@@ -248,14 +248,19 @@
           tabungan bersama
         </h2>
 
-        <div class="bg-neutral-100/90 rounded-2xl p-5 flex items-center justify-between border border-neutral-200/50">
+        <div onclick="openPlantSheet()" class="bg-neutral-100/90 rounded-2xl p-5 flex items-center justify-between border border-neutral-200/50 cursor-pointer hover:bg-neutral-200/50 transition">
           <div>
             <span class="text-[10px] md:text-xs uppercase font-bold tracking-wider text-neutral-400 block">Total Terkumpul</span>
             <span id="totalSavingsValue" class="text-2xl md:text-3xl font-extrabold text-neutral-900 tracking-tight">Rp0</span>
+            <div class="flex items-center space-x-2 mt-1.5">
+              <span id="plantStageBadge" class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">🌱 benih & tunas</span>
+              <span id="activeMonthBadge" class="text-[10px] font-semibold text-neutral-500 bg-white/70 px-2 py-0.5 rounded-full border border-neutral-200/60">-- ----</span>
+            </div>
           </div>
-          <span id="activeMonthBadge" class="text-xs md:text-sm font-semibold text-neutral-500 lowercase bg-white/70 px-3 py-1.5 rounded-full border border-neutral-200/60 shadow-xs">
-            -- ----
-          </span>
+          <div class="flex flex-col items-end shrink-0">
+            <div id="plantSvgMini" class="h-[65px] w-[55px] flex items-center justify-center"></div>
+            <span class="text-[9px] text-neutral-400 font-medium mt-0.5">ketuk detail ›</span>
+          </div>
         </div>
       </section>
 
@@ -514,6 +519,49 @@
     </div>
 
     <!-- ====================================================================== -->
+    <!-- DRAWER: TANAMAN TABUNGAN CINTA (52 MINGGU KOMITMEN)                  -->
+    <!-- ====================================================================== -->
+    <div id="plantSheet" class="absolute inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex flex-col justify-end transition-opacity">
+      <div class="sheet-content bg-white rounded-t-3xl px-6 pt-5 pb-8 md:p-8 space-y-4 max-h-[85%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-base md:text-lg font-bold text-neutral-900 lowercase">tanaman tabungan cinta</h3>
+            <p class="text-xs text-neutral-400">simbol komitmen 52 minggu faris & saiba</p>
+          </div>
+          <button onclick="closePlantSheet()" class="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 hover:bg-neutral-200 transition">✕</button>
+        </div>
+
+        <!-- Large plant visual -->
+        <div id="plantSvgLarge" class="flex items-center justify-center py-3 min-h-[160px]"></div>
+
+        <!-- Status pertumbuhan -->
+        <div class="bg-neutral-50 rounded-2xl p-4 space-y-3">
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-neutral-500 font-medium">progres</span>
+            <span id="plantProgressPercent" class="font-bold text-neutral-900 font-mono">0%</span>
+          </div>
+          <div class="w-full h-2 bg-neutral-200 rounded-full overflow-hidden">
+            <div id="plantProgressBar" class="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full transition-all duration-700" style="width:0%"></div>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-neutral-500">minggu lunas</span>
+            <span id="plantWeeksPaid" class="font-semibold text-neutral-900 font-mono">0 dari 52</span>
+          </div>
+        </div>
+
+        <!-- Daftar 5 fase pertumbuhan -->
+        <div class="space-y-2">
+          <p class="text-xs font-bold text-neutral-700 lowercase">5 fase pertumbuhan</p>
+          <div id="plantStageList" class="space-y-1.5"></div>
+        </div>
+
+        <button onclick="closePlantSheet()" class="btn-press w-full py-3 rounded-full bg-neutral-100 text-xs md:text-sm font-semibold text-neutral-600 hover:bg-neutral-200 transition">
+          tutup
+        </button>
+      </div>
+    </div>
+
+    <!-- ====================================================================== -->
     <!-- MODAL LIGHTBOX FULLSCREEN BUKTI TRANSFER (ZOOM VIEWER)                 -->
     <!-- ====================================================================== -->
     <div id="fullscreenModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md hidden flex flex-col items-center justify-between p-4 md:p-8" onclick="closeFullscreenProof()">
@@ -580,6 +628,7 @@
       updateMonthDisplay();
       renderAllTimelines();
       renderSummary();
+      renderPlantVisuals();
       renderFullHistory();
       checkPartnerPresence();
       syncWithGoogleBackend();
@@ -962,6 +1011,7 @@
       const totalAmount = monthRecords.length * APP_DATABASE.config.nominal;
       const valEl = document.getElementById('totalSavingsValue');
       if (valEl) valEl.textContent = 'Rp' + totalAmount.toLocaleString('id-ID');
+      renderPlantVisuals();
     }
 
     /**
@@ -1441,6 +1491,7 @@
             saveToLocalStorage();
             closeDetailSheet();
             renderAllTimelines();
+            renderSummary();
             renderFullHistory();
             showToast(`koreksi berhasil di-${action}`);
           } else {
@@ -1484,6 +1535,184 @@
     function closeFullscreenProof() {
       const fullModal = document.getElementById('fullscreenModal');
       if (fullModal) fullModal.classList.add('hidden');
+    }
+
+    /**
+     * TANAMAN TABUNGAN CINTA — LOGIKA & SVG RENDER
+     */
+    const TOTAL_WEEKS_TARGET = 52;
+
+    function getPlantStage(totalPaidWeeks) {
+      const pct = Math.min(100, Math.round((totalPaidWeeks / TOTAL_WEEKS_TARGET) * 100));
+      let stage;
+      if (pct <= 15) stage = 1;
+      else if (pct <= 38) stage = 2;
+      else if (pct <= 61) stage = 3;
+      else if (pct <= 84) stage = 4;
+      else stage = 5;
+      return { stage, pct, weeks: totalPaidWeeks };
+    }
+
+    const STAGE_LABELS = [
+      '🌱 fase 1: benih & tunas',
+      '🌿 fase 2: tunas muda',
+      '🌳 fase 3: rimbun bercabang',
+      '🌸 fase 4: kuncup cinta',
+      '🌺 fase 5: mekar sempurna'
+    ];
+
+    const STAGE_LIST_ITEMS = [
+      { label: '1. benih & tunas', emoji: '🌱' },
+      { label: '2. tunas muda', emoji: '🌿' },
+      { label: '3. rimbun bercabang', emoji: '🌳' },
+      { label: '4. kuncup cinta', emoji: '🌸' },
+      { label: '5. mekar sempurna', emoji: '🌺' }
+    ];
+
+    function renderPlantSvg(stage, isLarge) {
+      const vw = isLarge ? 180 : 100;
+      const vh = isLarge ? 200 : 120;
+      const scale = isLarge ? 1 : 0.55;
+      const sx = n => Math.round(n * scale);
+      const sy = n => Math.round(n * scale);
+
+      // Base pot coordinates
+      const pot = {
+        topL: `${sx(25)},${sy(100)}`,
+        topR: `${sx(75)},${sy(100)}`,
+        botR: `${sx(85)},${sy(120)}`,
+        botL: `${sx(15)},${sy(120)}`,
+        rimX: sx(22), rimW: sx(56), rimY: sy(95), rimH: sy(7),
+        soilCx: sx(50), soilCy: sy(100), soilRx: sx(28), soilRy: sy(5)
+      };
+
+      // Stem end Y varies by stage
+      const stemTopY = [sy(82), sy(70), sy(58), sy(48), sy(40)][stage - 1];
+      const stemColor = '#22C55E';
+      const leafColor = '#4ADE80';
+      const budColor = '#F472B6';
+      const petalColor = '#FB7185';
+
+      let parts = [];
+
+      // Pot
+      parts.push(`<polygon points="${pot.topL} ${pot.topR} ${pot.botR} ${pot.botL}" fill="#C67B5B"/>`);
+      parts.push(`<rect x="${pot.rimX}" y="${pot.rimY}" width="${pot.rimW}" height="${pot.rimH}" rx="3" fill="#B56E4A"/>`);
+      parts.push(`<ellipse cx="${pot.soilCx}" cy="${pot.soilCy}" rx="${pot.soilRx}" ry="${pot.soilRy}" fill="#5C3A1E"/>`);
+
+      // Stem
+      parts.push(`<path d="M ${sx(50)},${sy(98)} Q ${sx(52)},${sy((98+stemTopY)/2)} ${sx(50)},${stemTopY}" stroke="${stemColor}" stroke-width="${sx(3)}" fill="none" stroke-linecap="round"/>`);
+
+      // Leaf helper
+      function addLeaf(cx, cy, rot, sc) {
+        const x = sx(cx), y = sy(cy), s = sc || 1;
+        const ls = sx(10) * s;
+        parts.push(`<g transform="translate(${x},${y}) rotate(${rot})"><path d="M0,0 Q${ls*0.6},-${ls*0.4} ${ls},-${ls} Q${ls*0.4},-${ls*0.6} 0,0" fill="${leafColor}"/></g>`);
+      }
+
+      // Leaves per stage
+      const leafLayout = [
+        // stage 1: 2 tiny leaves
+        () => { addLeaf(50, 82, -25, 0.5); addLeaf(50, 82, 25, 0.5); },
+        // stage 2: 4 leaves
+        () => { addLeaf(50, 80, -40, 0.8); addLeaf(50, 80, 40, 0.8);
+                addLeaf(50, 72, -30, 0.7); addLeaf(50, 72, 30, 0.7); },
+        // stage 3: 8 leaves
+        () => { addLeaf(50, 78, -40, 0.7); addLeaf(50, 78, 40, 0.7);
+                addLeaf(50, 72, -35, 0.7); addLeaf(50, 72, 35, 0.7);
+                addLeaf(50, 66, -30, 0.7); addLeaf(50, 66, 30, 0.7);
+                addLeaf(50, 60, -25, 0.6); addLeaf(50, 60, 25, 0.6); },
+        // stage 4: 10 leaves + bud
+        () => { addLeaf(50, 78, -40, 0.7); addLeaf(50, 78, 40, 0.7);
+                addLeaf(50, 72, -35, 0.7); addLeaf(50, 72, 35, 0.7);
+                addLeaf(50, 66, -30, 0.7); addLeaf(50, 66, 30, 0.7);
+                addLeaf(50, 60, -25, 0.6); addLeaf(50, 60, 25, 0.6);
+                addLeaf(50, 54, -20, 0.6); addLeaf(50, 54, 20, 0.6);
+                // bud
+                parts.push(`<ellipse cx="${sx(50)}" cy="${sy(48)}" rx="${sx(5)}" ry="${sx(7)}" fill="${budColor}"/>`);
+                parts.push(`<ellipse cx="${sx(50)}" cy="${sy(48)}" rx="${sx(3)}" ry="${sx(5)}" fill="#F9A8D4"/>`); },
+        // stage 5: 12 leaves + full flower
+        () => { addLeaf(50, 78, -40, 0.7); addLeaf(50, 78, 40, 0.7);
+                addLeaf(50, 72, -35, 0.7); addLeaf(50, 72, 35, 0.7);
+                addLeaf(50, 66, -30, 0.7); addLeaf(50, 66, 30, 0.7);
+                addLeaf(50, 60, -25, 0.6); addLeaf(50, 60, 25, 0.6);
+                addLeaf(50, 54, -20, 0.6); addLeaf(50, 54, 20, 0.6);
+                addLeaf(50, 48, -15, 0.5); addLeaf(50, 48, 15, 0.5);
+                // flower petals
+                const fx = sx(50), fy = sy(40);
+                for (let i = 0; i < 6; i++) {
+                  const angle = i * 60;
+                  parts.push(`<ellipse cx="${fx}" cy="${fy}" rx="${sx(4)}" ry="${sx(8)}" fill="${petalColor}" transform="rotate(${angle},${fx},${fy})" opacity="0.85"/>`);
+                }
+                // pistil
+                parts.push(`<circle cx="${fx}" cy="${fy}" r="${sx(4)}" fill="#FDE047"/>`);
+                parts.push(`<circle cx="${fx}" cy="${fy}" r="${sx(2)}" fill="#EAB308"/>`); }
+      ];
+
+      leafLayout[stage - 1]();
+
+      return `<svg viewBox="0 0 ${vw} ${vh}" xmlns="http://www.w3.org/2000/svg" class="${isLarge ? 'w-44 h-48' : 'w-[55px] h-[65px]'}">${parts.join('')}</svg>`;
+    }
+
+    function renderPlantVisuals() {
+      const totalPaidWeeks = Math.floor(APP_DATABASE.records.length / 2);
+      const { stage, pct, weeks } = getPlantStage(totalPaidWeeks);
+
+      // Mini SVG
+      const miniEl = document.getElementById('plantSvgMini');
+      if (miniEl) miniEl.innerHTML = renderPlantSvg(stage, false);
+
+      // Badge
+      const badgeEl = document.getElementById('plantStageBadge');
+      if (badgeEl) badgeEl.textContent = STAGE_LABELS[stage - 1];
+
+      // Large SVG (if sheet open, update it too)
+      const largeEl = document.getElementById('plantSvgLarge');
+      if (largeEl && !largeEl.closest('.hidden')) {
+        largeEl.innerHTML = renderPlantSvg(stage, true);
+      }
+
+      // Progress elements
+      const pctEl = document.getElementById('plantProgressPercent');
+      const barEl = document.getElementById('plantProgressBar');
+      const weeksEl = document.getElementById('plantWeeksPaid');
+      if (pctEl) pctEl.textContent = pct + '%';
+      if (barEl) barEl.style.width = pct + '%';
+      if (weeksEl) weeksEl.textContent = `${Math.min(weeks, TOTAL_WEEKS_TARGET)} dari ${TOTAL_WEEKS_TARGET}`;
+
+      // Stage list
+      const listEl = document.getElementById('plantStageList');
+      if (listEl) {
+        listEl.innerHTML = STAGE_LIST_ITEMS.map((item, i) => {
+          const isActive = (i + 1) === stage;
+          return `<div class="flex items-center space-x-2.5 px-3 py-2 rounded-xl ${isActive ? 'bg-emerald-50 border border-emerald-200' : 'bg-neutral-50 border border-transparent'}">
+            <span class="text-sm">${item.emoji}</span>
+            <span class="text-xs font-semibold ${isActive ? 'text-emerald-800' : 'text-neutral-600'} lowercase">${item.label}</span>
+            ${isActive ? '<span class="ml-auto w-2 h-2 rounded-full bg-emerald-500"></span>' : ''}
+          </div>`;
+        }).join('');
+      }
+    }
+
+    function openPlantSheet() {
+      const sheet = document.getElementById('plantSheet');
+      if (!sheet) return;
+
+      // Render large SVG with current stage
+      const totalPaidWeeks = Math.floor(APP_DATABASE.records.length / 2);
+      const { stage } = getPlantStage(totalPaidWeeks);
+      const largeEl = document.getElementById('plantSvgLarge');
+      if (largeEl) largeEl.innerHTML = renderPlantSvg(stage, true);
+
+      // Update progress + stage list
+      renderPlantVisuals();
+
+      sheet.classList.remove('hidden');
+    }
+
+    function closePlantSheet() {
+      const sheet = document.getElementById('plantSheet');
+      if (sheet) sheet.classList.add('hidden');
     }
 
     // Cegah gesture pinch-to-zoom & double-tap zoom pada iOS
