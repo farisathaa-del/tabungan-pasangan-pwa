@@ -199,11 +199,91 @@
       background: linear-gradient(to bottom, #0a111a, #0d2119) !important;
       border-color: rgba(34, 197, 94, 0.25) !important;
     }
-    body.night-theme #tabViewRiwayat,
+    body.night-theme #tabViewRiwayat {
+      background-color: transparent !important;
+    }
     body.night-theme #tabViewRiwayat .bg-white {
       background-color: #181B24 !important;
       border-color: rgba(255, 255, 255, 0.08) !important;
       color: #F8FAFC !important;
+    }
+    /* ── Night Theme: Riwayat header & badge ──────────────────────────── */
+    body.night-theme #tabViewRiwayat h2.text-neutral-900 {
+      color: #F1F5F9 !important;
+    }
+    body.night-theme #tabViewRiwayat p.text-neutral-400 {
+      color: #64748B !important;
+    }
+    body.night-theme #historyCountBadge {
+      background-color: rgba(6, 78, 59, 0.6) !important;
+      color: #A7F3D0 !important;
+      border-color: rgba(52, 211, 153, 0.3) !important;
+    }
+    /* ── Night Theme: History Summary Card ────────────────────────────── */
+    body.night-theme #historySummaryCard {
+      background: linear-gradient(135deg, rgba(17, 30, 46, 0.95), rgba(36, 20, 30, 0.85)) !important;
+      border-color: rgba(52, 211, 153, 0.25) !important;
+    }
+    body.night-theme #historyTotalAmount {
+      color: #4ADE80 !important;
+    }
+    body.night-theme #historyTotalFaris {
+      color: #CBD5E1 !important;
+    }
+    body.night-theme #historyTotalSaiba {
+      color: #FDA4AF !important;
+    }
+    body.night-theme #historySummaryCard .text-emerald-800\/80 {
+      color: #6EE7B7 !important;
+    }
+    /* ── Night Theme: Filter buttons ──────────────────────────────────── */
+    body.night-theme #filterBtnAll,
+    body.night-theme #filterBtnA,
+    body.night-theme #filterBtnB {
+      background-color: #181B24 !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      color: #94A3B8 !important;
+    }
+    body.night-theme #filterBtnAll.filter-active-neutral,
+    body.night-theme #filterBtnA.filter-active-neutral {
+      background-color: #F8FAFC !important;
+      color: #0F1117 !important;
+      border-color: transparent !important;
+    }
+    body.night-theme #filterBtnB.filter-active-rose {
+      background-color: #F43F5E !important;
+      color: #FFFFFF !important;
+      border-color: transparent !important;
+    }
+    /* ── Night Theme: History month header ────────────────────────────── */
+    body.night-theme #tabViewRiwayat .history-month-label {
+      color: #F8FAFC !important;
+    }
+    body.night-theme #tabViewRiwayat .history-month-badge {
+      background-color: #1E2330 !important;
+      color: #94A3B8 !important;
+      border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    /* ── Night Theme: History setoran cards ───────────────────────────── */
+    body.night-theme #tabViewRiwayat .history-card {
+      background-color: #181B24 !important;
+      border-color: rgba(255, 255, 255, 0.08) !important;
+    }
+    body.night-theme #tabViewRiwayat .history-card .text-neutral-900 {
+      color: #F8FAFC !important;
+    }
+    body.night-theme #tabViewRiwayat .history-card .text-neutral-400 {
+      color: #64748B !important;
+    }
+    body.night-theme #tabViewRiwayat .history-status-badge {
+      background-color: rgba(6, 78, 59, 0.4) !important;
+      color: #6EE7B7 !important;
+      border-color: rgba(52, 211, 153, 0.2) !important;
+    }
+    body.night-theme #tabViewRiwayat .history-note-box {
+      background-color: #24141E !important;
+      border-color: rgba(244, 63, 94, 0.3) !important;
+      color: #FDA4AF !important;
     }
     /* ── Night Theme: Sheet internals ──────────────────────────────────── */
     /* Semua sheet-content inner cards & dividers */
@@ -347,47 +427,6 @@
       background-color: #181B24 !important;
       color: #F8FAFC !important;
       border-color: rgba(255, 255, 255, 0.08) !important;
-    }
-    /* ── History tab: item cards & internal elements ────────────────────── */
-    body.night-theme #tabViewRiwayat .bg-white.rounded-2xl {
-      background-color: #1E2330 !important;
-      border-color: rgba(255, 255, 255, 0.08) !important;
-    }
-    body.night-theme #tabViewRiwayat .text-neutral-900 {
-      color: #F8FAFC !important;
-    }
-    body.night-theme #tabViewRiwayat .text-neutral-700 {
-      color: #CBD5E1 !important;
-    }
-    body.night-theme #tabViewRiwayat .text-neutral-400 {
-      color: #64748B !important;
-    }
-    body.night-theme #tabViewRiwayat .bg-neutral-100,
-    body.night-theme #tabViewRiwayat .bg-neutral-50\/80 {
-      background-color: #1E2330 !important;
-      border-color: rgba(255, 255, 255, 0.08) !important;
-    }
-    body.night-theme #tabViewRiwayat .text-neutral-700.font-mono,
-    body.night-theme #tabViewRiwayat .bg-neutral-100.px-2 {
-      background-color: #262D3D !important;
-      color: #94A3B8 !important;
-    }
-    body.night-theme #tabViewRiwayat .bg-rose-50\/60 {
-      background-color: #2D1522 !important;
-      border-color: rgba(244, 63, 94, 0.2) !important;
-    }
-    body.night-theme #tabViewRiwayat .text-rose-800 {
-      color: #FDA4AF !important;
-    }
-    body.night-theme #tabViewRiwayat .bg-emerald-50 {
-      background-color: rgba(6, 78, 59, 0.4) !important;
-    }
-    /* Active filter btn in riwayat */
-    body.night-theme #tabViewRiwayat #filterBtnAll,
-    body.night-theme #tabViewRiwayat #filterBtnA,
-    body.night-theme #tabViewRiwayat #filterBtnB {
-      background-color: #1E2330 !important;
-      color: #94A3B8 !important;
     }
     @keyframes pulse-ring {
       0%, 100% {
@@ -952,20 +991,20 @@
             dikelompokkan rapi per bulan
           </p>
         </div>
-        <span id="historyCountBadge" class="text-xs font-mono font-bold px-3 py-1 rounded-full bg-neutral-200/70 text-neutral-700">
+        <span id="historyCountBadge" class="text-xs font-mono font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/70">
           0 data
         </span>
       </div>
 
       <!-- Ringkasan Total Riwayat -->
-      <div id="historySummaryCard" class="bg-neutral-50/80 rounded-2xl p-3 border border-neutral-100 hidden">
+      <div id="historySummaryCard" class="bg-gradient-to-r from-emerald-50/90 via-white to-rose-50/80 rounded-2xl p-3.5 border border-emerald-200/70 shadow-xs hidden">
         <div class="flex items-center justify-between">
           <div>
-            <span class="text-[10px] font-bold text-neutral-500 tracking-wide uppercase">Total Tabungan Riwayat</span>
-            <p id="historyTotalAmount" class="text-lg font-black text-neutral-900">Rp0</p>
+            <span class="text-[10px] font-bold text-emerald-800/80 uppercase tracking-wider">Total Tabungan Riwayat</span>
+            <p id="historyTotalAmount" class="text-lg font-black text-emerald-950 font-mono tracking-tight">Rp0</p>
           </div>
           <div class="text-right text-[11px]">
-            <div class="font-semibold text-neutral-700">Faris: <span id="historyTotalFaris">Rp0</span></div>
+            <div class="font-semibold text-neutral-800">Faris: <span id="historyTotalFaris">Rp0</span></div>
             <div class="font-semibold text-rose-600 mt-0.5">Saiba ♥: <span id="historyTotalSaiba">Rp0</span></div>
           </div>
         </div>
@@ -973,13 +1012,13 @@
 
       <!-- Filter Kapsul Sederhana -->
       <div class="flex items-center space-x-2 pt-1 pb-1">
-        <button onclick="setHistoryFilter('all')" id="filterBtnAll" class="btn-press px-4 py-1.5 rounded-full text-xs font-semibold bg-neutral-900 text-white transition">
+        <button onclick="setHistoryFilter('all')" id="filterBtnAll" class="btn-press px-4 py-1.5 rounded-full text-xs font-semibold bg-neutral-900 text-white shadow-xs transition filter-active-neutral">
           semua
         </button>
-        <button onclick="setHistoryFilter('A')" id="filterBtnA" class="btn-press px-4 py-1.5 rounded-full text-xs font-semibold bg-neutral-100 text-neutral-600 hover:bg-neutral-200 transition">
+        <button onclick="setHistoryFilter('A')" id="filterBtnA" class="btn-press px-4 py-1.5 rounded-full text-xs font-semibold bg-white/90 border border-neutral-200/80 text-neutral-600 hover:bg-neutral-50 shadow-xs transition">
           faris
         </button>
-        <button onclick="setHistoryFilter('B')" id="filterBtnB" class="btn-press px-4 py-1.5 rounded-full text-xs font-semibold bg-neutral-100 text-neutral-600 hover:bg-neutral-200 transition">
+        <button onclick="setHistoryFilter('B')" id="filterBtnB" class="btn-press px-4 py-1.5 rounded-full text-xs font-semibold bg-white/90 border border-neutral-200/80 text-neutral-600 hover:bg-neutral-50 shadow-xs transition">
           saiba <span class="text-rose-500">♥</span>
         </button>
       </div>
@@ -2271,18 +2310,16 @@
       const btnA = document.getElementById('filterBtnA');
       const btnB = document.getElementById('filterBtnB');
 
-      [btnAll, btnA, btnB].forEach(btn => {
-        if (btn) {
-          btn.className = 'btn-press px-4 py-1.5 rounded-full text-xs font-semibold bg-neutral-100 text-neutral-600 hover:bg-neutral-200 transition';
-        }
-      });
+      // Reset all to inactive pill style
+      const inactiveClass = 'btn-press px-4 py-1.5 rounded-full text-xs font-semibold bg-white/90 border border-neutral-200/80 text-neutral-600 hover:bg-neutral-50 shadow-xs transition';
+      [btnAll, btnA, btnB].forEach(btn => { if (btn) btn.className = inactiveClass; });
 
       if (filter === 'all' && btnAll) {
-        btnAll.className = 'btn-press px-4 py-1.5 rounded-full text-xs font-semibold bg-neutral-900 text-white transition';
+        btnAll.className = 'btn-press px-4 py-1.5 rounded-full text-xs font-semibold bg-neutral-900 text-white shadow-xs transition filter-active-neutral';
       } else if (filter === 'A' && btnA) {
-        btnA.className = 'btn-press px-4 py-1.5 rounded-full text-xs font-semibold bg-neutral-900 text-white transition';
+        btnA.className = 'btn-press px-4 py-1.5 rounded-full text-xs font-semibold bg-neutral-900 text-white shadow-xs transition filter-active-neutral';
       } else if (filter === 'B' && btnB) {
-        btnB.className = 'btn-press px-4 py-1.5 rounded-full text-xs font-semibold bg-neutral-900 text-white transition';
+        btnB.className = 'btn-press px-4 py-1.5 rounded-full text-xs font-semibold bg-rose-500 text-white shadow-xs shadow-rose-200 transition filter-active-rose';
       }
 
       renderFullHistory();
@@ -2345,14 +2382,14 @@
           <div class="space-y-2.5">
             <!-- Header Bulan -->
             <div class="flex items-center justify-between px-1 pt-1">
-              <span class="text-xs font-bold text-neutral-900 lowercase tracking-wide">${groupName}</span>
-              <span class="text-[10px] font-mono text-neutral-400 bg-neutral-100 px-2 py-0.5 rounded-full">${groupItems.length} setoran</span>
+              <span class="text-xs font-bold text-neutral-900 lowercase tracking-wide history-month-label">${groupName}</span>
+              <span class="text-[10px] font-mono bg-emerald-50 text-emerald-700 border border-emerald-200/50 px-2 py-0.5 rounded-full history-month-badge">${groupItems.length} setoran</span>
             </div>
 
             <!-- Daftar Kartu Pada Bulan Ini -->
             <div class="space-y-2.5">
               ${groupItems.map(item => `
-                <div onclick="openDetailSheet('${item.id}')" class="bg-white rounded-2xl p-4 border border-neutral-100 flex flex-col space-y-2 cursor-pointer btn-press shadow-sm hover:border-neutral-200 transition">
+                <div onclick="openDetailSheet('${item.id}')" class="history-card bg-white rounded-2xl p-4 border ${item.user === 'B' ? 'border-rose-100/70' : 'border-neutral-100'} flex flex-col space-y-2 cursor-pointer btn-press shadow-sm hover:border-neutral-200 transition">
                   <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
                       <span class="w-8 h-8 rounded-full ${item.user === 'A' ? 'bg-neutral-900 text-white shadow-xs' : 'bg-rose-500 text-white shadow-xs shadow-rose-200'} text-xs font-bold flex items-center justify-center">
@@ -2365,7 +2402,7 @@
                     </div>
                     <div class="text-right">
                       <span class="text-xs font-bold text-neutral-900 font-mono block">Rp100.000</span>
-                      <span class="text-[10px] font-semibold text-emerald-600 lowercase bg-emerald-50 px-2 py-0.5 rounded-full">
+                      <span class="text-[10px] font-semibold text-emerald-700 lowercase bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-full history-status-badge">
                         ${item.status.toLowerCase()}
                       </span>
                     </div>
@@ -2373,7 +2410,7 @@
 
                   <!-- Baris Love Note Mini di Kartu Riwayat (Jika Ada) -->
                   ${item.note ? `
-                    <div class="bg-rose-50/60 rounded-xl px-2.5 py-1.5 text-[11px] text-rose-800 flex items-center space-x-1.5 border border-rose-100/50">
+                    <div class="history-note-box bg-rose-50/70 rounded-xl px-2.5 py-1.5 text-[11px] text-rose-800 flex items-center space-x-1.5 border border-rose-200/60">
                       <span>💌</span>
                       <span class="truncate italic">"${item.note}"</span>
                     </div>
