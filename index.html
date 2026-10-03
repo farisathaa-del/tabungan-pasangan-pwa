@@ -404,7 +404,7 @@
                 <div id="plantSvgMini" class="absolute left-1/2 -translate-x-1/2 bottom-0 h-[64px] w-[48px] flex items-center justify-center z-10 pointer-events-none"></div>
 
                 <!-- Kucing Safa Miniatur Interaktif -->
-                <div id="safaContainer" class="absolute left-1/2 -translate-x-1/2 bottom-0 z-20 cursor-pointer" onclick="event.stopPropagation(); tapSafaMeow();">
+                <div id="safaContainer" class="absolute left-1/2 -translate-x-1/2 bottom-0 z-20 cursor-pointer select-none" onclick="event.stopPropagation(); tapSafaMeow();" style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;">
                   <div id="safaSvgMini" class="w-[46px] h-[46px] flex items-center justify-center"></div>
                 </div>
               </div>
@@ -705,7 +705,7 @@
           </svg>
 
           <!-- Bubble Chat Safa di Detail Taman: independen di atas taman, tidak terbalik/terpotong -->
-          <div id="safaDetailBubble" class="hidden absolute top-2 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-sm border border-rose-200 text-rose-600 text-[11px] font-semibold px-3 py-1 rounded-full shadow-md whitespace-nowrap z-30 pointer-events-none transition-all">
+          <div id="safaDetailBubble" class="hidden absolute top-2 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-sm border border-rose-200 text-rose-600 text-[11px] font-semibold px-3 py-1 rounded-full shadow-md whitespace-normal text-center max-w-[220px] leading-tight z-30 pointer-events-none transition-all">
             meow! ♥
           </div>
 
@@ -718,7 +718,7 @@
             <div id="plantSvgLarge" class="absolute left-1/2 -translate-x-1/2 bottom-1 flex items-center justify-center shrink-0 z-10 pointer-events-none"></div>
 
             <!-- Kucing Safa di Taman Detail (bisa di-tap) -->
-            <div id="safaLargeContainer" class="absolute left-1/2 -translate-x-1/2 bottom-1 cursor-pointer shrink-0 transition-transform" onclick="tapSafaDetailMeow()">
+            <div id="safaLargeContainer" class="absolute left-1/2 -translate-x-1/2 bottom-1 cursor-pointer shrink-0 transition-transform select-none" onclick="event.stopPropagation(); tapSafaDetailMeow();" style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;">
               <div id="safaSvgLarge" class="w-[72px] h-[72px] flex items-center justify-center"></div>
             </div>
           </div>
