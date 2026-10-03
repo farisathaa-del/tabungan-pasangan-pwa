@@ -109,7 +109,7 @@
       </div>
 
       <!-- Logo PWA Siluet Pasangan -->
-      <div class="relative z-10 w-full py-6 md:py-8 flex items-center justify-center cursor-pointer select-none" onclick="enterAppWithDefault()">
+      <div class="relative z-10 w-full py-6 md:py-8 flex items-center justify-center select-none">
         <div class="relative p-1 rounded-3xl bg-neutral-800/80 border border-neutral-700/60 shadow-2xl shadow-black/50 hover:border-neutral-600 transition">
           <img src="./icons/icon-192.png" alt="Logo Faris & Saiba" class="w-24 h-24 md:w-28 md:h-28 rounded-2xl object-cover">
         </div>
@@ -223,7 +223,7 @@
       </section>
 
       <!-- BARIS 2: SAIBA -->
-      <section class="space-y-2 bg-white md:bg-transparent p-3 md:p-0 rounded-2xl md:rounded-none border border-neutral-100 md:border-0 shadow-sm md:shadow-none">
+      <section class="space-y-2 bg-rose-50/70 md:bg-rose-50/50 p-3 md:p-3.5 rounded-2xl border border-rose-200/80 shadow-xs">
         <div>
           <h2 class="text-xl md:text-2xl font-bold tracking-tight text-neutral-900 lowercase">
             saiba <span class="text-rose-500 text-lg">♥</span>
@@ -953,7 +953,7 @@
             <div class="relative flex flex-col items-center cursor-pointer btn-press" onclick="openDetailSheet('${record.id}')">
               ${pendingKor ? `<span class="w-2 h-2 rounded-full bg-amber-400 absolute top-0 right-0"></span>` : ''}
               ${hasNote ? `<span class="text-[9px] absolute -top-1.5 -left-1">💌</span>` : ''}
-              <div class="w-9 h-9 md:w-11 md:h-11 rounded-full bg-neutral-900 text-white flex items-center justify-center text-xs md:text-sm font-bold shadow-sm">
+              <div class="w-9 h-9 md:w-11 md:h-11 rounded-full ${role === 'B' ? 'bg-rose-500 text-white shadow-sm shadow-rose-200' : 'bg-neutral-900 text-white shadow-sm'} flex items-center justify-center text-xs md:text-sm font-bold">
                 ${item.weekNum}
               </div>
               <span class="text-[10px] md:text-xs font-semibold text-neutral-400 mt-1.5 uppercase">
@@ -962,7 +962,7 @@
             </div>
           `;
         } else {
-          const activeRingClass = item.isCurrentActiveWeek ? 'ring-2 ring-neutral-900 ring-offset-2 ring-active-week' : '';
+          const activeRingClass = item.isCurrentActiveWeek ? (role === 'B' ? 'ring-2 ring-rose-400 ring-offset-2 ring-active-week' : 'ring-2 ring-neutral-900 ring-offset-2 ring-active-week') : '';
           const clickAction = isCurrentActiveRole ? `openUploadSheet(${item.id})` : `showToast('ini slot setoran punya pasangan kamu ya')`;
 
           return `
@@ -970,7 +970,7 @@
               <div class="w-9 h-9 md:w-11 md:h-11 rounded-full bg-neutral-100 text-neutral-500 flex items-center justify-center text-xs md:text-sm font-medium hover:bg-neutral-200/70 transition ${activeRingClass}">
                 ${item.weekNum}
               </div>
-              <span class="text-[10px] md:text-xs font-semibold ${item.isCurrentActiveWeek ? 'text-neutral-800 font-bold' : 'text-neutral-300'} mt-1.5 uppercase">
+              <span class="text-[10px] md:text-xs font-semibold ${item.isCurrentActiveWeek ? (role === 'B' ? 'text-rose-700 font-bold' : 'text-neutral-800 font-bold') : 'text-neutral-300'} mt-1.5 uppercase">
                 ${item.weekLabel}
               </span>
             </div>
@@ -1083,11 +1083,11 @@
                 <div onclick="openDetailSheet('${item.id}')" class="bg-white rounded-2xl p-4 border border-neutral-100 flex flex-col space-y-2 cursor-pointer btn-press shadow-sm hover:border-neutral-200 transition">
                   <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
-                      <span class="w-8 h-8 rounded-full ${item.user === 'A' ? 'bg-neutral-900 text-white' : 'bg-neutral-200 text-neutral-800'} text-xs font-bold flex items-center justify-center">
-                        ${item.user}
+                      <span class="w-8 h-8 rounded-full ${item.user === 'A' ? 'bg-neutral-900 text-white shadow-xs' : 'bg-rose-500 text-white shadow-xs shadow-rose-200'} text-xs font-bold flex items-center justify-center">
+                        ${item.user === 'A' ? 'F' : 'S'}
                       </span>
                       <div>
-                        <p class="text-xs font-bold text-neutral-900 lowercase">${item.userName || (item.user === 'A' ? 'faris' : 'saiba <3')}</p>
+                        <p class="text-xs font-bold ${item.user === 'A' ? 'text-neutral-900' : 'text-rose-900'} lowercase">${item.user === 'A' ? 'faris' : 'saiba <span class="text-rose-500">♥</span>'}</p>
                         <p class="text-[10px] text-neutral-400">${item.labelMinggu} · ${item.timestamp}</p>
                       </div>
                     </div>
@@ -1218,6 +1218,16 @@
       const weekLabel = targetUploadWeekId ? `minggu ${targetUploadWeekId}` : 'minggu berjalan';
       const labelEl = document.getElementById('uploadSheetWeekLabel');
       if (labelEl) labelEl.textContent = `${weekLabel} (${MONTH_SHORT_NAMES[viewMonth]} ${viewYear}) · ${currentUser.name}`;
+
+      // Role-based submit button styling
+      const btnSubmit = document.getElementById('btnSubmitProof');
+      if (btnSubmit) {
+        if (currentUser.role === 'B') {
+          btnSubmit.className = 'btn-press flex-1 py-3 rounded-full bg-rose-500 text-xs md:text-sm font-semibold text-white hover:bg-rose-600 disabled:opacity-40 transition flex items-center justify-center space-x-2';
+        } else {
+          btnSubmit.className = 'btn-press flex-1 py-3 rounded-full bg-neutral-900 text-xs md:text-sm font-semibold text-white hover:bg-neutral-800 disabled:opacity-40 transition flex items-center justify-center space-x-2';
+        }
+      }
 
       const sheet = document.getElementById('uploadSheet');
       if (sheet) sheet.classList.remove('hidden');
