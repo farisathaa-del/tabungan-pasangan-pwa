@@ -31,7 +31,7 @@ assert(html.includes('id="detailSheet"') && html.includes('class="sheet-content 
 assert(html.includes('id="koreksiSheet"') && html.includes('class="sheet-content bg-white'), 'Koreksi sheet must include .sheet-content');
 
 // 6. Service worker version bump
-assert(sw.includes("CACHE_NAME = 'tabungan-v17'"), 'Service worker cache must be bumped to v17');
+assert(sw.includes("CACHE_NAME = 'tabungan-v18'"), 'Service worker cache must be bumped to v18');
 
 // 7. Plant visual & drawer integration
 assert(html.includes('id="plantSheet"') && html.includes('class="sheet-content bg-white'), 'Plant sheet must exist with safe area');
@@ -81,4 +81,9 @@ assert.doesNotThrow(() => {
   new Function(scriptMatch[1]);
 }, 'JavaScript inside index.html must have valid syntax without duplicates or compilation errors');
 
-console.log('ALL PWA CHECKS PASSED (14/14)');
+// 15. Background Music: Adele - Lovesong
+assert(html.includes('id="btnMusicToggle"'), 'Music toggle button must exist');
+assert(html.includes('id="bgMusic"') && html.includes('adele-lovesong.mp3'), 'Audio element for Adele - Lovesong must exist');
+assert(html.includes('function toggleMusic()') && html.includes('function playMusicOnGesture()'), 'Music toggle and gesture trigger must exist');
+
+console.log('ALL PWA CHECKS PASSED (15/15)');

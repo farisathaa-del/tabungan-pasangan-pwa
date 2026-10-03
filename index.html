@@ -286,6 +286,12 @@
         </button>
       </div>
 
+      <!-- Tombol Musik: Adele - Lovesong -->
+      <button id="btnMusicToggle" onclick="toggleMusic()" title="Adele - Lovesong" class="btn-press w-9 h-9 md:w-10 md:h-10 rounded-full bg-rose-50 border border-rose-200/80 text-rose-600 flex items-center justify-center hover:bg-rose-100 transition shadow-2xs relative" style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;">
+        <span id="musicIcon" class="text-sm">🎵</span>
+        <span id="musicPlayingDot" class="hidden absolute top-1 right-1 w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+      </button>
+
       <!-- Tombol '+' Minimalis untuk Setor Minggu Ini -->
       <button onclick="openUploadSheet()" title="Setor Minggu Ini" class="btn-press w-9 h-9 md:w-10 md:h-10 rounded-full bg-neutral-900 text-white flex items-center justify-center hover:bg-neutral-800 transition shadow-sm">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -990,6 +996,35 @@
       }, 2600);
     }
 
+    // ponytail: native HTML5 Audio element for romantic bg music
+    let isMusicPlaying = false;
+    function toggleMusic() {
+      const audio = document.getElementById('bgMusic');
+      if (!audio) return;
+      if (audio.paused) {
+        audio.play().then(() => updateMusicUI(true)).catch(e => console.warn('Audio play error:', e));
+      } else {
+        audio.pause();
+        audio.setAttribute('data-user-muted', 'true');
+        updateMusicUI(false);
+      }
+    }
+
+    function updateMusicUI(playing) {
+      isMusicPlaying = playing;
+      const icon = document.getElementById('musicIcon');
+      const dot = document.getElementById('musicPlayingDot');
+      if (icon) icon.textContent = playing ? '🎵' : '🔇';
+      if (dot) dot.classList.toggle('hidden', !playing);
+    }
+
+    function playMusicOnGesture() {
+      const audio = document.getElementById('bgMusic');
+      if (audio && audio.paused && !audio.hasAttribute('data-user-muted')) {
+        audio.play().then(() => updateMusicUI(true)).catch(() => updateMusicUI(false));
+      }
+    }
+
     /**
      * HALAMAN PEMBUKA & PEMILIHAN PENGGUNA
      */
@@ -1011,6 +1046,9 @@
 
       renderAllTimelines();
       checkPartnerPresence();
+
+      // Mulai musik latar saat pengguna masuk
+      playMusicOnGesture();
 
       // Eksekusi Pop-up Sapaan Waktu Sesuai Pengguna
       const greeting = getTimeGreeting();
@@ -2189,5 +2227,10 @@
       lastTouchEnd = now;
     }, false);
   </script>
+
+  <!-- ponytail: native HTML5 Audio element for romantic bg music -->
+  <audio id="bgMusic" loop preload="none">
+    <source src="./audio/adele-lovesong.mp3" type="audio/mpeg">
+  </audio>
 </body>
 </html>
