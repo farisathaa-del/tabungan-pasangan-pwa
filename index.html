@@ -998,15 +998,26 @@
 
     // ponytail: native HTML5 Audio element for romantic bg music
     let isMusicPlaying = false;
-    function toggleMusic() {
+    function getAudioEl() {
       const audio = document.getElementById('bgMusic');
+      if (audio && !audio.dataset.initBound) {
+        audio.volume = 0.45;
+        audio.addEventListener('play', () => updateMusicUI(true));
+        audio.addEventListener('pause', () => updateMusicUI(false));
+        audio.dataset.initBound = 'true';
+      }
+      return audio;
+    }
+
+    function toggleMusic() {
+      const audio = getAudioEl();
       if (!audio) return;
       if (audio.paused) {
-        audio.play().then(() => updateMusicUI(true)).catch(e => console.warn('Audio play error:', e));
+        audio.removeAttribute('data-user-muted');
+        audio.play().catch(e => console.warn('Audio play error:', e));
       } else {
-        audio.pause();
         audio.setAttribute('data-user-muted', 'true');
-        updateMusicUI(false);
+        audio.pause();
       }
     }
 
@@ -1019,9 +1030,9 @@
     }
 
     function playMusicOnGesture() {
-      const audio = document.getElementById('bgMusic');
+      const audio = getAudioEl();
       if (audio && audio.paused && !audio.hasAttribute('data-user-muted')) {
-        audio.play().then(() => updateMusicUI(true)).catch(() => updateMusicUI(false));
+        audio.play().catch(() => updateMusicUI(false));
       }
     }
 
