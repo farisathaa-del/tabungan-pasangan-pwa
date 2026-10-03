@@ -31,7 +31,7 @@ assert(html.includes('id="detailSheet"') && html.includes('class="sheet-content 
 assert(html.includes('id="koreksiSheet"') && html.includes('class="sheet-content bg-white'), 'Koreksi sheet must include .sheet-content');
 
 // 6. Service worker version bump
-assert(sw.includes("CACHE_NAME = 'tabungan-v11'"), 'Service worker cache must be bumped to v11');
+assert(sw.includes("CACHE_NAME = 'tabungan-v12'"), 'Service worker cache must be bumped to v12');
 
 // 7. Plant visual & drawer integration
 assert(html.includes('id="plantSheet"') && html.includes('class="sheet-content bg-white'), 'Plant sheet must exist with safe area');
@@ -48,14 +48,16 @@ assert(!html.includes('onclick="enterAppWithDefault()"'), 'Automatic enter on cl
 assert(html.includes('bg-rose-50/70'), 'Saiba card must have soft rose styling');
 assert(html.includes("item.user === 'A' ? 'F' : 'S'"), 'History list must show F and S avatars');
 
-// 10. Safa the digital cat mascot integration
+// 10. Safa the digital cat mascot & alive garden terrarium integration
 assert(html.includes('id="safaContainer"'), 'Safa container must exist');
 assert(html.includes('id="safaSvgMini"'), 'Safa mini SVG must exist');
 assert(html.includes('id="safaBubbleMini"'), 'Safa speech bubble must exist');
 assert(html.includes('id="safaModalIcon"'), 'Safa modal icon must exist in plant drawer');
 assert(html.includes('function getSafaStatus()'), 'getSafaStatus logic must exist');
 assert(html.includes('function tapSafaMeow()'), 'tapSafaMeow interactive function must exist');
-assert(html.includes('safaOrbitPot') && html.includes('safa-orbit-anim'), 'Safa 3D orbit CSS keyframes and class must exist');
+assert(html.includes('safaGardenPlay') && html.includes('safa-playing-anim'), 'Safa garden playing CSS keyframes and class must exist');
+assert(html.includes('safaTailWag') && html.includes('safa-tail-wag'), 'Safa tail wag animation must exist');
+assert(html.includes('stroke="#22C55E"') && html.includes('fill="#BBF7D0"'), 'Mini garden lawn hills and grass blades must exist');
 
 // 11. Strict JS syntax compilation check (prevent uncaught runtime breaks)
 const scriptMatch = html.match(/<script>([\s\S]*?)<\/script>/);

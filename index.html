@@ -89,27 +89,45 @@
       50% { transform: translateY(-3px) rotate(2deg); }
       100% { transform: translateY(0px) rotate(0deg); }
     }
+    @keyframes safaGardenPlay {
+      0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+      25% {
+        transform: translateY(-3px) translateX(-2px) rotate(-2deg);
+      }
+      50% {
+        transform: translateY(0px) translateX(-5px) rotate(0deg);
+      }
+      75% {
+        transform: translateY(-4px) translateX(-2px) rotate(2deg);
+      }
+    }
+    @keyframes safaTailWag {
+      0%, 100% {
+        transform: rotate(0deg);
+      }
+      50% {
+        transform: rotate(14deg);
+      }
+    }
     @keyframes safaHeartFloat {
       0% { transform: translateY(0px) scale(0.8); opacity: 0; }
       50% { opacity: 1; }
-      100% { transform: translateY(-10px) scale(1.1); opacity: 0; }
-    }
-    @keyframes safaOrbitPot {
-      0%   { left: 74px; bottom: 2px;  z-index: 20; transform: scaleX(-1) scale(1); }
-      25%  { left: 38px; bottom: 0px;  z-index: 20; transform: scaleX(-1) scale(1.06); }
-      50%  { left: 2px;  bottom: 4px;  z-index: 20; transform: scaleX(1)  scale(1); }
-      75%  { left: 38px; bottom: 14px; z-index: 5;  transform: scaleX(1)  scale(0.82); }
-      100% { left: 74px; bottom: 2px;  z-index: 20; transform: scaleX(-1) scale(1); }
+      100% { transform: translateY(-12px) scale(1.15); opacity: 0; }
     }
     .safa-walking-anim {
       animation: safaWalkBob 0.5s ease-in-out infinite;
     }
+    .safa-playing-anim {
+      animation: safaGardenPlay 2.8s ease-in-out infinite;
+    }
+    .safa-tail-wag {
+      transform-origin: 38px 28px;
+      animation: safaTailWag 1.2s ease-in-out infinite;
+    }
     .safa-heart-anim {
       animation: safaHeartFloat 1.8s ease-in-out infinite;
-    }
-    .safa-orbit-anim {
-      position: absolute !important;
-      animation: safaOrbitPot 9s linear infinite;
     }
   </style>
 </head>
@@ -285,15 +303,46 @@
             </div>
           </div>
           <div class="flex flex-col items-end shrink-0 relative">
-            <div class="relative w-[120px] h-[68px] flex items-center justify-center select-none overflow-visible">
-              <!-- Pot Tanaman Miniatur di Tengah Terrarium -->
-              <div id="plantSvgMini" class="absolute left-1/2 -translate-x-1/2 bottom-0 h-[65px] w-[50px] flex items-center justify-center z-10 pointer-events-none"></div>
-              <!-- Kucing Safa Miniatur Interaktif Mengitari Pot -->
-              <div id="safaContainer" class="absolute z-20 cursor-pointer transition-all" onclick="event.stopPropagation(); tapSafaMeow();">
-                <div id="safaBubbleMini" class="hidden absolute -top-8 left-1/2 -translate-x-1/2 bg-white border border-rose-200 text-rose-600 text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-md whitespace-nowrap z-30">
-                  meow! ♥
-                </div>
-                <div id="safaSvgMini" class="w-[44px] h-[44px] flex items-center justify-center"></div>
+            <!-- Bubble Chat Safa di luar wadah animasi: selalu tegak, tidak terbalik, tidak terpotong -->
+            <div id="safaBubbleMini" class="hidden absolute -top-8 right-0 max-w-[200px] bg-white/95 backdrop-blur-sm border border-rose-200 text-rose-600 text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-md whitespace-nowrap z-30 pointer-events-none transition-all">
+              meow! ♥
+            </div>
+
+            <!-- Wadah Terrarium Taman Hijau Mini Asri -->
+            <div class="relative w-[138px] h-[72px] rounded-2xl bg-gradient-to-b from-emerald-50/90 via-emerald-100/50 to-emerald-200/40 border border-emerald-200/60 overflow-hidden select-none shadow-sm flex items-end justify-center">
+              
+              <!-- Background Bukit Rumput & Tanaman Hias Hijau Muda (SVG) -->
+              <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 138 72" fill="none" preserveAspectRatio="none">
+                <!-- Sinar matahari lembut sudut kanan -->
+                <circle cx="125" cy="5" r="30" fill="#FEF08A" opacity="0.25"/>
+                <!-- Bukit belakang hijau pastel lembut -->
+                <path d="M-10 52 Q35 38 80 46 Q115 52 150 42 L150 72 L-10 72 Z" fill="#BBF7D0" opacity="0.6"/>
+                <!-- Bukit depan hijau muda asri -->
+                <path d="M-5 58 Q40 50 75 54 Q110 58 145 52 L145 72 L-5 72 Z" fill="#86EFAC" opacity="0.75"/>
+                <!-- Rumpun rumput kecil organik -->
+                <path d="M12 58 L10 50 M12 58 L13 47 M12 58 L16 51" stroke="#22C55E" stroke-width="1.2" stroke-linecap="round"/>
+                <path d="M58 64 L56 57 M58 64 L59 55 M58 64 L62 58" stroke="#16A34A" stroke-width="1.2" stroke-linecap="round"/>
+                <path d="M122 56 L120 49 M122 56 L123 46 M122 56 L126 50" stroke="#22C55E" stroke-width="1.2" stroke-linecap="round"/>
+                <!-- Bunga daisy manis di padang rumput -->
+                <circle cx="24" cy="54" r="1.5" fill="#F59E0B"/>
+                <circle cx="22.5" cy="54" r="1" fill="#FFFFFF"/>
+                <circle cx="25.5" cy="54" r="1" fill="#FFFFFF"/>
+                <circle cx="24" cy="52.5" r="1" fill="#FFFFFF"/>
+                <circle cx="24" cy="55.5" r="1" fill="#FFFFFF"/>
+                
+                <circle cx="114" cy="52" r="1.5" fill="#F59E0B"/>
+                <circle cx="112.5" cy="52" r="1" fill="#FFFFFF"/>
+                <circle cx="115.5" cy="52" r="1" fill="#FFFFFF"/>
+                <circle cx="114" cy="50.5" r="1" fill="#FFFFFF"/>
+                <circle cx="114" cy="53.5" r="1" fill="#FFFFFF"/>
+              </svg>
+
+              <!-- Pot Tanaman Miniatur di Kiri Terrarium -->
+              <div id="plantSvgMini" class="absolute left-2.5 bottom-1 h-[62px] w-[46px] flex items-center justify-center z-10 pointer-events-none"></div>
+
+              <!-- Kucing Safa Miniatur Interaktif di Kanan Terrarium -->
+              <div id="safaContainer" class="absolute right-1 bottom-0 z-20 cursor-pointer transition-all" onclick="event.stopPropagation(); tapSafaMeow();">
+                <div id="safaSvgMini" class="w-[46px] h-[46px] flex items-center justify-center"></div>
               </div>
             </div>
             <span class="text-[9px] text-neutral-400 font-medium mt-0.5">ketuk detail ›</span>
@@ -1656,6 +1705,9 @@
 
       let parts = [];
 
+      // Ground shadow under pot
+      parts.push(`<ellipse cx="${sx(50)}" cy="${sy(121)}" rx="${sx(30)}" ry="${sx(5)}" fill="#15803D" opacity="0.3"/>`);
+
       // Pot
       parts.push(`<polygon points="${pot.topL} ${pot.topR} ${pot.botR} ${pot.botL}" fill="#C67B5B"/>`);
       parts.push(`<rect x="${pot.rimX}" y="${pot.rimY}" width="${pot.rimW}" height="${pot.rimH}" rx="3" fill="#B56E4A"/>`);
@@ -1854,6 +1906,8 @@
         `;
       } else if (mode === 'waiting') {
         extra = `
+          <!-- Ground shadow under cat -->
+          <ellipse cx="26" cy="42" rx="16" ry="3.5" fill="#15803D" opacity="0.25"/>
           <!-- Chubby sitting upright body -->
           <ellipse cx="26" cy="27" rx="14" ry="15" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
           ${ears}
@@ -1873,8 +1927,12 @@
       } else if (mode === 'walking') {
         extra = `
           <g class="safa-walking-anim" style="transform-origin:26px 26px">
-            <!-- Fluffy tail -->
-            <path d="M38 28 Q48 20 46 12 Q43 10 41 15 Q40 22 36 29" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round"/>
+            <!-- Ground shadow under cat -->
+            <ellipse cx="26" cy="42" rx="16" ry="3.5" fill="#15803D" opacity="0.25"/>
+            <!-- Fluffy tail with wag animation -->
+            <g class="safa-tail-wag">
+              <path d="M38 28 Q48 20 46 12 Q43 10 41 15 Q40 22 36 29" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round"/>
+            </g>
             <!-- Chubby body bean -->
             <ellipse cx="27" cy="27" rx="16" ry="13" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
             <ellipse cx="22" cy="21" rx="13" ry="10" fill="#ffffff"/>
@@ -1918,9 +1976,9 @@
       const container = document.getElementById('safaContainer');
       if (container) {
         if (status.mode === 'walking') {
-          container.className = 'absolute z-20 cursor-pointer safa-orbit-anim';
+          container.className = 'absolute right-1 bottom-0 z-20 cursor-pointer safa-playing-anim';
         } else {
-          container.className = 'absolute right-0 bottom-0 z-20 cursor-pointer';
+          container.className = 'absolute right-1 bottom-0 z-20 cursor-pointer';
         }
       }
     }
