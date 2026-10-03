@@ -162,6 +162,9 @@
       background: linear-gradient(to bottom, #0a111a, #0d2119) !important;
       border-color: rgba(34, 197, 94, 0.25) !important;
     }
+    body.night-theme .cat-house-glow {
+      opacity: 0.65 !important;
+    }
     @keyframes pulse-ring {
       0%, 100% {
         box-shadow: 0 0 0 0 rgba(24, 24, 27, 0.4);
@@ -365,9 +368,10 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
           </svg>
         </button>
-        <span id="navMonthYearLabel" class="text-xs font-bold text-neutral-800 lowercase px-1.5 font-mono">
+        <span id="navMonthYearLabel" onclick="openMonthPicker()" class="text-xs font-bold text-neutral-800 lowercase px-1.5 font-mono cursor-pointer hover:bg-white/80 rounded transition">
           -- ----
         </span>
+        <input type="month" id="nativeMonthPicker" class="sr-only" onchange="onMonthPicked(this.value)">
         <button onclick="changeMonth(1)" title="Bulan Berikutnya" class="w-6 h-6 rounded-full hover:bg-white text-neutral-600 flex items-center justify-center transition">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -375,11 +379,17 @@
         </button>
       </div>
 
-      <!-- Tombol Musik: Adele - Lovesong -->
-      <button id="btnMusicToggle" onclick="toggleMusic()" title="Adele - Lovesong" class="btn-press w-9 h-9 md:w-10 md:h-10 rounded-full bg-rose-50 border border-rose-200/80 text-rose-600 flex items-center justify-center hover:bg-rose-100 transition shadow-2xs relative" style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;">
-        <span id="musicIcon" class="text-sm">🎵</span>
-        <span id="musicPlayingDot" class="hidden absolute top-1 right-1 w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-      </button>
+      <!-- Tombol Musik & Pemilih Lagu -->
+      <div class="flex items-center space-x-1">
+        <button id="btnMusicToggle" onclick="toggleMusic()" title="Play / Pause Musik" class="btn-press w-9 h-9 md:w-10 md:h-10 rounded-full bg-rose-50 border border-rose-200/80 text-rose-600 flex items-center justify-center hover:bg-rose-100 transition shadow-2xs relative" style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;">
+          <span id="musicIcon" class="text-sm">🎵</span>
+          <span id="musicPlayingDot" class="hidden absolute top-1 right-1 w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+        </button>
+        <button onclick="openSongPicker()" id="currentSongBtn" title="Ganti Lagu" class="btn-press flex items-center space-x-1 px-2 py-1 rounded-full bg-rose-50/70 border border-rose-200/60 hover:bg-rose-100/80 transition" style="touch-action: manipulation;">
+          <span id="currentSongLabel" class="text-[9px] text-rose-600 font-semibold max-w-[55px] truncate leading-tight">Adele</span>
+          <span class="text-[8px] text-rose-400">▼</span>
+        </button>
+      </div>
 
       <!-- Tombol '+' Minimalis untuk Setor Minggu Ini -->
       <button onclick="openUploadSheet()" title="Setor Minggu Ini" class="btn-press w-9 h-9 md:w-10 md:h-10 rounded-full bg-neutral-900 text-white flex items-center justify-center hover:bg-neutral-800 transition shadow-sm">
@@ -471,6 +481,27 @@
               <path class="garden-hill-front" d="M-10 92 Q90 80 200 86 Q290 96 390 82 L390 120 L-10 120 Z" fill="#86EFAC" opacity="0.75"/>
               <!-- Rumpun rumput organik bertebaran di sepanjang dasar card -->
               <path d="M20 95 L18 87 M20 95 L22 83 M20 95 L26 88" stroke="#22C55E" stroke-width="1.3" stroke-linecap="round"/>
+              <!-- Rumah Kucing Safa (kiri taman) -->
+              <g class="cat-house-group">
+                <!-- Bayangan tanah -->
+                <ellipse cx="47" cy="117" rx="24" ry="5" fill="#14532D" opacity="0.25"/>
+                <!-- Dinding rumah kayu pastel peach -->
+                <rect x="26" y="89" width="42" height="28" rx="2" fill="#FDE2C8"/>
+                <!-- Atap segitiga -->
+                <path d="M22 89 L47 72 L72 89 Z" fill="#FED7AA" stroke="#FDBA74" stroke-width="0.8"/>
+                <!-- Telinga kucing mini di puncak atap -->
+                <path d="M42 72 L45 63 L50 72 Z" fill="#FED7AA" stroke="#FDBA74" stroke-width="0.6"/>
+                <path d="M44 72 L47 65 L50 72 Z" fill="#FFD6B0"/>
+                <!-- Pintu lengkung -->
+                <path d="M40 117 L40 101 Q47 94 54 101 L54 117 Z" fill="#B45309" opacity="0.8"/>
+                <!-- Siluet kucing di pintu -->
+                <ellipse cx="47" cy="107" rx="5" ry="6" fill="#92400E"/>
+                <path d="M43 104 L44 100 L46 104 Z" fill="#92400E"/>
+                <path d="M48 104 L50 100 L51 104 Z" fill="#92400E"/>
+                <path d="M44 105 Q47 108 50 105" stroke="#92400E" stroke-width="0.6" fill="none"/>
+                <!-- Cahaya lampu hangat malam (night-mode) -->
+                <ellipse cx="47" cy="103" rx="16" ry="12" fill="#FEF08A" opacity="0" class="cat-house-glow"/>
+              </g>
               <path d="M120 98 L118 90 M120 98 L121 86 M120 98 L125 91" stroke="#16A34A" stroke-width="1.3" stroke-linecap="round"/>
               <path d="M210 96 L208 88 M210 96 L211 84 M210 96 L215 89" stroke="#22C55E" stroke-width="1.3" stroke-linecap="round"/>
               <path d="M295 94 L293 86 M295 94 L296 82 M295 94 L300 87" stroke="#16A34A" stroke-width="1.3" stroke-linecap="round"/>
@@ -487,6 +518,7 @@
             <div class="space-y-1">
               <span class="text-[10px] md:text-xs uppercase font-extrabold tracking-wider text-emerald-800/80 block">Total Terkumpul</span>
               <span id="totalSavingsValue" class="text-2xl md:text-3xl font-black text-emerald-950 tracking-tight block">Rp0</span>
+              <div id="monthSubTotal" class="text-[11px] font-semibold text-emerald-700">Bulan ini: Rp0</div>
               <div class="flex items-center space-x-2 pt-0.5">
                 <span id="plantStageBadge" class="text-[10px] font-bold text-emerald-800 bg-white/85 px-2.5 py-0.5 rounded-full border border-emerald-200/80 shadow-xs">🌱 benih & tunas</span>
                 <span id="activeMonthBadge" class="text-[10px] font-semibold text-emerald-700 bg-white/70 px-2 py-0.5 rounded-full border border-emerald-200/60">-- ----</span>
@@ -537,6 +569,20 @@
         <span id="historyCountBadge" class="text-xs font-mono font-bold px-3 py-1 rounded-full bg-neutral-200/70 text-neutral-700">
           0 data
         </span>
+      </div>
+
+      <!-- Ringkasan Total Riwayat -->
+      <div id="historySummaryCard" class="bg-neutral-50/80 rounded-2xl p-3 border border-neutral-100 hidden">
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-[10px] font-bold text-neutral-500 tracking-wide uppercase">Total Tabungan Riwayat</span>
+            <p id="historyTotalAmount" class="text-lg font-black text-neutral-900">Rp0</p>
+          </div>
+          <div class="text-right text-[11px]">
+            <div class="font-semibold text-neutral-700">Faris: <span id="historyTotalFaris">Rp0</span></div>
+            <div class="font-semibold text-rose-600 mt-0.5">Saiba ♥: <span id="historyTotalSaiba">Rp0</span></div>
+          </div>
+        </div>
       </div>
 
       <!-- Filter Kapsul Sederhana -->
@@ -812,6 +858,27 @@
             <path class="garden-hill-front" d="M-10 150 Q80 134 180 142 Q280 152 370 138 L370 190 L-10 190 Z" fill="#86EFAC" opacity="0.8"/>
             <!-- Rumpun rumput kecil organik -->
             <path d="M30 156 L27 144 M30 156 L32 140 M30 156 L37 146" stroke="#22C55E" stroke-width="1.6" stroke-linecap="round"/>
+            <!-- Rumah Kucing Safa (kiri taman detail) -->
+            <g class="cat-house-group">
+              <!-- Bayangan tanah -->
+              <ellipse cx="47" cy="184" rx="28" ry="6" fill="#14532D" opacity="0.25"/>
+              <!-- Dinding rumah kayu pastel peach -->
+              <rect x="22" y="146" width="50" height="38" rx="3" fill="#FDE2C8"/>
+              <!-- Atap segitiga -->
+              <path d="M17 146 L47 126 L77 146 Z" fill="#FED7AA" stroke="#FDBA74" stroke-width="1"/>
+              <!-- Telinga kucing mini di puncak atap -->
+              <path d="M41 126 L45 115 L51 126 Z" fill="#FED7AA" stroke="#FDBA74" stroke-width="0.8"/>
+              <path d="M43 126 L47 117 L51 126 Z" fill="#FFD6B0"/>
+              <!-- Pintu lengkung -->
+              <path d="M40 184 L40 165 Q47 157 54 165 L54 184 Z" fill="#B45309" opacity="0.8"/>
+              <!-- Siluet kucing di pintu -->
+              <ellipse cx="47" cy="172" rx="6" ry="7" fill="#92400E"/>
+              <path d="M43 168 L44 163 L46 168 Z" fill="#92400E"/>
+              <path d="M48 168 L50 163 L51 168 Z" fill="#92400E"/>
+              <path d="M43 169 Q47 173 51 169" stroke="#92400E" stroke-width="0.8" fill="none"/>
+              <!-- Cahaya lampu hangat malam -->
+              <ellipse cx="47" cy="168" rx="20" ry="14" fill="#FEF08A" opacity="0" class="cat-house-glow"/>
+            </g>
             <path d="M110 162 L107 150 M110 162 L112 146 M110 162 L116 152" stroke="#16A34A" stroke-width="1.6" stroke-linecap="round"/>
             <path d="M245 160 L242 148 M245 160 L247 144 M245 160 L252 150" stroke="#22C55E" stroke-width="1.6" stroke-linecap="round"/>
             <path d="M330 154 L327 142 M330 154 L332 138 M330 154 L337 144" stroke="#16A34A" stroke-width="1.6" stroke-linecap="round"/>
@@ -876,6 +943,65 @@
         </div>
 
         <button onclick="closePlantSheet()" class="btn-press w-full py-3 rounded-full bg-neutral-100 text-xs md:text-sm font-semibold text-neutral-600 hover:bg-neutral-200 transition">
+          tutup
+        </button>
+      </div>
+    </div>
+
+    <!-- ====================================================================== -->
+    <!-- DRAWER: PEMILIH LAGU (SONG PICKER)                                    -->
+    <!-- ====================================================================== -->
+    <div id="songPickerSheet" class="absolute inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex flex-col justify-end transition-opacity">
+      <div class="sheet-content bg-white rounded-t-3xl px-6 pt-5 pb-8 md:p-8 space-y-3.5 max-h-[70%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-base md:text-lg font-bold text-neutral-900 lowercase">pemilih lagu</h3>
+            <p class="text-xs text-neutral-400">iringi tabungan cinta dengan musik</p>
+          </div>
+          <button onclick="closeSongPicker()" class="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 hover:bg-neutral-200 transition">✕</button>
+        </div>
+
+        <!-- Lagu Aktif -->
+        <div class="bg-rose-50/70 border border-rose-100 rounded-2xl p-3.5 flex items-center space-x-3">
+          <span class="text-xl" id="songPickerIcon">🎵</span>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-bold text-neutral-800 lowercase">sedang diputar</p>
+            <p id="songPickerCurrentTitle" class="text-sm font-semibold text-rose-700 truncate">Adele - Lovesong</p>
+          </div>
+          <button onclick="toggleMusic()" id="songPickerPlayBtn" class="btn-press w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 transition shadow-xs">
+            <span id="songPickerPlayIcon">⏸</span>
+          </button>
+        </div>
+
+        <!-- Daftar Lagu Bawaan -->
+        <div class="space-y-1.5">
+          <p class="text-[10px] font-bold text-neutral-500 uppercase tracking-wide">lagu bawaan</p>
+          <button onclick="selectSong('adele')" id="songBtnAdele" class="btn-press w-full flex items-center space-x-3 px-3.5 py-3 rounded-2xl bg-rose-50/50 border border-rose-100 text-left hover:bg-rose-50 transition">
+            <span class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">🎵</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-bold text-neutral-800">Adele - Lovesong</p>
+              <p class="text-[10px] text-neutral-400">05:16 · lagu cinta klasik</p>
+            </div>
+            <span id="songCheckAdele" class="w-5 h-5 rounded-full bg-rose-500 text-white flex items-center justify-center text-[10px]">✓</span>
+          </button>
+        </div>
+
+        <!-- Unggah Lagu Sendiri -->
+        <div class="space-y-2">
+          <p class="text-[10px] font-bold text-neutral-500 uppercase tracking-wide">unggah lagu sendiri</p>
+          <div onclick="document.getElementById('customAudioInput').click()" class="border border-dashed border-neutral-300 hover:border-neutral-900 rounded-2xl p-4 text-center cursor-pointer transition bg-neutral-50/50">
+            <input type="file" id="customAudioInput" accept="audio/*" class="hidden" onchange="handleCustomAudio(event)">
+            <div id="customAudioPrompt">
+              <p class="text-xs font-semibold text-neutral-600">+ pilih file audio dari HP / laptop</p>
+              <p class="text-[10px] text-neutral-400 mt-1">MP3, M4A, OGG, WAV — maks 50 MB</p>
+            </div>
+            <div id="customAudioPreview" class="hidden">
+              <p id="customAudioFileName" class="text-xs font-semibold text-neutral-800">file.mp3</p>
+            </div>
+          </div>
+        </div>
+
+        <button onclick="closeSongPicker()" class="btn-press w-full py-3 rounded-full bg-neutral-100 text-xs md:text-sm font-semibold text-neutral-600 hover:bg-neutral-200 transition">
           tutup
         </button>
       </div>
@@ -1076,6 +1202,78 @@
       return weeks;
     }
 
+    /**
+     * PEMILIH LAGU (SONG PICKER)
+     */
+    let currentSong = 'adele';
+    let customAudioUrl = null;
+
+    function openSongPicker() {
+      const sheet = document.getElementById('songPickerSheet');
+      if (!sheet) return;
+      // Sync play/pause icon
+      const audio = getAudioEl();
+      const playIcon = document.getElementById('songPickerPlayIcon');
+      if (playIcon) playIcon.textContent = audio && !audio.paused ? '⏸' : '▶';
+      sheet.classList.remove('hidden');
+    }
+
+    function closeSongPicker() {
+      const sheet = document.getElementById('songPickerSheet');
+      if (sheet) sheet.classList.add('hidden');
+    }
+
+    function selectSong(songId) {
+      const audio = getAudioEl();
+      if (!audio) return;
+      if (songId === 'adele') {
+        if (customAudioUrl) {
+          URL.revokeObjectURL(customAudioUrl);
+          customAudioUrl = null;
+        }
+        audio.src = './audio/adele-lovesong.mp3';
+        currentSong = 'adele';
+        // Update UI checkmark
+        document.getElementById('songCheckAdele').classList.remove('hidden');
+        // Update labels
+        document.getElementById('songPickerCurrentTitle').textContent = 'Adele - Lovesong';
+        document.getElementById('currentSongLabel').textContent = 'Adele - Lovesong';
+        document.getElementById('currentSongLabel').classList.remove('hidden');
+        document.getElementById('songPickerIcon').textContent = '🎵';
+        audio.removeAttribute('data-user-muted');
+        audio.load();
+        audio.play().catch(() => updateMusicUI(false));
+      }
+    }
+
+    function handleCustomAudio(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      if (file.size > 50 * 1024 * 1024) {
+        showToast('File terlalu besar (maks 50 MB)');
+        return;
+      }
+      const audio = getAudioEl();
+      if (!audio) return;
+      if (customAudioUrl) URL.revokeObjectURL(customAudioUrl);
+      customAudioUrl = URL.createObjectURL(file);
+      audio.src = customAudioUrl;
+      currentSong = 'custom';
+      // Update UI
+      document.getElementById('songCheckAdele').classList.add('hidden');
+      const fileName = file.name.replace(/\.[^/.]+$/, '').substring(0, 30);
+      document.getElementById('songPickerCurrentTitle').textContent = fileName;
+      document.getElementById('currentSongLabel').textContent = fileName;
+      document.getElementById('currentSongLabel').classList.remove('hidden');
+      document.getElementById('songPickerIcon').textContent = '🎶';
+      document.getElementById('customAudioFileName').textContent = file.name;
+      document.getElementById('customAudioPreview').classList.remove('hidden');
+      document.getElementById('customAudioPrompt').classList.add('hidden');
+      audio.removeAttribute('data-user-muted');
+      audio.load();
+      audio.play().catch(() => updateMusicUI(false));
+    }
+
     // ponytail: auto night theme active from 18:30 to 05:00
     function isNightTime() {
       const now = new Date();
@@ -1129,6 +1327,11 @@
         audio.volume = 0.45;
         audio.addEventListener('play', () => updateMusicUI(true));
         audio.addEventListener('pause', () => updateMusicUI(false));
+        audio.addEventListener('ended', function onEnded() {
+          if (!audio.loop) audio.loop = true;
+          audio.currentTime = 0;
+          audio.play().catch(() => {});
+        });
         audio.dataset.initBound = 'true';
       }
       return audio;
@@ -1152,6 +1355,10 @@
       const dot = document.getElementById('musicPlayingDot');
       if (icon) icon.textContent = playing ? '🎵' : '🔇';
       if (dot) dot.classList.toggle('hidden', !playing);
+      const playIcon = document.getElementById('songPickerPlayIcon');
+      if (playIcon) playIcon.textContent = playing ? '⏸' : '▶';
+      const label = document.getElementById('currentSongLabel');
+      if (label) label.classList.remove('hidden');
     }
 
     function playMusicOnGesture() {
@@ -1159,6 +1366,9 @@
       if (audio && audio.paused && !audio.hasAttribute('data-user-muted')) {
         audio.play().catch(() => updateMusicUI(false));
       }
+      // Show current song label
+      const label = document.getElementById('currentSongLabel');
+      if (label) label.classList.remove('hidden');
     }
 
     /**
@@ -1252,12 +1462,37 @@
       checkFullMonthCelebration();
     }
 
+    function openMonthPicker() {
+      const picker = document.getElementById('nativeMonthPicker');
+      if (!picker) return;
+      picker.value = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}`;
+      if (picker.showPicker) {
+        picker.showPicker();
+      } else {
+        picker.click();
+      }
+    }
+
+    function onMonthPicked(val) {
+      if (!val) return;
+      const parts = val.split('-');
+      if (parts.length !== 2) return;
+      viewYear = parseInt(parts[0], 10);
+      viewMonth = parseInt(parts[1], 10) - 1;
+      updateMonthDisplay();
+      renderAllTimelines();
+      renderSummary();
+      checkFullMonthCelebration();
+    }
+
     function updateMonthDisplay() {
       const label = document.getElementById('navMonthYearLabel');
       const badge = document.getElementById('activeMonthBadge');
       const str = `${MONTH_SHORT_NAMES[viewMonth]} ${viewYear}`;
       if (label) label.textContent = str;
       if (badge) badge.textContent = str;
+      const picker = document.getElementById('nativeMonthPicker');
+      if (picker) picker.value = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}`;
     }
 
     /**
@@ -1388,9 +1623,12 @@
 
     function renderSummary() {
       const monthRecords = APP_DATABASE.records.filter(r => r.year === viewYear && r.monthIndex === viewMonth);
-      const totalAmount = monthRecords.length * APP_DATABASE.config.nominal;
+      const monthTotal = monthRecords.length * APP_DATABASE.config.nominal;
+      const grandTotal = APP_DATABASE.records.length * APP_DATABASE.config.nominal;
       const valEl = document.getElementById('totalSavingsValue');
-      if (valEl) valEl.textContent = 'Rp' + totalAmount.toLocaleString('id-ID');
+      if (valEl) valEl.textContent = 'Rp' + grandTotal.toLocaleString('id-ID');
+      const subEl = document.getElementById('monthSubTotal');
+      if (subEl) subEl.textContent = 'Bulan ini: Rp' + monthTotal.toLocaleString('id-ID');
       renderPlantVisuals();
     }
 
@@ -1433,6 +1671,24 @@
       }
 
       if (badge) badge.textContent = `${filtered.length} data`;
+
+      // Update summary card
+      const summaryCard = document.getElementById('historySummaryCard');
+      const totalEl = document.getElementById('historyTotalAmount');
+      const farisEl = document.getElementById('historyTotalFaris');
+      const saibaEl = document.getElementById('historyTotalSaiba');
+      if (summaryCard) {
+        const nominal = APP_DATABASE.config.nominal;
+        const farisCount = APP_DATABASE.records.filter(r => r.user === 'A').length;
+        const saibaCount = APP_DATABASE.records.filter(r => r.user === 'B').length;
+        const totalAll = APP_DATABASE.records.length * nominal;
+        const totalFaris = farisCount * nominal;
+        const totalSaiba = saibaCount * nominal;
+        if (totalEl) totalEl.textContent = 'Rp' + totalAll.toLocaleString('id-ID');
+        if (farisEl) farisEl.textContent = 'Rp' + totalFaris.toLocaleString('id-ID');
+        if (saibaEl) saibaEl.textContent = 'Rp' + totalSaiba.toLocaleString('id-ID');
+        summaryCard.classList.remove('hidden');
+      }
 
       if (filtered.length === 0) {
         container.innerHTML = `

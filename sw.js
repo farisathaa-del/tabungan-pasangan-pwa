@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tabungan-v23';
+const CACHE_NAME = 'tabungan-v24';
 const ASSETS = [
   './',
   './index.html',
