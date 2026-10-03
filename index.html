@@ -349,7 +349,7 @@
     <!-- ====================================================================== -->
     <!-- TOP BAR (TOMBOL PROFIL PENGGUNA, NAVIGASI BULAN, AKSI TAMBAH SETORAN) -->
     <!-- ====================================================================== -->
-    <header class="pt-3 md:pt-4 px-6 md:px-10 pb-2.5 flex items-center justify-between bg-[#FAFAFC] z-20 border-b border-neutral-100/60">
+    <header class="pt-3 md:pt-4 px-3.5 sm:px-6 md:px-10 pb-2.5 flex items-center justify-between bg-[#FAFAFC] z-20 border-b border-neutral-100/60">
       <!-- Tombol Profil Pengguna: Klik untuk kembali ke Layar Pembuka -->
       <button onclick="openOpeningScreen()" title="Ganti Pengguna / Buka Layar Pembuka" class="btn-press flex items-center space-x-2.5 py-1.5 px-3.5 rounded-full bg-neutral-200/60 hover:bg-neutral-200 transition">
         <span id="activeUserIndicator" class="w-2 h-2 rounded-full bg-emerald-500"></span>
@@ -371,7 +371,6 @@
         <span id="navMonthYearLabel" onclick="openMonthPicker()" class="text-xs font-bold text-neutral-800 lowercase px-1.5 font-mono cursor-pointer hover:bg-white/80 rounded transition">
           -- ----
         </span>
-        <input type="month" id="nativeMonthPicker" class="sr-only" onchange="onMonthPicked(this.value)">
         <button onclick="changeMonth(1)" title="Bulan Berikutnya" class="w-6 h-6 rounded-full hover:bg-white text-neutral-600 flex items-center justify-center transition">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -379,24 +378,26 @@
         </button>
       </div>
 
-      <!-- Tombol Musik & Pemilih Lagu -->
-      <div class="flex items-center space-x-1">
-        <button id="btnMusicToggle" onclick="toggleMusic()" title="Play / Pause Musik" class="btn-press w-9 h-9 md:w-10 md:h-10 rounded-full bg-rose-50 border border-rose-200/80 text-rose-600 flex items-center justify-center hover:bg-rose-100 transition shadow-2xs relative" style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;">
-          <span id="musicIcon" class="text-sm">🎵</span>
-          <span id="musicPlayingDot" class="hidden absolute top-1 right-1 w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-        </button>
-        <button onclick="openSongPicker()" id="currentSongBtn" title="Ganti Lagu" class="btn-press flex items-center space-x-1 px-2 py-1 rounded-full bg-rose-50/70 border border-rose-200/60 hover:bg-rose-100/80 transition" style="touch-action: manipulation;">
-          <span id="currentSongLabel" class="text-[9px] text-rose-600 font-semibold max-w-[55px] truncate leading-tight">Adele</span>
-          <span class="text-[8px] text-rose-400">▼</span>
+      <!-- Aksi Kanan: Musik & Tombol Setor -->
+      <div class="flex items-center space-x-1.5 sm:space-x-2">
+        <!-- Split Pill Musik Terpadu: toggle + pemilih lagu -->
+        <div class="flex items-center bg-rose-50 border border-rose-200/70 rounded-full p-0.5 shadow-2xs">
+          <button id="btnMusicToggle" onclick="toggleMusic()" title="Play / Pause Musik" class="btn-press w-7 h-7 rounded-full flex items-center justify-center hover:bg-rose-100 transition relative">
+            <span id="musicIcon" class="text-xs">🎵</span>
+            <span id="musicPlayingDot" class="hidden absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+          </button>
+          <button onclick="openSongPicker()" id="currentSongBtn" title="Pilih Lagu" class="btn-press px-1.5 py-1 text-rose-500 hover:text-rose-700 flex items-center">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+          </button>
+        </div>
+
+        <!-- Tombol '+' Minimalis untuk Setor Minggu Ini -->
+        <button onclick="openUploadSheet()" title="Setor Minggu Ini" class="btn-press w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-neutral-900 text-white flex items-center justify-center hover:bg-neutral-800 transition shadow-sm">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
         </button>
       </div>
-
-      <!-- Tombol '+' Minimalis untuk Setor Minggu Ini -->
-      <button onclick="openUploadSheet()" title="Setor Minggu Ini" class="btn-press w-9 h-9 md:w-10 md:h-10 rounded-full bg-neutral-900 text-white flex items-center justify-center hover:bg-neutral-800 transition shadow-sm">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-        </svg>
-      </button>
     </header>
 
     <!-- KEHADIRAN PASANGAN (PARTNER PRESENCE PULSE) -->
@@ -1008,6 +1009,51 @@
     </div>
 
     <!-- ====================================================================== -->
+    <!-- DRAWER: PEMILIH BULAN (MONTH PICKER SHEET)                            -->
+    <!-- ====================================================================== -->
+    <div id="monthPickerSheet" class="absolute inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex flex-col justify-end transition-opacity">
+      <div class="sheet-content bg-white rounded-t-3xl px-6 pt-5 pb-8 md:p-8 space-y-4 max-h-[70%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
+        <div class="flex items-center justify-between">
+          <h3 class="text-base md:text-lg font-bold text-neutral-900">pilih bulan &amp; tahun</h3>
+          <button onclick="closeMonthPicker()" class="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 hover:bg-neutral-200 transition">
+            ✕
+          </button>
+        </div>
+
+        <!-- Year Navigator -->
+        <div class="flex items-center justify-center space-x-6">
+          <button onclick="changePickerYear(-1)" class="btn-press w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 flex items-center justify-center transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+          <span id="pickerYearLabel" class="text-sm font-bold text-neutral-800 font-mono w-16 text-center">2026</span>
+          <button onclick="changePickerYear(1)" class="btn-press w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 flex items-center justify-center transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Month Grid: 4 cols x 3 rows -->
+        <div class="grid grid-cols-4 gap-3">
+          <button onclick="selectMonthFromPicker(0)" id="mpBtn0" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">jan<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
+          <button onclick="selectMonthFromPicker(1)" id="mpBtn1" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">feb<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
+          <button onclick="selectMonthFromPicker(2)" id="mpBtn2" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">mar<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
+          <button onclick="selectMonthFromPicker(3)" id="mpBtn3" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">apr<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
+          <button onclick="selectMonthFromPicker(4)" id="mpBtn4" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">mei<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
+          <button onclick="selectMonthFromPicker(5)" id="mpBtn5" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">jun<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
+          <button onclick="selectMonthFromPicker(6)" id="mpBtn6" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">jul<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
+          <button onclick="selectMonthFromPicker(7)" id="mpBtn7" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">ags<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
+          <button onclick="selectMonthFromPicker(8)" id="mpBtn8" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">sep<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
+          <button onclick="selectMonthFromPicker(9)" id="mpBtn9" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">okt<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
+          <button onclick="selectMonthFromPicker(10)" id="mpBtn10" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">nov<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
+          <button onclick="selectMonthFromPicker(11)" id="mpBtn11" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">des<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================================== -->
     <!-- MODAL LIGHTBOX FULLSCREEN BUKTI TRANSFER (ZOOM VIEWER)                 -->
     <!-- ====================================================================== -->
     <div id="fullscreenModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md hidden flex flex-col items-center justify-between p-4 md:p-8" onclick="closeFullscreenProof()">
@@ -1052,6 +1098,7 @@
     const today = new Date();
     let viewYear = today.getFullYear();
     let viewMonth = today.getMonth();
+    let pickerYear = viewYear;
 
     const MONTH_SHORT_NAMES = ['jan', 'feb', 'mar', 'apr', 'mei', 'jun', 'jul', 'agu', 'sep', 'okt', 'nov', 'des'];
     const MONTH_FULL_NAMES = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
@@ -1237,8 +1284,6 @@
         document.getElementById('songCheckAdele').classList.remove('hidden');
         // Update labels
         document.getElementById('songPickerCurrentTitle').textContent = 'Adele - Lovesong';
-        document.getElementById('currentSongLabel').textContent = 'Adele - Lovesong';
-        document.getElementById('currentSongLabel').classList.remove('hidden');
         document.getElementById('songPickerIcon').textContent = '🎵';
         audio.removeAttribute('data-user-muted');
         audio.load();
@@ -1263,8 +1308,6 @@
       document.getElementById('songCheckAdele').classList.add('hidden');
       const fileName = file.name.replace(/\.[^/.]+$/, '').substring(0, 30);
       document.getElementById('songPickerCurrentTitle').textContent = fileName;
-      document.getElementById('currentSongLabel').textContent = fileName;
-      document.getElementById('currentSongLabel').classList.remove('hidden');
       document.getElementById('songPickerIcon').textContent = '🎶';
       document.getElementById('customAudioFileName').textContent = file.name;
       document.getElementById('customAudioPreview').classList.remove('hidden');
@@ -1357,8 +1400,6 @@
       if (dot) dot.classList.toggle('hidden', !playing);
       const playIcon = document.getElementById('songPickerPlayIcon');
       if (playIcon) playIcon.textContent = playing ? '⏸' : '▶';
-      const label = document.getElementById('currentSongLabel');
-      if (label) label.classList.remove('hidden');
     }
 
     function playMusicOnGesture() {
@@ -1463,26 +1504,55 @@
     }
 
     function openMonthPicker() {
-      const picker = document.getElementById('nativeMonthPicker');
-      if (!picker) return;
-      picker.value = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}`;
-      if (picker.showPicker) {
-        picker.showPicker();
-      } else {
-        picker.click();
+      pickerYear = viewYear;
+      const sheet = document.getElementById('monthPickerSheet');
+      if (!sheet) return;
+      sheet.classList.remove('hidden');
+      // Sync year label and styling
+      syncMonthPickerUI();
+    }
+
+    function closeMonthPicker() {
+      const sheet = document.getElementById('monthPickerSheet');
+      if (sheet) sheet.classList.add('hidden');
+    }
+
+    function changePickerYear(dir) {
+      pickerYear += dir;
+      syncMonthPickerUI();
+    }
+
+    function syncMonthPickerUI() {
+      const yearLabel = document.getElementById('pickerYearLabel');
+      if (yearLabel) yearLabel.textContent = pickerYear;
+
+      // Style active month, show dot for months with records
+      for (let m = 0; m < 12; m++) {
+        const btn = document.getElementById('mpBtn' + m);
+        if (!btn) continue;
+        const dot = btn.querySelector('.mp-dot');
+        // Active month styling
+        if (m === viewMonth && pickerYear === viewYear) {
+          btn.className = 'month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition bg-neutral-900 text-white font-bold rounded-2xl shadow-xs';
+        } else {
+          btn.className = 'month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition bg-neutral-100 hover:bg-neutral-200 text-neutral-700 font-semibold rounded-2xl transition';
+        }
+        // Green dot if month has records
+        if (dot) {
+          const hasRecord = APP_DATABASE.records.some(r => r.year === pickerYear && r.monthIndex === m);
+          dot.classList.toggle('hidden', !hasRecord);
+        }
       }
     }
 
-    function onMonthPicked(val) {
-      if (!val) return;
-      const parts = val.split('-');
-      if (parts.length !== 2) return;
-      viewYear = parseInt(parts[0], 10);
-      viewMonth = parseInt(parts[1], 10) - 1;
+    function selectMonthFromPicker(mIndex) {
+      viewMonth = mIndex;
+      viewYear = pickerYear;
       updateMonthDisplay();
       renderAllTimelines();
       renderSummary();
       checkFullMonthCelebration();
+      closeMonthPicker();
     }
 
     function updateMonthDisplay() {
@@ -1491,8 +1561,6 @@
       const str = `${MONTH_SHORT_NAMES[viewMonth]} ${viewYear}`;
       if (label) label.textContent = str;
       if (badge) badge.textContent = str;
-      const picker = document.getElementById('nativeMonthPicker');
-      if (picker) picker.value = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}`;
     }
 
     /**

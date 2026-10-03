@@ -30,8 +30,8 @@ assert(html.includes('id="uploadSheet"') && html.includes('class="sheet-content 
 assert(html.includes('id="detailSheet"') && html.includes('class="sheet-content bg-white'), 'Detail sheet must include .sheet-content');
 assert(html.includes('id="koreksiSheet"') && html.includes('class="sheet-content bg-white'), 'Koreksi sheet must include .sheet-content');
 
-// 6. Service worker version bump
-assert(sw.includes("CACHE_NAME = 'tabungan-v24'"), 'Service worker cache must be bumped to v24');
+// 6. Service worker version bump (v25)
+assert(sw.includes("CACHE_NAME = 'tabungan-v25'"), 'Service worker cache must be bumped to v25');
 
 // 7. Plant visual & drawer integration
 assert(html.includes('id="plantSheet"') && html.includes('class="sheet-content bg-white'), 'Plant sheet must exist with safe area');
@@ -102,9 +102,10 @@ assert(html.includes('M31 12 Q37 4 38 15'), 'Safa waiting mode must have symmetr
 assert(html.includes('Left Ear (back ear, layered behind head)'), 'Safa walking mode must layer back ear behind head');
 assert(html.includes('Right Ear (front ear, on top of head with seamless white patch and NO dividing line)'), 'Safa walking mode must seamlessly layer front ear');
 
-// 19. Month Picker: native input type month & clickable label
-assert(html.includes('id="nativeMonthPicker"') && html.includes('type="month"'), 'Native month picker input must exist');
-assert(html.includes('openMonthPicker()') && html.includes('onMonthPicked'), 'Month picker functions must exist');
+// 19. Month Picker Sheet (replaces broken native month picker)
+assert(html.includes('id="monthPickerSheet"'), 'Custom month picker sheet must exist');
+assert(html.includes('selectMonthFromPicker(') && html.includes('changePickerYear('), 'Month picker functions must exist');
+assert(html.includes('class="grid grid-cols-4 gap-3"'), 'Month grid must be 4 columns');
 
 // 20. Cat house in garden scene and detail drawer
 assert(html.includes('cat-house-group') && html.includes('cat-house-glow'), 'Cat house SVG and night glow must exist');
@@ -120,4 +121,11 @@ assert(html.includes('function openSongPicker()') && html.includes('function sel
 // 23. Savings card cumulative all-time total
 assert(html.includes('APP_DATABASE.records.length * APP_DATABASE.config.nominal'), 'Total savings value must calculate cumulative all-time total');
 
-console.log('ALL PWA CHECKS PASSED (23/23)');
+// 24. Split pill music (no separate song label in header)
+assert(html.includes('Split Pill Musik Terpadu'), 'Split pill music section must exist');
+assert(!html.includes('id="currentSongLabel"'), 'currentSongLabel must be removed from header');
+
+// 25. No native month picker (broken on iOS)
+assert(!html.includes('id="nativeMonthPicker"'), 'Native month picker input must be removed');
+
+console.log('ALL PWA CHECKS PASSED (25/25)');
