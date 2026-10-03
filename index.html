@@ -293,59 +293,56 @@
           tabungan bersama
         </h2>
 
-        <div onclick="openPlantSheet()" class="bg-neutral-100/90 rounded-2xl p-5 flex items-center justify-between border border-neutral-200/50 cursor-pointer hover:bg-neutral-200/50 transition">
-          <div>
-            <span class="text-[10px] md:text-xs uppercase font-bold tracking-wider text-neutral-400 block">Total Terkumpul</span>
-            <span id="totalSavingsValue" class="text-2xl md:text-3xl font-extrabold text-neutral-900 tracking-tight">Rp0</span>
-            <div class="flex items-center space-x-2 mt-1.5">
-              <span id="plantStageBadge" class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">🌱 benih & tunas</span>
-              <span id="activeMonthBadge" class="text-[10px] font-semibold text-neutral-500 bg-white/70 px-2 py-0.5 rounded-full border border-neutral-200/60">-- ----</span>
-            </div>
-          </div>
-          <div class="flex flex-col items-end shrink-0 relative">
-            <!-- Bubble Chat Safa di luar wadah animasi: selalu tegak, tidak terbalik, tidak terpotong -->
-            <div id="safaBubbleMini" class="hidden absolute -top-8 right-0 max-w-[200px] bg-white/95 backdrop-blur-sm border border-rose-200 text-rose-600 text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-md whitespace-nowrap z-30 pointer-events-none transition-all">
-              meow! ♥
-            </div>
+        <div onclick="openPlantSheet()" class="relative overflow-hidden rounded-3xl p-5 md:p-6 bg-gradient-to-b from-emerald-50/90 via-emerald-100/50 to-emerald-200/40 border border-emerald-200/80 shadow-sm cursor-pointer hover:shadow-md transition">
+          <!-- Background Taman Hijau Asri Melintang Seluruh Card (SVG) -->
+          <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 380 120" fill="none" preserveAspectRatio="none">
+            <!-- Sinar mentari lembut sudut kanan -->
+            <circle cx="340" cy="15" r="40" fill="#FEF08A" opacity="0.3"/>
+            <!-- Bukit belakang pastel -->
+            <path d="M-10 80 Q100 55 220 70 Q300 80 390 60 L390 120 L-10 120 Z" fill="#BBF7D0" opacity="0.6"/>
+            <!-- Bukit depan hijau muda asri -->
+            <path d="M-10 92 Q90 80 200 86 Q290 96 390 82 L390 120 L-10 120 Z" fill="#86EFAC" opacity="0.75"/>
+            <!-- Rumpun rumput organik bertebaran di sepanjang dasar card -->
+            <path d="M20 95 L18 87 M20 95 L22 83 M20 95 L26 88" stroke="#22C55E" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M120 98 L118 90 M120 98 L121 86 M120 98 L125 91" stroke="#16A34A" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M210 96 L208 88 M210 96 L211 84 M210 96 L215 89" stroke="#22C55E" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M295 94 L293 86 M295 94 L296 82 M295 94 L300 87" stroke="#16A34A" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M360 92 L358 84 M360 92 L361 80 M360 92 L365 85" stroke="#22C55E" stroke-width="1.3" stroke-linecap="round"/>
+            <!-- Bunga daisy manis bertebaran -->
+            <circle cx="50" cy="94" r="1.8" fill="#F59E0B"/><circle cx="48" cy="94" r="1.2" fill="#FFFFFF"/><circle cx="52" cy="94" r="1.2" fill="#FFFFFF"/><circle cx="50" cy="92" r="1.2" fill="#FFFFFF"/><circle cx="50" cy="96" r="1.2" fill="#FFFFFF"/>
+            <circle cx="170" cy="96" r="1.8" fill="#F59E0B"/><circle cx="168" cy="96" r="1.2" fill="#FFFFFF"/><circle cx="172" cy="96" r="1.2" fill="#FFFFFF"/><circle cx="170" cy="94" r="1.2" fill="#FFFFFF"/><circle cx="170" cy="98" r="1.2" fill="#FFFFFF"/>
+            <circle cx="270" cy="95" r="1.8" fill="#F59E0B"/><circle cx="268" cy="95" r="1.2" fill="#FFFFFF"/><circle cx="272" cy="95" r="1.2" fill="#FFFFFF"/><circle cx="270" cy="93" r="1.2" fill="#FFFFFF"/><circle cx="270" cy="97" r="1.2" fill="#FFFFFF"/>
+          </svg>
 
-            <!-- Wadah Terrarium Taman Hijau Mini Asri -->
-            <div class="relative w-[138px] h-[72px] rounded-2xl bg-gradient-to-b from-emerald-50/90 via-emerald-100/50 to-emerald-200/40 border border-emerald-200/60 overflow-hidden select-none shadow-sm flex items-end justify-center">
-              
-              <!-- Background Bukit Rumput & Tanaman Hias Hijau Muda (SVG) -->
-              <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 138 72" fill="none" preserveAspectRatio="none">
-                <!-- Sinar matahari lembut sudut kanan -->
-                <circle cx="125" cy="5" r="30" fill="#FEF08A" opacity="0.25"/>
-                <!-- Bukit belakang hijau pastel lembut -->
-                <path d="M-10 52 Q35 38 80 46 Q115 52 150 42 L150 72 L-10 72 Z" fill="#BBF7D0" opacity="0.6"/>
-                <!-- Bukit depan hijau muda asri -->
-                <path d="M-5 58 Q40 50 75 54 Q110 58 145 52 L145 72 L-5 72 Z" fill="#86EFAC" opacity="0.75"/>
-                <!-- Rumpun rumput kecil organik -->
-                <path d="M12 58 L10 50 M12 58 L13 47 M12 58 L16 51" stroke="#22C55E" stroke-width="1.2" stroke-linecap="round"/>
-                <path d="M58 64 L56 57 M58 64 L59 55 M58 64 L62 58" stroke="#16A34A" stroke-width="1.2" stroke-linecap="round"/>
-                <path d="M122 56 L120 49 M122 56 L123 46 M122 56 L126 50" stroke="#22C55E" stroke-width="1.2" stroke-linecap="round"/>
-                <!-- Bunga daisy manis di padang rumput -->
-                <circle cx="24" cy="54" r="1.5" fill="#F59E0B"/>
-                <circle cx="22.5" cy="54" r="1" fill="#FFFFFF"/>
-                <circle cx="25.5" cy="54" r="1" fill="#FFFFFF"/>
-                <circle cx="24" cy="52.5" r="1" fill="#FFFFFF"/>
-                <circle cx="24" cy="55.5" r="1" fill="#FFFFFF"/>
-                
-                <circle cx="114" cy="52" r="1.5" fill="#F59E0B"/>
-                <circle cx="112.5" cy="52" r="1" fill="#FFFFFF"/>
-                <circle cx="115.5" cy="52" r="1" fill="#FFFFFF"/>
-                <circle cx="114" cy="50.5" r="1" fill="#FFFFFF"/>
-                <circle cx="114" cy="53.5" r="1" fill="#FFFFFF"/>
-              </svg>
-
-              <!-- Pot Tanaman Miniatur di Kiri Terrarium -->
-              <div id="plantSvgMini" class="absolute left-2.5 bottom-1 h-[62px] w-[46px] flex items-center justify-center z-10 pointer-events-none"></div>
-
-              <!-- Kucing Safa Miniatur Interaktif di Kanan Terrarium -->
-              <div id="safaContainer" class="absolute right-1 bottom-0 z-20 cursor-pointer transition-all" onclick="event.stopPropagation(); tapSafaMeow();">
-                <div id="safaSvgMini" class="w-[46px] h-[46px] flex items-center justify-center"></div>
+          <!-- Konten Card: Teks Total Terkumpul di Kiri & Miniatur Taman di Kanan -->
+          <div class="relative z-10 flex items-center justify-between">
+            <div class="space-y-1">
+              <span class="text-[10px] md:text-xs uppercase font-extrabold tracking-wider text-emerald-800/80 block">Total Terkumpul</span>
+              <span id="totalSavingsValue" class="text-2xl md:text-3xl font-black text-emerald-950 tracking-tight block">Rp0</span>
+              <div class="flex items-center space-x-2 pt-0.5">
+                <span id="plantStageBadge" class="text-[10px] font-bold text-emerald-800 bg-white/85 px-2.5 py-0.5 rounded-full border border-emerald-200/80 shadow-xs">🌱 benih & tunas</span>
+                <span id="activeMonthBadge" class="text-[10px] font-semibold text-emerald-700 bg-white/70 px-2 py-0.5 rounded-full border border-emerald-200/60">-- ----</span>
               </div>
             </div>
-            <span class="text-[9px] text-neutral-400 font-medium mt-0.5">ketuk detail ›</span>
+
+            <!-- Wadah Tanaman & Safa di Kanan -->
+            <div class="flex flex-col items-end shrink-0 relative">
+              <!-- Bubble Chat Safa: selalu tegak, tidak terbalik, tidak terpotong -->
+              <div id="safaBubbleMini" class="hidden absolute -top-8 right-0 max-w-[200px] bg-white/95 backdrop-blur-sm border border-rose-200 text-rose-600 text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-md whitespace-nowrap z-30 pointer-events-none transition-all">
+                meow! ♥
+              </div>
+
+              <div class="relative w-[124px] h-[72px] flex items-end justify-center select-none">
+                <!-- Pot Tanaman Miniatur di Kiri -->
+                <div id="plantSvgMini" class="absolute left-0 bottom-0.5 h-[62px] w-[46px] flex items-center justify-center z-10 pointer-events-none"></div>
+
+                <!-- Kucing Safa Miniatur Interaktif di Kanan -->
+                <div id="safaContainer" class="absolute right-0 bottom-0 z-20 cursor-pointer transition-all" onclick="event.stopPropagation(); tapSafaMeow();">
+                  <div id="safaSvgMini" class="w-[46px] h-[46px] flex items-center justify-center"></div>
+                </div>
+              </div>
+              <span class="text-[9px] text-emerald-700/80 font-semibold mt-1">ketuk detail taman ›</span>
+            </div>
           </div>
         </div>
       </section>
@@ -617,8 +614,44 @@
           <button onclick="closePlantSheet()" class="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 hover:bg-neutral-200 transition">✕</button>
         </div>
 
-        <!-- Large plant visual -->
-        <div id="plantSvgLarge" class="flex items-center justify-center py-3 min-h-[160px]"></div>
+        <!-- Taman Hijau Asri Detail: Tanaman & Kucing Safa di Padang Rumput -->
+        <div class="relative w-full h-[190px] rounded-3xl bg-gradient-to-b from-sky-50 via-emerald-50 to-emerald-100/90 border border-emerald-200/80 overflow-hidden shadow-inner flex items-end justify-center select-none">
+          <!-- Background Taman Panorama Detail (SVG) -->
+          <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 360 190" fill="none" preserveAspectRatio="none">
+            <!-- Mentari pagi hangat di langit kanan -->
+            <circle cx="315" cy="24" r="38" fill="#FEF08A" opacity="0.4"/>
+            <!-- Awan putih lembut melayang -->
+            <path d="M40 34 Q50 24 65 30 Q80 22 95 32 Q105 32 108 42 L35 42 Q30 38 40 34 Z" fill="#FFFFFF" opacity="0.75"/>
+            <path d="M220 44 Q230 36 242 40 Q252 32 264 41 Q272 41 275 48 L216 48 Q212 45 220 44 Z" fill="#FFFFFF" opacity="0.6"/>
+            <!-- Bukit belakang hijau pastel -->
+            <path d="M-20 135 Q80 108 180 122 Q280 140 380 118 L380 190 L-20 190 Z" fill="#BBF7D0" opacity="0.6"/>
+            <!-- Bukit depan padang rumput segar -->
+            <path d="M-10 150 Q80 134 180 142 Q280 152 370 138 L370 190 L-10 190 Z" fill="#86EFAC" opacity="0.8"/>
+            <!-- Rumpun rumput kecil organik -->
+            <path d="M30 156 L27 144 M30 156 L32 140 M30 156 L37 146" stroke="#22C55E" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M110 162 L107 150 M110 162 L112 146 M110 162 L116 152" stroke="#16A34A" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M245 160 L242 148 M245 160 L247 144 M245 160 L252 150" stroke="#22C55E" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M330 154 L327 142 M330 154 L332 138 M330 154 L337 144" stroke="#16A34A" stroke-width="1.6" stroke-linecap="round"/>
+            <!-- Bunga liar daisy di taman -->
+            <circle cx="55" cy="154" r="2.2" fill="#F59E0B"/><circle cx="52.5" cy="154" r="1.5" fill="#FFFFFF"/><circle cx="57.5" cy="154" r="1.5" fill="#FFFFFF"/><circle cx="55" cy="151.5" r="1.5" fill="#FFFFFF"/><circle cx="55" cy="156.5" r="1.5" fill="#FFFFFF"/>
+            <circle cx="305" cy="152" r="2.2" fill="#F59E0B"/><circle cx="302.5" cy="152" r="1.5" fill="#FFFFFF"/><circle cx="307.5" cy="152" r="1.5" fill="#FFFFFF"/><circle cx="305" cy="149.5" r="1.5" fill="#FFFFFF"/><circle cx="305" cy="154.5" r="1.5" fill="#FFFFFF"/>
+          </svg>
+
+          <!-- Panggung Kolaborasi Tanaman & Safa di Taman Detail -->
+          <div class="relative z-10 w-full flex items-end justify-center px-4 pb-1 space-x-4">
+            <!-- Tanaman Cinta di Taman Detail -->
+            <div id="plantSvgLarge" class="flex items-center justify-center shrink-0"></div>
+
+            <!-- Kucing Safa di Taman Detail (bisa di-tap) -->
+            <div id="safaLargeContainer" class="relative pb-0.5 cursor-pointer transition-transform hover:scale-105 active:scale-95 shrink-0" onclick="tapSafaDetailMeow()">
+              <!-- Bubble Chat Safa di Detail Taman -->
+              <div id="safaDetailBubble" class="hidden absolute -top-8 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-sm border border-rose-200 text-rose-600 text-[11px] font-semibold px-3 py-1 rounded-full shadow-md whitespace-nowrap z-30 pointer-events-none transition-all">
+                meow! ♥
+              </div>
+              <div id="safaSvgLarge" class="w-[72px] h-[72px] flex items-center justify-center"></div>
+            </div>
+          </div>
+        </div>
 
         <!-- Status pertumbuhan -->
         <div class="bg-neutral-50 rounded-2xl p-4 space-y-3">
@@ -1680,8 +1713,8 @@
     ];
 
     function renderPlantSvg(stage, isLarge) {
-      const vw = isLarge ? 180 : 100;
-      const vh = isLarge ? 200 : 120;
+      const vw = 100;
+      const vh = isLarge ? 135 : 125;
       const scale = isLarge ? 1 : 0.55;
       const sx = n => Math.round(n * scale);
       const sy = n => Math.round(n * scale);
@@ -1764,7 +1797,7 @@
 
       leafLayout[stage - 1]();
 
-      return `<svg viewBox="0 0 ${vw} ${vh}" xmlns="http://www.w3.org/2000/svg" class="${isLarge ? 'w-44 h-48' : 'w-[55px] h-[65px]'}">${parts.join('')}</svg>`;
+      return `<svg viewBox="0 0 ${vw} ${vh}" xmlns="http://www.w3.org/2000/svg" class="${isLarge ? 'w-32 h-36' : 'w-[52px] h-[62px]'}">${parts.join('')}</svg>`;
     }
 
     function renderPlantVisuals() {
@@ -1967,6 +2000,9 @@
       const modalIcon = document.getElementById('safaModalIcon');
       if (modalIcon) modalIcon.innerHTML = renderSafaSvg(status.mode, true);
 
+      const largeSvgEl = document.getElementById('safaSvgLarge');
+      if (largeSvgEl) largeSvgEl.innerHTML = renderSafaSvg(status.mode, true);
+
       const badgeEl = document.getElementById('safaStatusBadge');
       if (badgeEl) badgeEl.textContent = status.badge;
 
@@ -1976,9 +2012,18 @@
       const container = document.getElementById('safaContainer');
       if (container) {
         if (status.mode === 'walking') {
-          container.className = 'absolute right-1 bottom-0 z-20 cursor-pointer safa-playing-anim';
+          container.className = 'absolute right-0 bottom-0 z-20 cursor-pointer safa-playing-anim';
         } else {
-          container.className = 'absolute right-1 bottom-0 z-20 cursor-pointer';
+          container.className = 'absolute right-0 bottom-0 z-20 cursor-pointer';
+        }
+      }
+
+      const largeContainer = document.getElementById('safaLargeContainer');
+      if (largeContainer) {
+        if (status.mode === 'walking') {
+          largeContainer.className = 'relative z-20 pb-0.5 cursor-pointer transition-transform safa-playing-anim shrink-0';
+        } else {
+          largeContainer.className = 'relative z-20 pb-0.5 cursor-pointer transition-transform hover:scale-105 active:scale-95 shrink-0';
         }
       }
     }
@@ -2002,6 +2047,37 @@
       bubble.classList.remove('hidden');
       bubble.classList.add('scale-95', 'opacity-0');
       // force reflow
+      void bubble.offsetHeight;
+      bubble.classList.remove('scale-95', 'opacity-0');
+      bubble.classList.add('scale-100', 'opacity-100');
+      setTimeout(() => {
+        bubble.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+          bubble.classList.add('hidden');
+          bubble.classList.remove('scale-95', 'opacity-0', 'scale-100', 'opacity-100');
+        }, 200);
+      }, 2500);
+      if (navigator.vibrate) navigator.vibrate([30, 20, 30]);
+    }
+
+    function tapSafaDetailMeow() {
+      const status = getSafaStatus();
+      let messages = [];
+      if (status.mode === 'night_sleep') {
+        messages = ['shhh.. safa bobo di taman, selamat istirahat sayang ♥', 'ngantuk.. besok kita rawat tanaman lagi yaa~', 'safa mimpi indah tentang faris & saiba ♥'];
+      } else if (status.mode === 'day_idle') {
+        messages = ['nguap~ safa duduk di rumput nunggu setoran..', 'tanaman butuh air, dompet butuh komitmen! 🌱', 'safa laper, butuh semangat tabungan! 🐾'];
+      } else if (status.mode === 'waiting') {
+        messages = ['safa temenin tanaman nunggu kamu nih!', 'setengah jalan lagi minggu ini lunas berdua!', 'ayo kompak rawat tanaman cinta kita! ♥'];
+      } else if (status.mode === 'walking') {
+        messages = ['purrr.. tanaman cinta kita subur berkat kalian! 🌸', 'meow! kompak lunas minggu ini, hebat! ♥', 'safa seneng banget lari-lari di taman! ✨', 'sayang saiba banyak-banyak! 🐾'];
+      }
+      const msg = messages[Math.floor(Math.random() * messages.length)];
+      const bubble = document.getElementById('safaDetailBubble');
+      if (!bubble) return;
+      bubble.textContent = msg;
+      bubble.classList.remove('hidden');
+      bubble.classList.add('scale-95', 'opacity-0');
       void bubble.offsetHeight;
       bubble.classList.remove('scale-95', 'opacity-0');
       bubble.classList.add('scale-100', 'opacity-100');

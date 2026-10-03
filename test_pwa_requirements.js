@@ -31,7 +31,7 @@ assert(html.includes('id="detailSheet"') && html.includes('class="sheet-content 
 assert(html.includes('id="koreksiSheet"') && html.includes('class="sheet-content bg-white'), 'Koreksi sheet must include .sheet-content');
 
 // 6. Service worker version bump
-assert(sw.includes("CACHE_NAME = 'tabungan-v12'"), 'Service worker cache must be bumped to v12');
+assert(sw.includes("CACHE_NAME = 'tabungan-v13'"), 'Service worker cache must be bumped to v13');
 
 // 7. Plant visual & drawer integration
 assert(html.includes('id="plantSheet"') && html.includes('class="sheet-content bg-white'), 'Plant sheet must exist with safe area');
@@ -57,13 +57,22 @@ assert(html.includes('function getSafaStatus()'), 'getSafaStatus logic must exis
 assert(html.includes('function tapSafaMeow()'), 'tapSafaMeow interactive function must exist');
 assert(html.includes('safaGardenPlay') && html.includes('safa-playing-anim'), 'Safa garden playing CSS keyframes and class must exist');
 assert(html.includes('safaTailWag') && html.includes('safa-tail-wag'), 'Safa tail wag animation must exist');
-assert(html.includes('stroke="#22C55E"') && html.includes('fill="#BBF7D0"'), 'Mini garden lawn hills and grass blades must exist');
 
-// 11. Strict JS syntax compilation check (prevent uncaught runtime breaks)
+// 11. Keseluruhan Card Total Terkumpul menjadi Taman Asri
+assert(html.includes('bg-gradient-to-b from-emerald-50/90 via-emerald-100/50 to-emerald-200/40'), 'Home card must be full garden background');
+assert(html.includes('text-emerald-950') && html.includes('text-emerald-800/80'), 'Home card balance text must have high contrast on green lawn');
+
+// 12. Detail Sheet: Panggung Taman Hijau Panorama dengan Tanaman & Kucing Safa
+assert(html.includes('id="safaSvgLarge"'), 'Detail sheet must contain large Safa SVG in garden');
+assert(html.includes('id="safaDetailBubble"'), 'Detail sheet must contain interactive Safa speech bubble');
+assert(html.includes('function tapSafaDetailMeow()'), 'tapSafaDetailMeow function must exist');
+assert(html.includes('viewBox="0 0 360 190"'), 'Detail sheet must feature panoramic garden backdrop');
+
+// 13. Strict JS syntax compilation check (prevent uncaught runtime breaks)
 const scriptMatch = html.match(/<script>([\s\S]*?)<\/script>/);
 assert(scriptMatch, 'Script tag must exist in index.html');
 assert.doesNotThrow(() => {
   new Function(scriptMatch[1]);
 }, 'JavaScript inside index.html must have valid syntax without duplicates or compilation errors');
 
-console.log('ALL PWA CHECKS PASSED (12/12)');
+console.log('ALL PWA CHECKS PASSED (13/13)');
