@@ -31,7 +31,7 @@ assert(html.includes('id="detailSheet"') && html.includes('class="sheet-content 
 assert(html.includes('id="koreksiSheet"') && html.includes('class="sheet-content bg-white'), 'Koreksi sheet must include .sheet-content');
 
 // 6. Service worker version bump (v26)
-assert(sw.includes("CACHE_NAME = 'tabungan-v27'"), 'Service worker cache must be bumped to v26');
+assert(sw.includes("CACHE_NAME = 'tabungan-v28'"), 'Service worker cache must be bumped to v26');
 
 // 7. Plant visual & drawer integration
 assert(html.includes('id="plantSheet"') && html.includes('class="sheet-content bg-white'), 'Plant sheet must exist with safe area');
@@ -107,8 +107,9 @@ assert(html.includes('id="monthPickerSheet"'), 'Custom month picker sheet must e
 assert(html.includes('selectMonthFromPicker(') && html.includes('changePickerYear('), 'Month picker functions must exist');
 assert(html.includes('class="grid grid-cols-4 gap-3"'), 'Month grid must be 4 columns');
 
-// 20. Cat house in garden scene and detail drawer
-assert(html.includes('cat-house-group') && html.includes('cat-house-glow'), 'Cat house SVG and night glow must exist');
+// 20. Single house design (Cat house removed per user instruction, UP house centered)
+assert(!html.includes('cat-house-group'), 'Cat house must be removed per user instruction');
+assert(html.includes('id="upHouseGroupHome"') && html.includes('id="upHouseGroupPlant"'), 'Only authentic UP house must exist');
 
 // 21. History tab total savings dynamic summary card
 assert(html.includes('id="historySummaryCard"') && html.includes('id="historyTotalAmount"'), 'History summary card and total must exist');

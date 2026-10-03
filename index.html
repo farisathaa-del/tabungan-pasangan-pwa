@@ -74,26 +74,37 @@
       }
     }
     /* Night Theme (18:30 - 05:00) */
-    body.night-theme {
+    html.night-theme,
+    body.night-theme,
+    body.night-theme #appContainer,
+    body.night-theme main {
       background-color: #0F1117 !important;
       color: #E2E8F0 !important;
     }
     body.night-theme header {
-      background-color: rgba(15, 17, 23, 0.92) !important;
+      background-color: rgba(15, 17, 23, 0.95) !important;
       border-bottom-color: rgba(255, 255, 255, 0.08) !important;
     }
     body.night-theme #navMonthYearLabel {
       color: #F8FAFC !important;
     }
+    body.night-theme header button.bg-neutral-200\/60,
     body.night-theme header div.bg-neutral-100\/80 {
       background-color: #1E2330 !important;
       border-color: rgba(255, 255, 255, 0.1) !important;
     }
+    body.night-theme #activeUserLabel {
+      color: #F8FAFC !important;
+    }
     body.night-theme header button.hover\:bg-white {
       color: #94A3B8 !important;
     }
+    body.night-theme .bg-rose-50 {
+      background-color: #2D1522 !important;
+      border-color: rgba(244, 63, 94, 0.3) !important;
+    }
     body.night-theme nav {
-      background-color: rgba(15, 17, 23, 0.95) !important;
+      background-color: rgba(15, 17, 23, 0.96) !important;
       border-top-color: rgba(255, 255, 255, 0.08) !important;
     }
     body.night-theme nav button {
@@ -113,6 +124,20 @@
     body.night-theme #partnerPresenceBar {
       background-color: #23161F !important;
       border-bottom-color: rgba(244, 63, 94, 0.25) !important;
+    }
+    body.night-theme #timelineUserA .bg-neutral-100 {
+      background-color: #232838 !important;
+      color: #94A3B8 !important;
+    }
+    body.night-theme #timelineUserB .bg-neutral-100 {
+      background-color: #381E2C !important;
+      color: #FDA4AF !important;
+    }
+    body.night-theme .ring-active-week {
+      --tw-ring-offset-color: #181B24 !important;
+    }
+    body.night-theme #timelineUserB .ring-active-week {
+      --tw-ring-offset-color: #23161F !important;
     }
     body.night-theme .sheet-content {
       background-color: #181B24 !important;
@@ -142,6 +167,23 @@
     body.night-theme #totalSavingsValue {
       color: #4ADE80 !important;
     }
+    body.night-theme #monthSubTotal {
+      color: #86EFAC !important;
+    }
+    body.night-theme #plantStageBadge {
+      background-color: rgba(6, 78, 59, 0.8) !important;
+      color: #A7F3D0 !important;
+      border-color: rgba(52, 211, 153, 0.3) !important;
+    }
+    body.night-theme #activeMonthBadge {
+      background-color: rgba(30, 41, 59, 0.8) !important;
+      color: #CBD5E1 !important;
+      border-color: rgba(255, 255, 255, 0.15) !important;
+    }
+    body.night-theme .tabungan-bersama-card span.text-emerald-800\/80,
+    body.night-theme .tabungan-bersama-card span.text-emerald-700\/80 {
+      color: #6EE7B7 !important;
+    }
     /* Night Garden Elements */
     body.night-theme .garden-sun,
     body.night-theme .garden-clouds {
@@ -162,8 +204,11 @@
       background: linear-gradient(to bottom, #0a111a, #0d2119) !important;
       border-color: rgba(34, 197, 94, 0.25) !important;
     }
-    body.night-theme .cat-house-glow {
-      opacity: 0.65 !important;
+    body.night-theme #tabViewRiwayat,
+    body.night-theme #tabViewRiwayat .bg-white {
+      background-color: #181B24 !important;
+      border-color: rgba(255, 255, 255, 0.08) !important;
+      color: #F8FAFC !important;
     }
     @keyframes pulse-ring {
       0%, 100% {
@@ -305,7 +350,7 @@
 <body class="bg-[#FAFAFC] h-full p-0 text-neutral-900 font-sans antialiased selection:bg-rose-500/20">
 
   <!-- SINGLE UNIFIED CONTAINER: Fleksibel Mobile Layar Penuh hingga Desktop Lapang -->
-  <div class="relative w-full h-full bg-[#FAFAFC] overflow-hidden flex flex-col">
+  <div id="appContainer" class="relative w-full h-full overflow-hidden flex flex-col">
 
     <!-- ====================================================================== -->
     <!-- HALAMAN PEMBUKA APLIKASI (OVERLAY GELAP DENGAN AMBIENT PINK GLOW)      -->
@@ -498,27 +543,7 @@
               <path class="garden-hill-front" d="M-10 92 Q90 80 200 86 Q290 96 390 82 L390 120 L-10 120 Z" fill="#86EFAC" opacity="0.75"/>
               <!-- Rumpun rumput organik bertebaran di sepanjang dasar card -->
               <path d="M20 95 L18 87 M20 95 L22 83 M20 95 L26 88" stroke="#22C55E" stroke-width="1.3" stroke-linecap="round"/>
-              <!-- Rumah Kucing Safa (kiri taman) -->
-              <g class="cat-house-group">
-                <!-- Bayangan tanah -->
-                <ellipse cx="47" cy="117" rx="24" ry="5" fill="#14532D" opacity="0.25"/>
-                <!-- Dinding rumah kayu pastel peach -->
-                <rect x="26" y="89" width="42" height="28" rx="2" fill="#FDE2C8"/>
-                <!-- Atap segitiga -->
-                <path d="M22 89 L47 72 L72 89 Z" fill="#FED7AA" stroke="#FDBA74" stroke-width="0.8"/>
-                <!-- Telinga kucing mini di puncak atap -->
-                <path d="M42 72 L45 63 L50 72 Z" fill="#FED7AA" stroke="#FDBA74" stroke-width="0.6"/>
-                <path d="M44 72 L47 65 L50 72 Z" fill="#FFD6B0"/>
-                <!-- Pintu lengkung -->
-                <path d="M40 117 L40 101 Q47 94 54 101 L54 117 Z" fill="#B45309" opacity="0.8"/>
-                <!-- Siluet kucing di pintu -->
-                <ellipse cx="47" cy="107" rx="5" ry="6" fill="#92400E"/>
-                <path d="M43 104 L44 100 L46 104 Z" fill="#92400E"/>
-                <path d="M48 104 L50 100 L51 104 Z" fill="#92400E"/>
-                <path d="M44 105 Q47 108 50 105" stroke="#92400E" stroke-width="0.6" fill="none"/>
-                <!-- Cahaya lampu hangat malam (night-mode) -->
-                <ellipse cx="47" cy="103" rx="16" ry="12" fill="#FEF08A" opacity="0" class="cat-house-glow"/>
-              </g>
+              <!-- Rumah kucing dihapus: cukup 1 rumah di tengah card -->
               <path d="M120 98 L118 90 M120 98 L121 86 M120 98 L125 91" stroke="#16A34A" stroke-width="1.3" stroke-linecap="round"/>
               <path d="M210 96 L208 88 M210 96 L211 84 M210 96 L215 89" stroke="#22C55E" stroke-width="1.3" stroke-linecap="round"/>
               <path d="M295 94 L293 86 M295 94 L296 82 M295 94 L300 87" stroke="#16A34A" stroke-width="1.3" stroke-linecap="round"/>
@@ -528,7 +553,7 @@
               <circle cx="170" cy="96" r="1.8" fill="#F59E0B"/><circle cx="168" cy="96" r="1.2" fill="#FFFFFF"/><circle cx="172" cy="96" r="1.2" fill="#FFFFFF"/><circle cx="170" cy="94" r="1.2" fill="#FFFFFF"/><circle cx="170" cy="98" r="1.2" fill="#FFFFFF"/>
               <circle cx="270" cy="95" r="1.8" fill="#F59E0B"/><circle cx="268" cy="95" r="1.2" fill="#FFFFFF"/><circle cx="272" cy="95" r="1.2" fill="#FFFFFF"/><circle cx="270" cy="93" r="1.2" fill="#FFFFFF"/><circle cx="270" cy="97" r="1.2" fill="#FFFFFF"/>
               <!-- Rumah Film UP Autentik 9-Elemen (Card Beranda) -->
-              <g id="upHouseGroupHome" class="up-house-group" onclick="tapUpHouse()" style="cursor:pointer" transform="translate(18, 14) scale(0.65)">
+              <g id="upHouseGroupHome" class="up-house-group" onclick="tapUpHouse()" style="cursor:pointer" transform="translate(-3, 14) scale(0.65)">
         <!-- 5. CEROBONG BATA MERAH (TETHER BALON) -->
         <g id="upChimney">
           <rect x="332" y="66" width="12" height="48" fill="#B91C1C" rx="1"/>
@@ -636,7 +661,7 @@
           </g>
         </g>
               </g>
-              <g transform="translate(18, 14) scale(0.65)">
+              <g transform="translate(-3, 14) scale(0.65)">
       <!-- ==================== HALAMAN DEPAN RUMAH UP (PEKARANGAN & KOTAK SURAT) ==================== -->
       <!-- Jalan setapak batu paving menuju teras -->
       <g id="upWalkway">
@@ -1041,27 +1066,7 @@
             <path class="garden-hill-front" d="M-10 150 Q80 134 180 142 Q280 152 370 138 L370 190 L-10 190 Z" fill="#86EFAC" opacity="0.8"/>
             <!-- Rumpun rumput kecil organik -->
             <path d="M30 156 L27 144 M30 156 L32 140 M30 156 L37 146" stroke="#22C55E" stroke-width="1.6" stroke-linecap="round"/>
-            <!-- Rumah Kucing Safa (kiri taman detail) -->
-            <g class="cat-house-group">
-              <!-- Bayangan tanah -->
-              <ellipse cx="47" cy="184" rx="28" ry="6" fill="#14532D" opacity="0.25"/>
-              <!-- Dinding rumah kayu pastel peach -->
-              <rect x="22" y="146" width="50" height="38" rx="3" fill="#FDE2C8"/>
-              <!-- Atap segitiga -->
-              <path d="M17 146 L47 126 L77 146 Z" fill="#FED7AA" stroke="#FDBA74" stroke-width="1"/>
-              <!-- Telinga kucing mini di puncak atap -->
-              <path d="M41 126 L45 115 L51 126 Z" fill="#FED7AA" stroke="#FDBA74" stroke-width="0.8"/>
-              <path d="M43 126 L47 117 L51 126 Z" fill="#FFD6B0"/>
-              <!-- Pintu lengkung -->
-              <path d="M40 184 L40 165 Q47 157 54 165 L54 184 Z" fill="#B45309" opacity="0.8"/>
-              <!-- Siluet kucing di pintu -->
-              <ellipse cx="47" cy="172" rx="6" ry="7" fill="#92400E"/>
-              <path d="M43 168 L44 163 L46 168 Z" fill="#92400E"/>
-              <path d="M48 168 L50 163 L51 168 Z" fill="#92400E"/>
-              <path d="M43 169 Q47 173 51 169" stroke="#92400E" stroke-width="0.8" fill="none"/>
-              <!-- Cahaya lampu hangat malam -->
-              <ellipse cx="47" cy="168" rx="20" ry="14" fill="#FEF08A" opacity="0" class="cat-house-glow"/>
-            </g>
+            <!-- Rumah kucing dihapus per preferensi user -->
             <path d="M110 162 L107 150 M110 162 L112 146 M110 162 L116 152" stroke="#16A34A" stroke-width="1.6" stroke-linecap="round"/>
             <path d="M245 160 L242 148 M245 160 L247 144 M245 160 L252 150" stroke="#22C55E" stroke-width="1.6" stroke-linecap="round"/>
             <path d="M330 154 L327 142 M330 154 L332 138 M330 154 L337 144" stroke="#16A34A" stroke-width="1.6" stroke-linecap="round"/>
@@ -1697,7 +1702,10 @@
 
     function applyDayNightTheme() {
       const isNight = isNightTime();
+      document.documentElement.classList.toggle('night-theme', isNight);
       document.body.classList.toggle('night-theme', isNight);
+      const meta = document.getElementById('themeColorMeta');
+      if (meta) meta.setAttribute('content', isNight ? '#0F1117' : '#FAFAFC');
       return isNight;
     }
 
