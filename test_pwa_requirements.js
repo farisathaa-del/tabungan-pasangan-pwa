@@ -31,7 +31,7 @@ assert(html.includes('id="detailSheet"') && html.includes('class="sheet-content 
 assert(html.includes('id="koreksiSheet"') && html.includes('class="sheet-content bg-white'), 'Koreksi sheet must include .sheet-content');
 
 // 6. Service worker version bump
-assert(sw.includes("CACHE_NAME = 'tabungan-v10'"), 'Service worker cache must be bumped to v10');
+assert(sw.includes("CACHE_NAME = 'tabungan-v11'"), 'Service worker cache must be bumped to v11');
 
 // 7. Plant visual & drawer integration
 assert(html.includes('id="plantSheet"') && html.includes('class="sheet-content bg-white'), 'Plant sheet must exist with safe area');
@@ -55,6 +55,7 @@ assert(html.includes('id="safaBubbleMini"'), 'Safa speech bubble must exist');
 assert(html.includes('id="safaModalIcon"'), 'Safa modal icon must exist in plant drawer');
 assert(html.includes('function getSafaStatus()'), 'getSafaStatus logic must exist');
 assert(html.includes('function tapSafaMeow()'), 'tapSafaMeow interactive function must exist');
+assert(html.includes('safaOrbitPot') && html.includes('safa-orbit-anim'), 'Safa 3D orbit CSS keyframes and class must exist');
 
 // 11. Strict JS syntax compilation check (prevent uncaught runtime breaks)
 const scriptMatch = html.match(/<script>([\s\S]*?)<\/script>/);
@@ -63,4 +64,4 @@ assert.doesNotThrow(() => {
   new Function(scriptMatch[1]);
 }, 'JavaScript inside index.html must have valid syntax without duplicates or compilation errors');
 
-console.log('ALL PWA CHECKS PASSED (11/11)');
+console.log('ALL PWA CHECKS PASSED (12/12)');

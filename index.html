@@ -94,11 +94,22 @@
       50% { opacity: 1; }
       100% { transform: translateY(-10px) scale(1.1); opacity: 0; }
     }
+    @keyframes safaOrbitPot {
+      0%   { left: 74px; bottom: 2px;  z-index: 20; transform: scaleX(-1) scale(1); }
+      25%  { left: 38px; bottom: 0px;  z-index: 20; transform: scaleX(-1) scale(1.06); }
+      50%  { left: 2px;  bottom: 4px;  z-index: 20; transform: scaleX(1)  scale(1); }
+      75%  { left: 38px; bottom: 14px; z-index: 5;  transform: scaleX(1)  scale(0.82); }
+      100% { left: 74px; bottom: 2px;  z-index: 20; transform: scaleX(-1) scale(1); }
+    }
     .safa-walking-anim {
       animation: safaWalkBob 0.5s ease-in-out infinite;
     }
     .safa-heart-anim {
       animation: safaHeartFloat 1.8s ease-in-out infinite;
+    }
+    .safa-orbit-anim {
+      position: absolute !important;
+      animation: safaOrbitPot 9s linear infinite;
     }
   </style>
 </head>
@@ -274,15 +285,15 @@
             </div>
           </div>
           <div class="flex flex-col items-end shrink-0 relative">
-            <div class="relative w-[115px] h-[68px] flex items-center justify-between select-none">
-              <!-- Pot Tanaman Miniatur -->
-              <div id="plantSvgMini" class="h-[65px] w-[50px] flex items-center justify-center"></div>
-              <!-- Kucing Safa Miniatur Interaktif -->
-              <div id="safaContainer" class="relative z-20 cursor-pointer" onclick="event.stopPropagation(); tapSafaMeow();">
-                <div id="safaBubbleMini" class="hidden absolute -top-8 right-0 bg-white border border-rose-200 text-rose-600 text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-md whitespace-nowrap z-30">
+            <div class="relative w-[120px] h-[68px] flex items-center justify-center select-none overflow-visible">
+              <!-- Pot Tanaman Miniatur di Tengah Terrarium -->
+              <div id="plantSvgMini" class="absolute left-1/2 -translate-x-1/2 bottom-0 h-[65px] w-[50px] flex items-center justify-center z-10 pointer-events-none"></div>
+              <!-- Kucing Safa Miniatur Interaktif Mengitari Pot -->
+              <div id="safaContainer" class="absolute z-20 cursor-pointer transition-all" onclick="event.stopPropagation(); tapSafaMeow();">
+                <div id="safaBubbleMini" class="hidden absolute -top-8 left-1/2 -translate-x-1/2 bg-white border border-rose-200 text-rose-600 text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-md whitespace-nowrap z-30">
                   meow! ♥
                 </div>
-                <div id="safaSvgMini" class="w-[50px] h-[50px] flex items-center justify-center"></div>
+                <div id="safaSvgMini" class="w-[44px] h-[44px] flex items-center justify-center"></div>
               </div>
             </div>
             <span class="text-[9px] text-neutral-400 font-medium mt-0.5">ketuk detail ›</span>
@@ -1790,80 +1801,99 @@
     }
 
     function renderSafaSvg(mode, isLarge) {
-      const vw = 56, vh = 56;
-      const sz = isLarge ? '56' : '48';
+      const vw = 52, vh = 48;
+      const sz = isLarge ? '56' : '44';
 
       let extra = '';
-      const head = `<circle cx="28" cy="26" r="12" fill="#fff" stroke="#d1d5db" stroke-width="1"/>`;
-      const ears = `<polygon points="19,20 14,10 24,17" fill="#fff" stroke="#d1d5db" stroke-width="1"/><polygon points="37,20 42,10 32,17" fill="#fff" stroke="#d1d5db" stroke-width="1"/>`;
-      const innerEars = `<polygon points="19,20 16,12 23,18" fill="#fbcfe8"/><polygon points="37,20 40,12 33,18" fill="#fbcfe8"/>`;
-      const nose = `<ellipse cx="28" cy="27" rx="1.5" ry="1" fill="#f9a8d4"/>`;
-      const blush = `<circle cx="21" cy="29" r="2.5" fill="#fecaca" opacity="0.6"/><circle cx="35" cy="29" r="2.5" fill="#fecaca" opacity="0.6"/>`;
-      const whiskers = `<line x1="16" y1="26" x2="8" y2="24" stroke="#d1d5db" stroke-width="0.8"/><line x1="16" y1="28" x2="8" y2="30" stroke="#d1d5db" stroke-width="0.8"/><line x1="40" y1="26" x2="48" y2="24" stroke="#d1d5db" stroke-width="0.8"/><line x1="40" y1="28" x2="48" y2="30" stroke="#d1d5db" stroke-width="0.8"/>`;
-      const tail = `<path d="M40 42 Q50 36 48 28" stroke="#d1d5db" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+      const ears = `
+        <path d="M12 15 Q10 7 16 11 Z" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
+        <path d="M22 13 Q26 7 28 15 Z" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
+        <path d="M13 14 Q12 9 15 12 Z" fill="#fbcfe8"/>
+        <path d="M23 14 Q25 9 27 14 Z" fill="#fbcfe8"/>
+      `;
+      const blush = `
+        <ellipse cx="14" cy="22" rx="2.5" ry="1.5" fill="#fecaca"/>
+        <ellipse cx="30" cy="22" rx="2.5" ry="1.5" fill="#fecaca"/>
+      `;
+      const whiskers = `
+        <line x1="12" y1="21" x2="6" y2="20" stroke="#d1d5db" stroke-width="0.8"/>
+        <line x1="12" y1="23" x2="6" y2="24" stroke="#d1d5db" stroke-width="0.8"/>
+        <line x1="32" y1="21" x2="38" y2="20" stroke="#d1d5db" stroke-width="0.8"/>
+        <line x1="32" y1="23" x2="38" y2="24" stroke="#d1d5db" stroke-width="0.8"/>
+      `;
 
       if (mode === 'night_sleep') {
         extra = `
-          <ellipse cx="28" cy="46" rx="20" ry="6" fill="#fbcfe8"/>
-          <ellipse cx="28" cy="42" rx="13" ry="9" fill="#fff" stroke="#d1d5db" stroke-width="1"/>
-          ${head}
-          ${ears}${innerEars}
-          <path d="M23 25 Q25 27 27 25" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          <path d="M29 25 Q31 27 33 25" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          ${blush}${nose}${whiskers}
-          <path d="M40 44 Q48 40 46 32" stroke="#d1d5db" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-          <text x="38" y="18" font-size="7" fill="#a78bfa" font-weight="bold" font-family="sans-serif">z</text>
-          <text x="42" y="12" font-size="5" fill="#c4b5fd" font-weight="bold" font-family="sans-serif">z</text>
-          <text x="45" y="7" font-size="4" fill="#ddd6fe" font-weight="bold" font-family="sans-serif">z</text>
+          <!-- Pink cushion -->
+          <ellipse cx="26" cy="38" rx="20" ry="6" fill="#fbcfe8"/>
+          <!-- Chubby sleeping curled body -->
+          <ellipse cx="26" cy="28" rx="16" ry="12" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
+          ${ears}
+          <!-- Sleeping eyes -->
+          <path d="M16 20 Q18 22 20 20" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <path d="M24 20 Q26 22 28 20" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          ${blush}${whiskers}
+          <path d="M38 30 Q44 26 42 20" stroke="#9ca3af" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <text x="36" y="16" font-size="7" fill="#a78bfa" font-weight="bold" font-family="sans-serif">z</text>
+          <text x="41" y="11" font-size="5" fill="#c4b5fd" font-weight="bold" font-family="sans-serif">z</text>
         `;
       } else if (mode === 'day_idle') {
         extra = `
-          <ellipse cx="28" cy="46" rx="18" ry="5" fill="#fbcfe8" opacity="0.4"/>
-          <ellipse cx="28" cy="44" rx="14" ry="8" fill="#fff" stroke="#d1d5db" stroke-width="1"/>
-          ${head}${ears}${innerEars}
-          <path d="M23 25 Q25 27 27 25" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          <path d="M29 25 Q31 27 33 25" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          ${blush}${nose}${whiskers}
-          <ellipse cx="28" cy="30" rx="3" ry="2.5" fill="#fb7185" opacity="0.7"/>
-          <path d="M38 44 Q48 40 46 32" stroke="#d1d5db" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-          <path d="M18 44 L14 42 M18 46 L14 46" stroke="#d1d5db" stroke-width="1.5" stroke-linecap="round"/>
+          <!-- Chubby resting body -->
+          <ellipse cx="26" cy="30" rx="17" ry="11" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
+          ${ears}
+          <!-- Sleepy eyes -->
+          <path d="M16 19 Q18 21 20 19" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <path d="M24 19 Q26 21 28 19" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <!-- Open yawn mouth -->
+          <ellipse cx="22" cy="23" rx="2.5" ry="2" fill="#fb7185"/>
+          ${blush}${whiskers}
+          <ellipse cx="18" cy="37" rx="3.5" ry="2" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+          <ellipse cx="30" cy="37" rx="3.5" ry="2" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+          <path d="M38 32 Q44 28 42 22" stroke="#9ca3af" stroke-width="2" fill="none" stroke-linecap="round"/>
         `;
       } else if (mode === 'waiting') {
         extra = `
-          <ellipse cx="28" cy="48" rx="10" ry="4" fill="#fbcfe8" opacity="0.3"/>
-          <ellipse cx="28" cy="42" rx="10" ry="12" fill="#fff" stroke="#d1d5db" stroke-width="1"/>
-          ${head}${ears}${innerEars}
-          <circle cx="24" cy="25" r="3" fill="#1f2937"/>
-          <circle cx="32" cy="25" r="3" fill="#1f2937"/>
-          <circle cx="24.5" cy="24.5" r="1.2" fill="#fff"/>
-          <circle cx="32.5" cy="24.5" r="1.2" fill="#fff"/>
-          ${blush}${nose}${whiskers}
-          <path d="M20 35 Q24 38 28 35 Q32 38 36 35" stroke="#374151" stroke-width="0.8" fill="none" stroke-linecap="round"/>
-          <path d="M28 48 L28 54" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
-          <path d="M24 52 L28 54 L32 52" stroke="#d1d5db" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          <text x="42" y="18" font-size="8" fill="#f59e0b">✦</text>
+          <!-- Chubby sitting upright body -->
+          <ellipse cx="26" cy="27" rx="14" ry="15" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
+          ${ears}
+          <!-- Sparkling curious eyes -->
+          <circle cx="19" cy="19" r="2.8" fill="#1f2937"/>
+          <circle cx="27" cy="19" r="2.8" fill="#1f2937"/>
+          <circle cx="19.8" cy="18.2" r="1" fill="#ffffff"/>
+          <circle cx="27.8" cy="18.2" r="1" fill="#ffffff"/>
+          <path d="M21 23 Q23 24.5 25 23" stroke="#4b5563" stroke-width="1" fill="none" stroke-linecap="round"/>
+          ${blush}${whiskers}
+          <!-- Front paws together -->
+          <ellipse cx="23" cy="38" rx="2.8" ry="2" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+          <ellipse cx="29" cy="38" rx="2.8" ry="2" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
+          <!-- Golden sparkle -->
+          <text x="36" y="14" font-size="8" fill="#f59e0b">✦</text>
         `;
       } else if (mode === 'walking') {
         extra = `
-          <g class="safa-walking-anim" style="transform-origin:28px 32px">
-          <ellipse cx="28" cy="46" rx="10" ry="6" fill="#fff" stroke="#d1d5db" stroke-width="1"/>
-          ${head}${ears}${innerEars}
-          <path d="M23 25 Q25 23 27 25" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          <path d="M29 25 Q31 23 33 25" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          ${blush}${nose}${whiskers}
-          <!-- pink ribbon collar -->
-          <path d="M18 33 L20 37 L24 35 L28 38 L32 35 L36 37 L38 33" fill="#f472b6" stroke="#ec4899" stroke-width="0.5"/>
-          <!-- golden bell -->
-          <circle cx="28" cy="38" r="2.5" fill="#f59e0b" stroke="#d97706" stroke-width="0.5"/>
-          <circle cx="28" cy="40" r="1" fill="#d97706"/>
-          <!-- walking legs -->
-          <line x1="23" y1="50" x2="20" y2="54" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
-          <line x1="33" y1="50" x2="36" y2="54" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
-          ${tail}
-          <!-- floating hearts -->
-          <text x="10" y="16" class="safa-heart-anim" font-size="7" fill="#f472b6">♥</text>
-          <text x="0" y="28" class="safa-heart-anim" font-size="5" fill="#f9a8d4" style="animation-delay:0.5s">♥</text>
-          <text x="44" y="14" class="safa-heart-anim" font-size="6" fill="#ec4899" style="animation-delay:0.9s">♥</text>
+          <g class="safa-walking-anim" style="transform-origin:26px 26px">
+            <!-- Fluffy tail -->
+            <path d="M38 28 Q48 20 46 12 Q43 10 41 15 Q40 22 36 29" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round"/>
+            <!-- Chubby body bean -->
+            <ellipse cx="27" cy="27" rx="16" ry="13" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
+            <ellipse cx="22" cy="21" rx="13" ry="10" fill="#ffffff"/>
+            <ellipse cx="22" cy="21" rx="13" ry="10" fill="none" stroke="#9ca3af" stroke-width="1.2"/>
+            ${ears}
+            <!-- Happy smiling eyes -->
+            <path d="M15 19 Q18 16 21 19" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <path d="M23 19 Q26 16 29 19" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            ${blush}${whiskers}
+            <path d="M20 22 Q22 24 24 22" stroke="#4b5563" stroke-width="1" fill="none" stroke-linecap="round"/>
+            <!-- Pink collar & golden bell -->
+            <path d="M17 26 Q22 29 28 26" stroke="#f472b6" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <circle cx="22" cy="28.5" r="2.2" fill="#f59e0b" stroke="#d97706" stroke-width="0.5"/>
+            <!-- Chubby stepping paws -->
+            <ellipse cx="17" cy="38" rx="3.5" ry="2.5" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
+            <ellipse cx="31" cy="38" rx="3.5" ry="2.5" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
+            <!-- Floating hearts -->
+            <text x="3" y="14" font-size="8" fill="#f472b6" class="safa-heart-anim">♥</text>
+            <text x="38" y="12" font-size="6" fill="#ec4899" class="safa-heart-anim" style="animation-delay:0.7s">♥</text>
           </g>
         `;
       }
@@ -1884,6 +1914,15 @@
 
       const descEl = document.getElementById('safaModalDesc');
       if (descEl) descEl.textContent = status.desc;
+
+      const container = document.getElementById('safaContainer');
+      if (container) {
+        if (status.mode === 'walking') {
+          container.className = 'absolute z-20 cursor-pointer safa-orbit-anim';
+        } else {
+          container.className = 'absolute right-0 bottom-0 z-20 cursor-pointer';
+        }
+      }
     }
 
     function tapSafaMeow() {
