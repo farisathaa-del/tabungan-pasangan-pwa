@@ -73,6 +73,75 @@
         padding-bottom: max(2.5rem, calc(env(safe-area-inset-bottom) + 1.75rem)) !important;
       }
     }
+    /* Night Theme (18:30 - 05:00) */
+    body.night-theme {
+      background-color: #0F1117 !important;
+      color: #E2E8F0 !important;
+    }
+    body.night-theme header {
+      background-color: rgba(15, 17, 23, 0.92) !important;
+      border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+    }
+    body.night-theme #navMonthYearLabel {
+      color: #F8FAFC !important;
+    }
+    body.night-theme header div.bg-neutral-100\/80 {
+      background-color: #1E2330 !important;
+      border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    body.night-theme header button.hover\:bg-white {
+      color: #94A3B8 !important;
+    }
+    body.night-theme nav {
+      background-color: rgba(15, 17, 23, 0.95) !important;
+      border-top-color: rgba(255, 255, 255, 0.08) !important;
+    }
+    body.night-theme nav button {
+      color: #94A3B8 !important;
+    }
+    body.night-theme section.bg-white {
+      background-color: #181B24 !important;
+      border-color: rgba(255, 255, 255, 0.08) !important;
+    }
+    body.night-theme section h2 {
+      color: #F8FAFC !important;
+    }
+    body.night-theme section.bg-rose-50\/70 {
+      background-color: #23161F !important;
+      border-color: rgba(244, 63, 94, 0.25) !important;
+    }
+    body.night-theme #partnerPresenceBar {
+      background-color: #23161F !important;
+      border-bottom-color: rgba(244, 63, 94, 0.25) !important;
+    }
+    body.night-theme .sheet-content {
+      background-color: #181B24 !important;
+      color: #F8FAFC !important;
+      border-top-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    body.night-theme .sheet-content h3 {
+      color: #F8FAFC !important;
+    }
+    body.night-theme .sheet-content p.text-neutral-400 {
+      color: #94A3B8 !important;
+    }
+    body.night-theme .sheet-content div.bg-neutral-50\/50,
+    body.night-theme .sheet-content input {
+      background-color: #1E2330 !important;
+      border-color: rgba(255, 255, 255, 0.12) !important;
+      color: #F8FAFC !important;
+    }
+    body.night-theme .sheet-content button.bg-neutral-100 {
+      background-color: #262D3D !important;
+      color: #E2E8F0 !important;
+    }
+    body.night-theme .tabungan-bersama-card {
+      background: linear-gradient(to bottom, #111e2e, #131b26) !important;
+      border-color: rgba(34, 197, 94, 0.25) !important;
+    }
+    body.night-theme #totalSavingsValue {
+      color: #4ADE80 !important;
+    }
     @keyframes pulse-ring {
       0%, 100% {
         box-shadow: 0 0 0 0 rgba(24, 24, 27, 0.4);
@@ -361,7 +430,7 @@
           tabungan bersama
         </h2>
 
-        <div onclick="openPlantSheet()" class="relative rounded-3xl p-5 md:p-6 bg-gradient-to-b from-emerald-50/90 via-emerald-100/50 to-emerald-200/40 border border-emerald-200/80 shadow-sm cursor-pointer hover:shadow-md transition">
+        <div onclick="openPlantSheet()" class="tabungan-bersama-card relative rounded-3xl p-5 md:p-6 bg-gradient-to-b from-emerald-50/90 via-emerald-100/50 to-emerald-200/40 border border-emerald-200/80 shadow-sm cursor-pointer hover:shadow-md transition">
           <!-- Background Taman Hijau Asri Melintang Seluruh Card (SVG) terpotong rapi sesuai rounded-3xl -->
           <div class="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none">
             <svg class="w-full h-full" viewBox="0 0 380 120" fill="none" preserveAspectRatio="none">
@@ -834,6 +903,7 @@
      * INISIALISASI SAAT DOM SIAP
      */
     document.addEventListener('DOMContentLoaded', () => {
+      applyDayNightTheme();
       loadCachedData();
       updateMonthDisplay();
       renderAllTimelines();
@@ -965,15 +1035,29 @@
       return weeks;
     }
 
+    // ponytail: auto night theme active from 18:30 to 05:00
+    function isNightTime() {
+      const now = new Date();
+      const mins = now.getHours() * 60 + now.getMinutes();
+      return mins >= 1110 || mins < 300; // 18:30 s.d. 05:00
+    }
+
+    function applyDayNightTheme() {
+      const isNight = isNightTime();
+      document.body.classList.toggle('night-theme', isNight);
+      return isNight;
+    }
+
     /**
      * SAPAAN WAKTU ADAPTIF (WIB)
      */
     function getTimeGreeting() {
-      const hour = new Date().getHours();
-      if (hour >= 4 && hour < 11) return 'selamat pagi';
-      if (hour >= 11 && hour < 15) return 'selamat siang';
-      if (hour >= 15 && hour < 18) return 'selamat sore';
-      return 'selamat malam';
+      const now = new Date();
+      const mins = now.getHours() * 60 + now.getMinutes();
+      if (mins >= 240 && mins < 660) return 'selamat pagi'; // 04:00 - 11:00
+      if (mins >= 660 && mins < 900) return 'selamat siang'; // 11:00 - 15:00
+      if (mins >= 900 && mins < 1110) return 'selamat sore'; // 15:00 - 18:30
+      return 'selamat malam'; // 18:30 - 04:00
     }
 
     /**
@@ -1053,7 +1137,8 @@
       if (lockScreen) {
         lockScreen.classList.add('-translate-y-full');
       }
-      updateThemeColor('#FAFAFC');
+      const isNight = applyDayNightTheme();
+      updateThemeColor(isNight ? '#0F1117' : '#FAFAFC');
 
       renderAllTimelines();
       checkPartnerPresence();
@@ -1985,8 +2070,7 @@
      * SAFA — KUCING DIGITAL PENJAGA TABUNGAN CINTA
      */
     function getSafaStatus() {
-      const hour = new Date().getHours();
-      if (hour >= 22 || hour < 6) {
+      if (isNightTime()) {
         return { mode: 'night_sleep', title: 'safa tidur malam', badge: 'tidur malam', desc: 'shhh.. safa bobo di bantal empuk, selamat tidur sayang ♥' };
       }
       const timeline = getMonthTimeline(viewYear, viewMonth);
