@@ -30,8 +30,8 @@ assert(html.includes('id="uploadSheet"') && html.includes('class="sheet-content 
 assert(html.includes('id="detailSheet"') && html.includes('class="sheet-content bg-white'), 'Detail sheet must include .sheet-content');
 assert(html.includes('id="koreksiSheet"') && html.includes('class="sheet-content bg-white'), 'Koreksi sheet must include .sheet-content');
 
-// 6. Service worker version bump (v25)
-assert(sw.includes("CACHE_NAME = 'tabungan-v25'"), 'Service worker cache must be bumped to v25');
+// 6. Service worker version bump (v26)
+assert(sw.includes("CACHE_NAME = 'tabungan-v26'"), 'Service worker cache must be bumped to v26');
 
 // 7. Plant visual & drawer integration
 assert(html.includes('id="plantSheet"') && html.includes('class="sheet-content bg-white'), 'Plant sheet must exist with safe area');
@@ -128,4 +128,22 @@ assert(!html.includes('id="currentSongLabel"'), 'currentSongLabel must be remove
 // 25. No native month picker (broken on iOS)
 assert(!html.includes('id="nativeMonthPicker"'), 'Native month picker input must be removed');
 
-console.log('ALL PWA CHECKS PASSED (25/25)');
+// 26. Header single-line on iPhone 15: whitespace-nowrap on header, user label, month label
+assert(html.includes('class="whitespace-nowrap shrink-0 pt-3 md:pt-4 px-2.5'), 'Header must have whitespace-nowrap shrink-0');
+assert(html.includes('id="activeUserLabel" class="whitespace-nowrap inline-flex items-center'), 'activeUserLabel must have whitespace-nowrap');
+assert(html.includes('id="navMonthYearLabel" onclick="openMonthPicker()" class="whitespace-nowrap shrink-0'), 'navMonthYearLabel must have whitespace-nowrap shrink-0');
+
+// 27. Rumah Film UP: house group and dynamic balloons must exist
+assert(html.includes('id="upHouseGroupHome"') && html.includes('class="up-house-group"'), 'Up house group must exist in home view');
+assert(html.includes('id="upBalloonsHome"') && html.includes('class="up-balloons'), 'Up balloons container must exist in home view');
+assert(html.includes('id="upHouseGroupPlant"'), 'Up house group must exist in plant sheet');
+assert(html.includes('id="upBalloonsPlant"'), 'Up balloons must exist in plant sheet');
+assert(html.includes('function renderUpHouseBalloons()'), 'renderUpHouseBalloons function must exist');
+assert(html.includes('function tapUpHouse()'), 'tapUpHouse function must exist');
+
+// 28. Harry Styles - Coming Up Roses song support
+assert(html.includes('harry-styles-roses.mp3'), 'Harry Styles audio source must be referenced');
+assert(html.includes('selectSong(\'harry\')'), 'selectSong handler for harry must exist');
+assert(html.includes('id="songCheckHarry"'), 'Harry song checkmark element must exist');
+
+console.log('ALL PWA CHECKS PASSED (28/28)');

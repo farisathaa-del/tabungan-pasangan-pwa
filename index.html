@@ -283,6 +283,14 @@
     .safa-heart-anim {
       animation: safaHeartFloat 1.8s ease-in-out infinite;
     }
+    @keyframes upBalloonsSway {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-2.5px) rotate(1deg); }
+    }
+    .up-balloons-sway {
+      animation: upBalloonsSway 3.5s ease-in-out infinite;
+      transform-origin: bottom center;
+    }
   </style>
 </head>
 
@@ -337,8 +345,8 @@
             <button onclick="selectUserAndEnter('A', 'faris')" class="btn-press py-3.5 px-4 rounded-2xl bg-neutral-900/80 backdrop-blur-md border border-neutral-700/80 text-center hover:border-neutral-600 hover:bg-neutral-800/80 transition shadow-sm">
               <span class="text-xs font-bold text-white lowercase">faris</span>
             </button>
-            <button onclick="selectUserAndEnter('B', 'saiba <3')" class="btn-press py-3.5 px-4 rounded-2xl bg-neutral-900/80 backdrop-blur-md border border-neutral-700/80 text-center hover:border-rose-900/60 hover:bg-neutral-800/80 transition shadow-sm">
-              <span class="text-xs font-bold text-white lowercase">saiba <span class="text-rose-400">♥</span></span>
+            <button onclick="selectUserAndEnter('B', 'saiba')" class="btn-press py-3.5 px-4 rounded-2xl bg-neutral-900/80 backdrop-blur-md border border-neutral-700/80 text-center hover:border-rose-900/60 hover:bg-neutral-800/80 transition shadow-sm">
+              <span class="text-xs font-bold text-white lowercase">saiba <span class="text-rose-400">❤️</span></span>
             </button>
           </div>
         </div>
@@ -349,11 +357,11 @@
     <!-- ====================================================================== -->
     <!-- TOP BAR (TOMBOL PROFIL PENGGUNA, NAVIGASI BULAN, AKSI TAMBAH SETORAN) -->
     <!-- ====================================================================== -->
-    <header class="pt-3 md:pt-4 px-3.5 sm:px-6 md:px-10 pb-2.5 flex items-center justify-between bg-[#FAFAFC] z-20 border-b border-neutral-100/60">
+    <header class="whitespace-nowrap shrink-0 pt-3 md:pt-4 px-2.5 sm:px-6 md:px-10 pb-2.5 flex items-center justify-between bg-[#FAFAFC] z-20 border-b border-neutral-100/60">
       <!-- Tombol Profil Pengguna: Klik untuk kembali ke Layar Pembuka -->
-      <button onclick="openOpeningScreen()" title="Ganti Pengguna / Buka Layar Pembuka" class="btn-press flex items-center space-x-2.5 py-1.5 px-3.5 rounded-full bg-neutral-200/60 hover:bg-neutral-200 transition">
+      <button onclick="openOpeningScreen()" title="Ganti Pengguna / Buka Layar Pembuka" class="btn-press shrink-0 whitespace-nowrap flex items-center space-x-2.5 py-1.5 px-3.5 rounded-full bg-neutral-200/60 hover:bg-neutral-200 transition">
         <span id="activeUserIndicator" class="w-2 h-2 rounded-full bg-emerald-500"></span>
-        <span id="activeUserLabel" class="text-xs md:text-sm font-bold text-neutral-900 lowercase">
+        <span id="activeUserLabel" class="whitespace-nowrap inline-flex items-center space-x-1 text-xs md:text-sm font-bold text-neutral-900 lowercase">
           faris
         </span>
         <svg class="w-3.5 h-3.5 text-neutral-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -362,13 +370,13 @@
       </button>
 
       <!-- Navigasi Pemilih Bulan Minimalis: < Bulan Tahun > -->
-      <div class="flex items-center space-x-1.5 bg-neutral-100/80 rounded-full px-2 py-1 border border-neutral-200/40">
+      <div class="shrink-0 whitespace-nowrap flex items-center space-x-1.5 bg-neutral-100/80 rounded-full px-2 py-1 border border-neutral-200/40">
         <button onclick="changeMonth(-1)" title="Bulan Sebelumnya" class="w-6 h-6 rounded-full hover:bg-white text-neutral-600 flex items-center justify-center transition">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
           </svg>
         </button>
-        <span id="navMonthYearLabel" onclick="openMonthPicker()" class="text-xs font-bold text-neutral-800 lowercase px-1.5 font-mono cursor-pointer hover:bg-white/80 rounded transition">
+        <span id="navMonthYearLabel" onclick="openMonthPicker()" class="whitespace-nowrap shrink-0 text-xs font-bold text-neutral-800 lowercase px-1.5 font-mono cursor-pointer hover:bg-white/80 rounded transition">
           -- ----
         </span>
         <button onclick="changeMonth(1)" title="Bulan Berikutnya" class="w-6 h-6 rounded-full hover:bg-white text-neutral-600 flex items-center justify-center transition">
@@ -379,7 +387,7 @@
       </div>
 
       <!-- Aksi Kanan: Musik & Tombol Setor -->
-      <div class="flex items-center space-x-1.5 sm:space-x-2">
+      <div class="shrink-0 whitespace-nowrap flex items-center space-x-1.5 sm:space-x-2">
         <!-- Split Pill Musik Terpadu: toggle + pemilih lagu -->
         <div class="flex items-center bg-rose-50 border border-rose-200/70 rounded-full p-0.5 shadow-2xs">
           <button id="btnMusicToggle" onclick="toggleMusic()" title="Play / Pause Musik" class="btn-press w-7 h-7 rounded-full flex items-center justify-center hover:bg-rose-100 transition relative">
@@ -511,6 +519,33 @@
               <circle cx="50" cy="94" r="1.8" fill="#F59E0B"/><circle cx="48" cy="94" r="1.2" fill="#FFFFFF"/><circle cx="52" cy="94" r="1.2" fill="#FFFFFF"/><circle cx="50" cy="92" r="1.2" fill="#FFFFFF"/><circle cx="50" cy="96" r="1.2" fill="#FFFFFF"/>
               <circle cx="170" cy="96" r="1.8" fill="#F59E0B"/><circle cx="168" cy="96" r="1.2" fill="#FFFFFF"/><circle cx="172" cy="96" r="1.2" fill="#FFFFFF"/><circle cx="170" cy="94" r="1.2" fill="#FFFFFF"/><circle cx="170" cy="98" r="1.2" fill="#FFFFFF"/>
               <circle cx="270" cy="95" r="1.8" fill="#F59E0B"/><circle cx="268" cy="95" r="1.2" fill="#FFFFFF"/><circle cx="272" cy="95" r="1.2" fill="#FFFFFF"/><circle cx="270" cy="93" r="1.2" fill="#FFFFFF"/><circle cx="270" cy="97" r="1.2" fill="#FFFFFF"/>
+              <!-- Rumah Film UP (kanan taman) -->
+              <g id="upHouseGroupHome" class="up-house-group" onclick="tapUpHouse()" style="cursor:pointer">
+                <!-- Cerobong bata -->
+                <rect x="216" y="40" width="8" height="30" fill="#B45309" rx="1"/>
+                <rect x="214" y="38" width="12" height="5" fill="#92400E" rx="1"/>
+                <!-- Rumpun balon - diisi JS -->
+                <g id="upBalloonsHome" class="up-balloons up-balloons-sway"></g>
+                <!-- Sayap samping rose -->
+                <rect x="176" y="78" width="14" height="25" fill="#FDA4AF" rx="2"/>
+                <!-- Dinding papan kayu kuning -->
+                <rect x="190" y="65" width="40" height="38" fill="#FDE047" rx="2"/>
+                <!-- Atap toska -->
+                <path d="M186 65 L210 50 L234 65 Z" fill="#2DD4BF"/>
+                <path d="M194 65 L210 56 L226 65 Z" fill="#0D9488"/>
+                <!-- Pintu merah -->
+                <path d="M218 103 L218 85 Q225 77 232 85 L232 103 Z" fill="#EF4444"/>
+                <circle cx="229" cy="94" r="1.5" fill="#FDE047"/>
+                <!-- Jendela bay putih kaca biru -->
+                <rect x="195" y="75" width="12" height="10" rx="2" fill="#FFFFFF"/>
+                <rect x="195" y="75" width="12" height="10" rx="2" fill="none" stroke="#38BDF8" stroke-width="1.5"/>
+                <line x1="201" y1="75" x2="201" y2="85" stroke="#38BDF8" stroke-width="0.5"/>
+                <line x1="195" y1="80" x2="207" y2="80" stroke="#38BDF8" stroke-width="0.5"/>
+                <rect x="213" y="75" width="10" height="10" rx="2" fill="#FFFFFF"/>
+                <rect x="213" y="75" width="10" height="10" rx="2" fill="none" stroke="#38BDF8" stroke-width="1.5"/>
+                <line x1="218" y1="75" x2="218" y2="85" stroke="#38BDF8" stroke-width="0.5"/>
+                <line x1="213" y1="80" x2="223" y2="80" stroke="#38BDF8" stroke-width="0.5"/>
+              </g>
             </svg>
           </div>
 
@@ -886,6 +921,36 @@
             <!-- Bunga liar daisy di taman -->
             <circle cx="55" cy="154" r="2.2" fill="#F59E0B"/><circle cx="52.5" cy="154" r="1.5" fill="#FFFFFF"/><circle cx="57.5" cy="154" r="1.5" fill="#FFFFFF"/><circle cx="55" cy="151.5" r="1.5" fill="#FFFFFF"/><circle cx="55" cy="156.5" r="1.5" fill="#FFFFFF"/>
             <circle cx="305" cy="152" r="2.2" fill="#F59E0B"/><circle cx="302.5" cy="152" r="1.5" fill="#FFFFFF"/><circle cx="307.5" cy="152" r="1.5" fill="#FFFFFF"/><circle cx="305" cy="149.5" r="1.5" fill="#FFFFFF"/><circle cx="305" cy="154.5" r="1.5" fill="#FFFFFF"/>
+            <!-- Rumah Film UP (kanan taman detail) -->
+            <g id="upHouseGroupPlant" class="up-house-group" onclick="tapUpHouse()" style="cursor:pointer">
+              <!-- Cerobong bata -->
+              <rect x="312" y="58" width="12" height="48" fill="#B45309" rx="1.5"/>
+              <rect x="309" y="55" width="18" height="6" fill="#92400E" rx="1.5"/>
+              <!-- Rumpun balon - diisi JS -->
+              <g id="upBalloonsPlant" class="up-balloons up-balloons-sway"></g>
+              <!-- Sayap samping rose -->
+              <rect x="269" y="110" width="22" height="42" fill="#FDA4AF" rx="3"/>
+              <!-- Dinding papan kayu kuning -->
+              <rect x="291" y="95" width="54" height="57" fill="#FDE047" rx="3"/>
+              <!-- Atap toska -->
+              <path d="M286 95 L318 72 L350 95 Z" fill="#2DD4BF"/>
+              <path d="M297 95 L318 80 L339 95 Z" fill="#0D9488"/>
+              <!-- Jendela dormer atap -->
+              <rect x="310" y="80" width="16" height="14" rx="2" fill="#FFFFFF"/>
+              <path d="M307 80 L318 72 L329 80 Z" fill="#2DD4BF"/>
+              <!-- Pintu merah -->
+              <path d="M314 152 L314 130 Q323 120 332 130 L332 152 Z" fill="#EF4444"/>
+              <circle cx="329" cy="141" r="2.2" fill="#FDE047"/>
+              <!-- Jendela bay putih -->
+              <rect x="295" y="112" width="16" height="14" rx="2" fill="#FFFFFF"/>
+              <rect x="295" y="112" width="16" height="14" rx="2" fill="none" stroke="#38BDF8" stroke-width="2"/>
+              <line x1="303" y1="112" x2="303" y2="126" stroke="#38BDF8" stroke-width="0.8"/>
+              <line x1="295" y1="119" x2="311" y2="119" stroke="#38BDF8" stroke-width="0.8"/>
+              <rect x="315" y="112" width="14" height="14" rx="2" fill="#FFFFFF"/>
+              <rect x="315" y="112" width="14" height="14" rx="2" fill="none" stroke="#38BDF8" stroke-width="2"/>
+              <line x1="322" y1="112" x2="322" y2="126" stroke="#38BDF8" stroke-width="0.8"/>
+              <line x1="315" y1="119" x2="329" y2="119" stroke="#38BDF8" stroke-width="0.8"/>
+            </g>
           </svg>
 
           <!-- Bubble Chat Safa di Detail Taman: independen di atas taman, tidak terbalik/terpotong -->
@@ -984,6 +1049,14 @@
               <p class="text-[10px] text-neutral-400">05:16 · lagu cinta klasik</p>
             </div>
             <span id="songCheckAdele" class="w-5 h-5 rounded-full bg-rose-500 text-white flex items-center justify-center text-[10px]">✓</span>
+          </button>
+          <button onclick="selectSong('harry')" id="songBtnHarry" class="btn-press w-full flex items-center space-x-3 px-3.5 py-3 rounded-2xl bg-rose-50/50 border border-rose-100 text-left hover:bg-rose-50 transition">
+            <span class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">🌹</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-bold text-neutral-800">Harry Styles - Coming Up Roses</p>
+              <p class="text-[10px] text-neutral-400">04:34 · kiss all the time</p>
+            </div>
+            <span id="songCheckHarry" class="w-5 h-5 rounded-full bg-rose-500 text-white flex items-center justify-center text-[10px] hidden">✓</span>
           </button>
         </div>
 
@@ -1107,7 +1180,7 @@
       config: {
         nominal: 100000,
         namaA: 'faris',
-        namaB: 'saiba <3'
+        namaB: 'saiba'
       },
       records: [],
       koreksiList: []
@@ -1125,6 +1198,7 @@
       renderPlantVisuals();
       renderFullHistory();
       checkPartnerPresence();
+      renderUpHouseBalloons();
       syncWithGoogleBackend();
 
       if ('serviceWorker' in navigator) {
@@ -1280,11 +1354,24 @@
         }
         audio.src = './audio/adele-lovesong.mp3';
         currentSong = 'adele';
-        // Update UI checkmark
         document.getElementById('songCheckAdele').classList.remove('hidden');
-        // Update labels
+        document.getElementById('songCheckHarry').classList.add('hidden');
         document.getElementById('songPickerCurrentTitle').textContent = 'Adele - Lovesong';
         document.getElementById('songPickerIcon').textContent = '🎵';
+        audio.removeAttribute('data-user-muted');
+        audio.load();
+        audio.play().catch(() => updateMusicUI(false));
+      } else if (songId === 'harry') {
+        if (customAudioUrl) {
+          URL.revokeObjectURL(customAudioUrl);
+          customAudioUrl = null;
+        }
+        audio.src = './audio/harry-styles-roses.mp3';
+        currentSong = 'harry';
+        document.getElementById('songCheckHarry').classList.remove('hidden');
+        document.getElementById('songCheckAdele').classList.add('hidden');
+        document.getElementById('songPickerCurrentTitle').textContent = 'Harry Styles - Coming Up Roses';
+        document.getElementById('songPickerIcon').textContent = '🌹';
         audio.removeAttribute('data-user-muted');
         audio.load();
         audio.play().catch(() => updateMusicUI(false));
@@ -1420,7 +1507,13 @@
 
       const userLabel = document.getElementById('activeUserLabel');
       const userDot = document.getElementById('activeUserIndicator');
-      if (userLabel) userLabel.textContent = name;
+      if (userLabel) {
+        if (role === 'B') {
+          userLabel.innerHTML = 'saiba <span class="text-rose-500 text-xs">❤️</span>';
+        } else {
+          userLabel.textContent = 'faris';
+        }
+      }
       if (userDot) {
         userDot.className = `w-2 h-2 rounded-full ${role === 'A' ? 'bg-emerald-500' : 'bg-rose-400'}`;
       }
@@ -1621,6 +1714,7 @@
 
       checkFullMonthCelebration();
       renderSafaVisuals();
+      renderUpHouseBalloons();
     }
 
     function renderCirclesForUser(role, timeline) {
@@ -1698,6 +1792,7 @@
       const subEl = document.getElementById('monthSubTotal');
       if (subEl) subEl.textContent = 'Bulan ini: Rp' + monthTotal.toLocaleString('id-ID');
       renderPlantVisuals();
+      renderUpHouseBalloons();
     }
 
     /**
@@ -2422,6 +2517,7 @@
       // Update progress + stage list
       renderPlantVisuals();
       renderSafaVisuals();
+      renderUpHouseBalloons();
 
       sheet.classList.remove('hidden');
     }
@@ -2712,6 +2808,52 @@
         }, 200);
       }, 2500);
       if (navigator.vibrate) navigator.vibrate([30, 20, 30]);
+    }
+
+    /**
+     * RUMAH FILM UP — BALON MENYESUAIKAN TABUNGAN
+     */
+    const UP_BALLOON_COLORS = ['#EF4444', '#F97316', '#FACC15', '#10B981', '#06B6D4', '#3B82F6', '#8B5CF6', '#EC4899', '#F43F5E'];
+
+    function renderUpHouseBalloons() {
+      const count = Math.min(48, 8 + (APP_DATABASE.records.length * 3));
+      const homeG = document.getElementById('upBalloonsHome');
+      const plantG = document.getElementById('upBalloonsPlant');
+
+      // Small balloons for home card (smaller, tighter cluster)
+      if (homeG) {
+        let html = '';
+        for (let i = 0; i < count; i++) {
+          const c = UP_BALLOON_COLORS[i % UP_BALLOON_COLORS.length];
+          const cx = 216 + (i % 6) * 6 - 15;
+          const cy = 30 - Math.floor(i / 6) * 7;
+          html += `<g><circle cx="${cx}" cy="${cy}" r="4" fill="${c}" stroke="${c}" stroke-width="0.3"/>
+            <circle cx="${cx-1}" cy="${cy-1.5}" r="1.2" fill="#FFFFFF" opacity="0.6"/>
+            <path d="M${cx} ${cy+4} Q${cx+1} ${cy+8} ${216+2} ${40}" stroke="#94A3B8" stroke-width="0.4" fill="none"/></g>`;
+        }
+        homeG.innerHTML = html;
+      }
+
+      // Larger balloons for plant sheet
+      if (plantG) {
+        let html = '';
+        for (let i = 0; i < count; i++) {
+          const c = UP_BALLOON_COLORS[i % UP_BALLOON_COLORS.length];
+          const cx = 312 + (i % 6) * 8 - 20;
+          const cy = 44 - Math.floor(i / 6) * 9;
+          html += `<g><circle cx="${cx}" cy="${cy}" r="5.5" fill="${c}" stroke="${c}" stroke-width="0.4"/>
+            <circle cx="${cx-1.5}" cy="${cy-2}" r="1.8" fill="#FFFFFF" opacity="0.6"/>
+            <path d="M${cx} ${cy+5.5} Q${cx+1} ${cy+10} ${312+2} ${58}" stroke="#94A3B8" stroke-width="0.5" fill="none"/></g>`;
+        }
+        plantG.innerHTML = html;
+      }
+    }
+
+    function tapUpHouse() {
+      const total = APP_DATABASE.records.length * APP_DATABASE.config.nominal;
+      const balloonCount = Math.min(48, 8 + (APP_DATABASE.records.length * 3));
+      const formatted = total.toLocaleString('id-ID');
+      showToast(`🎈 Rumah impian Faris & Saiba — Tabungan kita menerbangkan mimpi! (${balloonCount} balon, Rp${formatted})`, 'pink');
     }
 
     // Cegah gesture pinch-to-zoom & double-tap zoom pada iOS
