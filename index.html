@@ -642,10 +642,10 @@
         <div class="pt-1">
           <p class="text-[11px] text-neutral-400 mb-2.5 font-medium">pilih pengguna untuk masuk:</p>
           <div class="grid grid-cols-2 gap-3 w-full">
-            <button onclick="selectUserAndEnter('A', 'faris')" class="btn-press py-3.5 px-4 rounded-2xl bg-neutral-900/80 backdrop-blur-md border border-neutral-700/80 text-center hover:border-neutral-600 hover:bg-neutral-800/80 transition shadow-sm">
+            <button id="btnUserFaris" onclick="selectUserAndEnter('A', 'faris')" class="btn-press py-3.5 px-4 rounded-2xl bg-neutral-900/80 backdrop-blur-md border border-neutral-700/80 text-center hover:border-neutral-600 hover:bg-neutral-800/80 transition shadow-sm">
               <span class="text-xs font-bold text-white lowercase">faris</span>
             </button>
-            <button onclick="selectUserAndEnter('B', 'saiba')" class="btn-press py-3.5 px-4 rounded-2xl bg-neutral-900/80 backdrop-blur-md border border-neutral-700/80 text-center hover:border-rose-900/60 hover:bg-neutral-800/80 transition shadow-sm">
+            <button id="btnUserSaiba" onclick="selectUserAndEnter('B', 'saiba')" class="btn-press py-3.5 px-4 rounded-2xl bg-neutral-900/80 backdrop-blur-md border border-neutral-700/80 text-center hover:border-rose-900/60 hover:bg-neutral-800/80 transition shadow-sm">
               <span class="text-xs font-bold text-white lowercase">saiba <span class="text-rose-400">❤️</span></span>
             </button>
           </div>
@@ -1739,17 +1739,23 @@
       syncWithGoogleBackend();
 
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js').then((reg) => {
-          reg.update();
-        }).catch((err) => console.warn('SW:', err));
+        try {
+          if (window.location.protocol.startsWith('http') && !window.location.hostname.includes('googleusercontent.com')) {
+            navigator.serviceWorker.register('./sw.js').then((reg) => {
+              reg.update();
+            }).catch((err) => console.warn('SW:', err));
 
-        let refreshing = false;
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          if (!refreshing) {
-            refreshing = true;
-            window.location.reload();
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+              if (!refreshing) {
+                refreshing = true;
+                window.location.reload();
+              }
+            });
           }
-        });
+        } catch (e) {
+          console.warn('SW disabled in sandbox:', e);
+        }
       }
     });
 
@@ -3009,7 +3015,8 @@
 
       leafLayout[stage - 1]();
 
-      return `<svg viewBox="0 0 ${vw} ${vh}" xmlns="http://www.w3.org/2000/svg" class="${isLarge ? 'w-32 h-36' : 'w-[48px] h-[64px]'}">${parts.join('')}</svg>`;
+      const svgClass = isLarge ? 'w-32 h-36' : 'w-[48px] h-[64px]';
+      return `<svg viewBox="0 0 ${vw} ${vh}" class="${svgClass}">${parts.join('')}</svg>`;
     }
 
     function renderPlantVisuals() {
@@ -3243,7 +3250,7 @@
         `;
       }
 
-      return `<svg viewBox="0 0 ${vw} ${vh}" xmlns="http://www.w3.org/2000/svg" class="w-[${sz}px] h-[${sz}px]">${extra}</svg>`;
+      return `<svg viewBox="0 0 ${vw} ${vh}" class="w-[${sz}px] h-[${sz}px]">${extra}</svg>`;
     }
 
     function renderSafaVisuals() {
@@ -3429,6 +3436,54 @@
       const formatted = total.toLocaleString('id-ID');
       const floatMsg = balloonCount >= 52 ? ' 🎈✨ Rumah kita terbang melayang bebas!' : '';
       showToast(`🎈 Rumah impian Faris & Saiba — Tabungan kita menerbangkan mimpi! (Minggu ${balloonCount.toString().padStart(2, '0')}: ${balloonCount} balon, Rp${formatted})${floatMsg}`, 'pink');
+    }
+
+    // Explicit window binding for GAS HtmlService inline handlers
+    window.selectUserAndEnter = selectUserAndEnter;
+    window.openOpeningScreen = openOpeningScreen;
+    window.switchTab = switchTab;
+    window.openUploadSheet = openUploadSheet;
+    window.closeUploadSheet = closeUploadSheet;
+    window.openPlantSheet = openPlantSheet;
+    window.closePlantSheet = closePlantSheet;
+    window.openMonthPicker = openMonthPicker;
+    window.closeMonthPicker = closeMonthPicker;
+    window.selectMonthFromPicker = selectMonthFromPicker;
+    window.changePickerYear = changePickerYear;
+    window.changeMonth = changeMonth;
+    window.executeSetoranSubmission = executeSetoranSubmission;
+    window.openDetailSheet = openDetailSheet;
+    window.closeDetailSheet = closeDetailSheet;
+    window.openKoreksiSheet = openKoreksiSheet;
+    window.closeKoreksiSheet = closeKoreksiSheet;
+    window.executeKoreksiSubmission = executeKoreksiSubmission;
+    window.respondToCorrection = respondToCorrection;
+    window.openFullscreenProof = openFullscreenProof;
+    window.openFullscreenNewProof = openFullscreenNewProof;
+    window.closeFullscreenProof = closeFullscreenProof;
+    window.setHistoryFilter = setHistoryFilter;
+    window.toggleMusic = toggleMusic;
+    window.openSongPicker = openSongPicker;
+    window.closeSongPicker = closeSongPicker;
+    window.selectSong = selectSong;
+    window.tapUpHouse = tapUpHouse;
+
+    function bindUserButtonsDirectly() {
+      const bFaris = document.getElementById('btnUserFaris');
+      if (bFaris && !bFaris.dataset.bound) {
+        bFaris.dataset.bound = 'true';
+        bFaris.addEventListener('click', function(e) { e.preventDefault(); selectUserAndEnter('A', 'faris'); });
+      }
+      const bSaiba = document.getElementById('btnUserSaiba');
+      if (bSaiba && !bSaiba.dataset.bound) {
+        bSaiba.dataset.bound = 'true';
+        bSaiba.addEventListener('click', function(e) { e.preventDefault(); selectUserAndEnter('B', 'saiba'); });
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', bindUserButtonsDirectly);
+    } else {
+      bindUserButtonsDirectly();
     }
 
     // Cegah gesture pinch-to-zoom & double-tap zoom pada iOS
