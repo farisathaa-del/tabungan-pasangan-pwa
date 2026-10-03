@@ -291,6 +291,14 @@
       animation: upBalloonsSway 3.5s ease-in-out infinite;
       transform-origin: bottom center;
     }
+    @keyframes upHouseFloat {
+      0%, 100% { transform: translateY(-7px) rotate(-0.4deg); }
+      50% { transform: translateY(-11px) rotate(0.6deg); }
+    }
+    .up-house-floating {
+      animation: upHouseFloat 4.2s ease-in-out infinite !important;
+      transform-origin: center bottom;
+    }
   </style>
 </head>
 
@@ -519,32 +527,171 @@
               <circle cx="50" cy="94" r="1.8" fill="#F59E0B"/><circle cx="48" cy="94" r="1.2" fill="#FFFFFF"/><circle cx="52" cy="94" r="1.2" fill="#FFFFFF"/><circle cx="50" cy="92" r="1.2" fill="#FFFFFF"/><circle cx="50" cy="96" r="1.2" fill="#FFFFFF"/>
               <circle cx="170" cy="96" r="1.8" fill="#F59E0B"/><circle cx="168" cy="96" r="1.2" fill="#FFFFFF"/><circle cx="172" cy="96" r="1.2" fill="#FFFFFF"/><circle cx="170" cy="94" r="1.2" fill="#FFFFFF"/><circle cx="170" cy="98" r="1.2" fill="#FFFFFF"/>
               <circle cx="270" cy="95" r="1.8" fill="#F59E0B"/><circle cx="268" cy="95" r="1.2" fill="#FFFFFF"/><circle cx="272" cy="95" r="1.2" fill="#FFFFFF"/><circle cx="270" cy="93" r="1.2" fill="#FFFFFF"/><circle cx="270" cy="97" r="1.2" fill="#FFFFFF"/>
-              <!-- Rumah Film UP (kanan taman) -->
-              <g id="upHouseGroupHome" class="up-house-group" onclick="tapUpHouse()" style="cursor:pointer">
-                <!-- Cerobong bata -->
-                <rect x="216" y="40" width="8" height="30" fill="#B45309" rx="1"/>
-                <rect x="214" y="38" width="12" height="5" fill="#92400E" rx="1"/>
-                <!-- Rumpun balon - diisi JS -->
-                <g id="upBalloonsHome" class="up-balloons up-balloons-sway"></g>
-                <!-- Sayap samping rose -->
-                <rect x="176" y="78" width="14" height="25" fill="#FDA4AF" rx="2"/>
-                <!-- Dinding papan kayu kuning -->
-                <rect x="190" y="65" width="40" height="38" fill="#FDE047" rx="2"/>
-                <!-- Atap toska -->
-                <path d="M186 65 L210 50 L234 65 Z" fill="#2DD4BF"/>
-                <path d="M194 65 L210 56 L226 65 Z" fill="#0D9488"/>
-                <!-- Pintu merah -->
-                <path d="M218 103 L218 85 Q225 77 232 85 L232 103 Z" fill="#EF4444"/>
-                <circle cx="229" cy="94" r="1.5" fill="#FDE047"/>
-                <!-- Jendela bay putih kaca biru -->
-                <rect x="195" y="75" width="12" height="10" rx="2" fill="#FFFFFF"/>
-                <rect x="195" y="75" width="12" height="10" rx="2" fill="none" stroke="#38BDF8" stroke-width="1.5"/>
-                <line x1="201" y1="75" x2="201" y2="85" stroke="#38BDF8" stroke-width="0.5"/>
-                <line x1="195" y1="80" x2="207" y2="80" stroke="#38BDF8" stroke-width="0.5"/>
-                <rect x="213" y="75" width="10" height="10" rx="2" fill="#FFFFFF"/>
-                <rect x="213" y="75" width="10" height="10" rx="2" fill="none" stroke="#38BDF8" stroke-width="1.5"/>
-                <line x1="218" y1="75" x2="218" y2="85" stroke="#38BDF8" stroke-width="0.5"/>
-                <line x1="213" y1="80" x2="223" y2="80" stroke="#38BDF8" stroke-width="0.5"/>
+              <!-- Rumah Film UP Autentik 9-Elemen (Card Beranda) -->
+              <g id="upHouseGroupHome" class="up-house-group" onclick="tapUpHouse()" style="cursor:pointer" transform="translate(18, 14) scale(0.65)">
+        <!-- 5. CEROBONG BATA MERAH (TETHER BALON) -->
+        <g id="upChimney">
+          <rect x="332" y="66" width="12" height="48" fill="#B91C1C" rx="1"/>
+          <line x1="332" y1="74" x2="344" y2="74" stroke="#7F1D1D" stroke-width="0.8"/>
+          <line x1="332" y1="82" x2="344" y2="82" stroke="#7F1D1D" stroke-width="0.8"/>
+          <line x1="332" y1="90" x2="344" y2="90" stroke="#7F1D1D" stroke-width="0.8"/>
+          <line x1="332" y1="98" x2="344" y2="98" stroke="#7F1D1D" stroke-width="0.8"/>
+          <rect x="330" y="62" width="16" height="5" fill="#991B1B" rx="1"/>
+          <rect x="331" y="60" width="14" height="3" fill="#64748B" rx="0.5"/>
+          <circle cx="338" cy="70" r="2.2" fill="#FDE047" stroke="#B45309" stroke-width="0.6"/>
+        </g>
+
+        <!-- KANOPI BALON DINAMIS -->
+        <g id="upBalloonsHome" class="up-balloons up-balloons-sway"></g>
+
+        <!-- 4. SIDING DINDING KAYU PASTEL: SAYAP KIRI (SOFT PINK DUSTY) -->
+        <g id="upLeftWing">
+          <rect x="254" y="114" width="34" height="44" fill="#FBCFE8" rx="2"/>
+          <line x1="254" y1="120" x2="288" y2="120" stroke="#F472B6" stroke-width="0.7" opacity="0.6"/>
+          <line x1="254" y1="126" x2="288" y2="126" stroke="#F472B6" stroke-width="0.7" opacity="0.6"/>
+          <line x1="254" y1="132" x2="288" y2="132" stroke="#F472B6" stroke-width="0.7" opacity="0.6"/>
+          <line x1="254" y1="138" x2="288" y2="138" stroke="#F472B6" stroke-width="0.7" opacity="0.6"/>
+          <line x1="254" y1="144" x2="288" y2="144" stroke="#F472B6" stroke-width="0.7" opacity="0.6"/>
+          <line x1="254" y1="150" x2="288" y2="150" stroke="#F472B6" stroke-width="0.7" opacity="0.6"/>
+          <path d="M250 114 L271 98 L292 114 Z" fill="#0D9488"/>
+          <path d="M253 114 L271 100 L289 114 Z" fill="#14B8A6"/>
+          <path d="M249 114 L293 114" stroke="#F97316" stroke-width="1.8" stroke-linecap="round"/>
+
+          <!-- 3. BAY WINDOW LANTAI DASAR -->
+          <g id="upBayWindowLower">
+            <polygon points="257,144 261,126 281,126 285,144" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="0.8"/>
+            <polygon points="255,126 260,121 282,121 287,126" fill="#0D9488"/>
+            <rect x="260" y="127" width="4.5" height="13" fill="#38BDF8"/>
+            <rect x="266.5" y="127" width="9" height="13" fill="#38BDF8"/>
+            <rect x="277.5" y="127" width="4.5" height="13" fill="#38BDF8"/>
+            <line x1="266.5" y1="133.5" x2="275.5" y2="133.5" stroke="#FFFFFF" stroke-width="0.8"/>
+            <line x1="257" y1="144" x2="285" y2="144" stroke="#94A3B8" stroke-width="1.2"/>
+          </g>
+        </g>
+
+        <!-- BAGIAN UTAMA / TENGAH (KUNING LEMON LANTAI 1 & TEAL/CYAN LANTAI 2) -->
+        <g id="upMainBody">
+          <rect x="286" y="120" width="56" height="38" fill="#FEF08A" rx="1"/>
+          <line x1="286" y1="126" x2="342" y2="126" stroke="#EAB308" stroke-width="0.7" opacity="0.6"/>
+          <line x1="286" y1="132" x2="342" y2="132" stroke="#EAB308" stroke-width="0.7" opacity="0.6"/>
+          <line x1="286" y1="138" x2="342" y2="138" stroke="#EAB308" stroke-width="0.7" opacity="0.6"/>
+          <line x1="286" y1="144" x2="342" y2="144" stroke="#EAB308" stroke-width="0.7" opacity="0.6"/>
+          <line x1="286" y1="150" x2="342" y2="150" stroke="#EAB308" stroke-width="0.7" opacity="0.6"/>
+
+          <rect x="286" y="96" width="54" height="25" fill="#67E8F9" rx="1"/>
+          <line x1="286" y1="102" x2="340" y2="102" stroke="#06B6D4" stroke-width="0.7" opacity="0.6"/>
+          <line x1="286" y1="108" x2="340" y2="108" stroke="#06B6D4" stroke-width="0.7" opacity="0.6"/>
+          <line x1="286" y1="114" x2="340" y2="114" stroke="#06B6D4" stroke-width="0.7" opacity="0.6"/>
+          <rect x="284" y="119" width="58" height="2.5" fill="#F59E0B" rx="0.5"/>
+
+          <!-- 3. BAY WINDOW LANTAI 2 -->
+          <g id="upBayWindowUpper">
+            <polygon points="288,116 291,99 307,99 310,116" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="0.7"/>
+            <polygon points="287,99 299,94 311,99" fill="#0D9488"/>
+            <rect x="290" y="100.5" width="3.5" height="12" fill="#38BDF8"/>
+            <rect x="295" y="100.5" width="8" height="12" fill="#38BDF8"/>
+            <rect x="304.5" y="100.5" width="3.5" height="12" fill="#38BDF8"/>
+            <line x1="295" y1="106.5" x2="303" y2="106.5" stroke="#FFFFFF" stroke-width="0.7"/>
+          </g>
+
+          <!-- 1. ATAP MANSARD VICTORIAN -->
+          <g id="upMansardRoof">
+            <polygon points="280,97 292,72 338,72 344,97" fill="#1E293B"/>
+            <polygon points="283,97 293,74 336,74 341,97" fill="#1E3A8A"/>
+            <path d="M278 97 L346 97" stroke="#F97316" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M291 72 L339 72" stroke="#F59E0B" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M293 71 L295 68 L297 71 L299 68 L301 71 L303 68 L305 71 L307 68 L309 71 L311 68 L313 71 L315 68 L317 71 L319 68 L321 71 L323 68 L325 71 L327 68 L329 71 L331 68 L333 71 L335 68 L337 71" stroke="#475569" stroke-width="0.8" fill="none"/>
+            <path d="M336 67 L336 61 M334 63 L338 63" stroke="#F59E0B" stroke-width="0.8"/>
+            <polygon points="334,61 336,59 338,61 336,60" fill="#F59E0B"/>
+          </g>
+
+          <!-- 2. DORMER WINDOW SEGITIGA -->
+          <g id="upDormerWindow">
+            <polygon points="307,88 319,69 331,88" fill="#0D9488"/>
+            <polygon points="309,88 319,72 329,88" fill="#14B8A6"/>
+            <line x1="307" y1="88" x2="319" y2="69" stroke="#F97316" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="319" y1="69" x2="331" y2="88" stroke="#F97316" stroke-width="1.5" stroke-linecap="round"/>
+            <rect x="312" y="77" width="14" height="13" fill="#FFFFFF" rx="1"/>
+            <polygon points="314,77 319,72 324,77" fill="#38BDF8"/>
+            <rect x="314" y="79" width="10" height="9" fill="#38BDF8"/>
+            <line x1="319" y1="79" x2="319" y2="88" stroke="#FFFFFF" stroke-width="0.8"/>
+            <line x1="314" y1="83.5" x2="324" y2="83.5" stroke="#FFFFFF" stroke-width="0.8"/>
+          </g>
+
+          <!-- 6. TERAS KAYU & PINTU MERAH -->
+          <g id="upFrontPorch">
+            <rect x="317" y="132" width="15" height="26" fill="#DC2626" rx="1.5"/>
+            <rect x="319" y="134" width="11" height="10" fill="#EF4444" rx="1"/>
+            <rect x="319" y="146" width="11" height="10" fill="#EF4444" rx="1"/>
+            <circle cx="328.5" cy="144" r="1.4" fill="#FBBF24" stroke="#B45309" stroke-width="0.4"/>
+            <polygon points="310,132 325,127 340,132" fill="#14B8A6"/>
+            <line x1="308" y1="132" x2="342" y2="132" stroke="#F97316" stroke-width="1.8" stroke-linecap="round"/>
+            <rect x="311" y="132" width="2.5" height="26" fill="#F472B6" rx="0.5"/>
+            <rect x="338" y="132" width="2.5" height="26" fill="#F472B6" rx="0.5"/>
+            <line x1="311" y1="146" x2="317" y2="146" stroke="#FFFFFF" stroke-width="1.2"/>
+            <line x1="311" y1="152" x2="317" y2="152" stroke="#FFFFFF" stroke-width="1.2"/>
+            <rect x="314" y="156" width="22" height="2.5" fill="#D97706" rx="0.5"/>
+            <rect x="312" y="158" width="26" height="2.5" fill="#B45309" rx="0.5"/>
+            <line x1="314" y1="156" x2="336" y2="156" stroke="#FEF3C7" stroke-width="0.8"/>
+          </g>
+        </g>
+              </g>
+              <g transform="translate(18, 14) scale(0.65)">
+      <!-- ==================== HALAMAN DEPAN RUMAH UP (PEKARANGAN & KOTAK SURAT) ==================== -->
+      <!-- Jalan setapak batu paving menuju teras -->
+      <g id="upWalkway">
+        <ellipse cx="325" cy="161.5" rx="5" ry="1.8" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.4"/>
+        <ellipse cx="320" cy="163" rx="4.5" ry="1.6" fill="#CBD5E1" stroke="#94A3B8" stroke-width="0.4"/>
+        <ellipse cx="328" cy="163.5" rx="4.5" ry="1.6" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.4"/>
+      </g>
+
+      <!-- 7. PAGAR PIKET PUTIH DENGAN JALUR GERBANG TERBUKA MENUJU PINTU -->
+      <g id="upPicketFence">
+        <line x1="246" y1="152" x2="308" y2="152" stroke="#CBD5E1" stroke-width="1.2"/>
+        <line x1="246" y1="156" x2="308" y2="156" stroke="#CBD5E1" stroke-width="1.2"/>
+        <polygon points="246,158 246,148 247.5,146 249,148 249,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <polygon points="252,158 252,148 253.5,146 255,148 255,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <polygon points="258,158 258,148 259.5,146 261,148 261,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <polygon points="264,158 264,148 265.5,146 267,148 267,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <polygon points="270,158 270,148 271.5,146 273,148 273,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <polygon points="276,158 276,148 277.5,146 279,148 279,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <polygon points="282,158 282,148 283.5,146 285,148 285,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <polygon points="288,158 288,148 289.5,146 291,148 291,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <polygon points="294,158 294,148 295.5,146 297,148 297,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <polygon points="300,158 300,148 301.5,146 303,148 303,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <rect x="306" y="145" width="3" height="13" fill="#FFFFFF" stroke="#64748B" stroke-width="0.5"/>
+        <circle cx="307.5" cy="144" r="1.6" fill="#F59E0B" stroke="#B45309" stroke-width="0.4"/>
+
+        <!-- Gerbang Masuk Terbuka (x: 309 s.d. 340) -->
+        <rect x="340" y="145" width="3" height="13" fill="#FFFFFF" stroke="#64748B" stroke-width="0.5"/>
+        <circle cx="341.5" cy="144" r="1.6" fill="#F59E0B" stroke="#B45309" stroke-width="0.4"/>
+        <line x1="343" y1="152" x2="356" y2="152" stroke="#CBD5E1" stroke-width="1.2"/>
+        <line x1="343" y1="156" x2="356" y2="156" stroke="#CBD5E1" stroke-width="1.2"/>
+        <polygon points="345,158 345,148 346.5,146 348,148 348,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <polygon points="351,158 351,148 352.5,146 354,148 354,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+      </g>
+
+      <!-- 8. KOTAK SURAT CARL & ELLIE DENGAN TULISAN S ❤️ F -->
+      <g id="upMailbox">
+        <rect x="242" y="148" width="2.4" height="12" fill="#F59E0B" rx="0.5"/>
+        <path d="M240 148 L242 153 M246 148 L244 153" stroke="#F59E0B" stroke-width="1.2" stroke-linecap="round"/>
+        <rect x="239" y="146.5" width="8.5" height="2" fill="#2563EB" rx="0.4"/>
+        <path d="M238 146.5 L238 140 Q243 136.5 248 140 L248 146.5 Z" fill="#FEF9C3" stroke="#06B6D4" stroke-width="0.8"/>
+        <path d="M238 146.5 L238 140 Q240 137 242 140 L242 146.5 Z" fill="#F8FAFC" stroke="#06B6D4" stroke-width="0.6"/>
+        <path d="M247.5 146.5 L247.5 138.5 L250.5 140 L247.5 141.5" fill="#EF4444"/>
+        <text x="240.8" y="144.5" font-size="3.2" font-family="Arial, Helvetica, sans-serif" font-weight="900" fill="#0284C7">S</text>
+        <path d="M244.4 143.2 Q243.8 142.1 244.5 141.6 Q245 141.6 245.2 142.2 Q245.4 141.6 245.9 141.6 Q246.6 142.1 246 143.2 L245.2 144.2 Z" fill="#EF4444"/>
+        <text x="246" y="144.5" font-size="3.2" font-family="Arial, Helvetica, sans-serif" font-weight="900" fill="#0284C7">F</text>
+      </g>
+
+      <!-- 9. RERUMPUTAN & BUNGA ASTER/DAISY -->
+      <g id="upGardenFlowers">
+        <path d="M236 160 Q290 156 358 160 L358 162 L236 162 Z" fill="#4ADE80" opacity="0.6"/>
+        <circle cx="238" cy="158" r="1.5" fill="#F59E0B"/><circle cx="236.5" cy="158" r="1" fill="#FFFFFF"/><circle cx="239.5" cy="158" r="1" fill="#FFFFFF"/><circle cx="238" cy="156.5" r="1" fill="#FFFFFF"/>
+        <circle cx="266" cy="159" r="1.5" fill="#F59E0B"/><circle cx="264.5" cy="159" r="1" fill="#FFFFFF"/><circle cx="267.5" cy="159" r="1" fill="#FFFFFF"/><circle cx="266" cy="157.5" r="1" fill="#FFFFFF"/>
+        <circle cx="304" cy="160" r="1.5" fill="#F59E0B"/><circle cx="302.5" cy="160" r="1" fill="#FFFFFF"/><circle cx="305.5" cy="160" r="1" fill="#FFFFFF"/><circle cx="304" cy="158.5" r="1" fill="#FFFFFF"/>
+        <circle cx="350" cy="159" r="1.5" fill="#F59E0B"/><circle cx="348.5" cy="159" r="1" fill="#FFFFFF"/><circle cx="351.5" cy="159" r="1" fill="#FFFFFF"/><circle cx="350" cy="157.5" r="1" fill="#FFFFFF"/>
+      </g>
               </g>
             </svg>
           </div>
@@ -921,36 +1068,173 @@
             <!-- Bunga liar daisy di taman -->
             <circle cx="55" cy="154" r="2.2" fill="#F59E0B"/><circle cx="52.5" cy="154" r="1.5" fill="#FFFFFF"/><circle cx="57.5" cy="154" r="1.5" fill="#FFFFFF"/><circle cx="55" cy="151.5" r="1.5" fill="#FFFFFF"/><circle cx="55" cy="156.5" r="1.5" fill="#FFFFFF"/>
             <circle cx="305" cy="152" r="2.2" fill="#F59E0B"/><circle cx="302.5" cy="152" r="1.5" fill="#FFFFFF"/><circle cx="307.5" cy="152" r="1.5" fill="#FFFFFF"/><circle cx="305" cy="149.5" r="1.5" fill="#FFFFFF"/><circle cx="305" cy="154.5" r="1.5" fill="#FFFFFF"/>
-            <!-- Rumah Film UP (kanan taman detail) -->
+            <!-- Bayangan tanah rumah UP pekarangan -->
+            <ellipse cx="304" cy="162" rx="60" ry="7" fill="#14532D" opacity="0.25"/>
+
+            <!-- Rumah Film UP Autentik 9-Elemen (Detail Lembar Taman) -->
             <g id="upHouseGroupPlant" class="up-house-group" onclick="tapUpHouse()" style="cursor:pointer">
-              <!-- Cerobong bata -->
-              <rect x="312" y="58" width="12" height="48" fill="#B45309" rx="1.5"/>
-              <rect x="309" y="55" width="18" height="6" fill="#92400E" rx="1.5"/>
-              <!-- Rumpun balon - diisi JS -->
-              <g id="upBalloonsPlant" class="up-balloons up-balloons-sway"></g>
-              <!-- Sayap samping rose -->
-              <rect x="269" y="110" width="22" height="42" fill="#FDA4AF" rx="3"/>
-              <!-- Dinding papan kayu kuning -->
-              <rect x="291" y="95" width="54" height="57" fill="#FDE047" rx="3"/>
-              <!-- Atap toska -->
-              <path d="M286 95 L318 72 L350 95 Z" fill="#2DD4BF"/>
-              <path d="M297 95 L318 80 L339 95 Z" fill="#0D9488"/>
-              <!-- Jendela dormer atap -->
-              <rect x="310" y="80" width="16" height="14" rx="2" fill="#FFFFFF"/>
-              <path d="M307 80 L318 72 L329 80 Z" fill="#2DD4BF"/>
-              <!-- Pintu merah -->
-              <path d="M314 152 L314 130 Q323 120 332 130 L332 152 Z" fill="#EF4444"/>
-              <circle cx="329" cy="141" r="2.2" fill="#FDE047"/>
-              <!-- Jendela bay putih -->
-              <rect x="295" y="112" width="16" height="14" rx="2" fill="#FFFFFF"/>
-              <rect x="295" y="112" width="16" height="14" rx="2" fill="none" stroke="#38BDF8" stroke-width="2"/>
-              <line x1="303" y1="112" x2="303" y2="126" stroke="#38BDF8" stroke-width="0.8"/>
-              <line x1="295" y1="119" x2="311" y2="119" stroke="#38BDF8" stroke-width="0.8"/>
-              <rect x="315" y="112" width="14" height="14" rx="2" fill="#FFFFFF"/>
-              <rect x="315" y="112" width="14" height="14" rx="2" fill="none" stroke="#38BDF8" stroke-width="2"/>
-              <line x1="322" y1="112" x2="322" y2="126" stroke="#38BDF8" stroke-width="0.8"/>
-              <line x1="315" y1="119" x2="329" y2="119" stroke="#38BDF8" stroke-width="0.8"/>
+        <!-- 5. CEROBONG BATA MERAH (TETHER BALON) -->
+        <g id="upChimney">
+          <rect x="332" y="66" width="12" height="48" fill="#B91C1C" rx="1"/>
+          <line x1="332" y1="74" x2="344" y2="74" stroke="#7F1D1D" stroke-width="0.8"/>
+          <line x1="332" y1="82" x2="344" y2="82" stroke="#7F1D1D" stroke-width="0.8"/>
+          <line x1="332" y1="90" x2="344" y2="90" stroke="#7F1D1D" stroke-width="0.8"/>
+          <line x1="332" y1="98" x2="344" y2="98" stroke="#7F1D1D" stroke-width="0.8"/>
+          <rect x="330" y="62" width="16" height="5" fill="#991B1B" rx="1"/>
+          <rect x="331" y="60" width="14" height="3" fill="#64748B" rx="0.5"/>
+          <circle cx="338" cy="70" r="2.2" fill="#FDE047" stroke="#B45309" stroke-width="0.6"/>
+        </g>
+
+        <!-- KANOPI BALON DINAMIS -->
+        <g id="upBalloonsPlant" class="up-balloons up-balloons-sway"></g>
+
+        <!-- 4. SIDING DINDING KAYU PASTEL: SAYAP KIRI (SOFT PINK DUSTY) -->
+        <g id="upLeftWing">
+          <rect x="254" y="114" width="34" height="44" fill="#FBCFE8" rx="2"/>
+          <line x1="254" y1="120" x2="288" y2="120" stroke="#F472B6" stroke-width="0.7" opacity="0.6"/>
+          <line x1="254" y1="126" x2="288" y2="126" stroke="#F472B6" stroke-width="0.7" opacity="0.6"/>
+          <line x1="254" y1="132" x2="288" y2="132" stroke="#F472B6" stroke-width="0.7" opacity="0.6"/>
+          <line x1="254" y1="138" x2="288" y2="138" stroke="#F472B6" stroke-width="0.7" opacity="0.6"/>
+          <line x1="254" y1="144" x2="288" y2="144" stroke="#F472B6" stroke-width="0.7" opacity="0.6"/>
+          <line x1="254" y1="150" x2="288" y2="150" stroke="#F472B6" stroke-width="0.7" opacity="0.6"/>
+          <path d="M250 114 L271 98 L292 114 Z" fill="#0D9488"/>
+          <path d="M253 114 L271 100 L289 114 Z" fill="#14B8A6"/>
+          <path d="M249 114 L293 114" stroke="#F97316" stroke-width="1.8" stroke-linecap="round"/>
+
+          <!-- 3. BAY WINDOW LANTAI DASAR -->
+          <g id="upBayWindowLower">
+            <polygon points="257,144 261,126 281,126 285,144" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="0.8"/>
+            <polygon points="255,126 260,121 282,121 287,126" fill="#0D9488"/>
+            <rect x="260" y="127" width="4.5" height="13" fill="#38BDF8"/>
+            <rect x="266.5" y="127" width="9" height="13" fill="#38BDF8"/>
+            <rect x="277.5" y="127" width="4.5" height="13" fill="#38BDF8"/>
+            <line x1="266.5" y1="133.5" x2="275.5" y2="133.5" stroke="#FFFFFF" stroke-width="0.8"/>
+            <line x1="257" y1="144" x2="285" y2="144" stroke="#94A3B8" stroke-width="1.2"/>
+          </g>
+        </g>
+
+        <!-- BAGIAN UTAMA / TENGAH (KUNING LEMON LANTAI 1 & TEAL/CYAN LANTAI 2) -->
+        <g id="upMainBody">
+          <rect x="286" y="120" width="56" height="38" fill="#FEF08A" rx="1"/>
+          <line x1="286" y1="126" x2="342" y2="126" stroke="#EAB308" stroke-width="0.7" opacity="0.6"/>
+          <line x1="286" y1="132" x2="342" y2="132" stroke="#EAB308" stroke-width="0.7" opacity="0.6"/>
+          <line x1="286" y1="138" x2="342" y2="138" stroke="#EAB308" stroke-width="0.7" opacity="0.6"/>
+          <line x1="286" y1="144" x2="342" y2="144" stroke="#EAB308" stroke-width="0.7" opacity="0.6"/>
+          <line x1="286" y1="150" x2="342" y2="150" stroke="#EAB308" stroke-width="0.7" opacity="0.6"/>
+
+          <rect x="286" y="96" width="54" height="25" fill="#67E8F9" rx="1"/>
+          <line x1="286" y1="102" x2="340" y2="102" stroke="#06B6D4" stroke-width="0.7" opacity="0.6"/>
+          <line x1="286" y1="108" x2="340" y2="108" stroke="#06B6D4" stroke-width="0.7" opacity="0.6"/>
+          <line x1="286" y1="114" x2="340" y2="114" stroke="#06B6D4" stroke-width="0.7" opacity="0.6"/>
+          <rect x="284" y="119" width="58" height="2.5" fill="#F59E0B" rx="0.5"/>
+
+          <!-- 3. BAY WINDOW LANTAI 2 -->
+          <g id="upBayWindowUpper">
+            <polygon points="288,116 291,99 307,99 310,116" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="0.7"/>
+            <polygon points="287,99 299,94 311,99" fill="#0D9488"/>
+            <rect x="290" y="100.5" width="3.5" height="12" fill="#38BDF8"/>
+            <rect x="295" y="100.5" width="8" height="12" fill="#38BDF8"/>
+            <rect x="304.5" y="100.5" width="3.5" height="12" fill="#38BDF8"/>
+            <line x1="295" y1="106.5" x2="303" y2="106.5" stroke="#FFFFFF" stroke-width="0.7"/>
+          </g>
+
+          <!-- 1. ATAP MANSARD VICTORIAN -->
+          <g id="upMansardRoof">
+            <polygon points="280,97 292,72 338,72 344,97" fill="#1E293B"/>
+            <polygon points="283,97 293,74 336,74 341,97" fill="#1E3A8A"/>
+            <path d="M278 97 L346 97" stroke="#F97316" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M291 72 L339 72" stroke="#F59E0B" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M293 71 L295 68 L297 71 L299 68 L301 71 L303 68 L305 71 L307 68 L309 71 L311 68 L313 71 L315 68 L317 71 L319 68 L321 71 L323 68 L325 71 L327 68 L329 71 L331 68 L333 71 L335 68 L337 71" stroke="#475569" stroke-width="0.8" fill="none"/>
+            <path d="M336 67 L336 61 M334 63 L338 63" stroke="#F59E0B" stroke-width="0.8"/>
+            <polygon points="334,61 336,59 338,61 336,60" fill="#F59E0B"/>
+          </g>
+
+          <!-- 2. DORMER WINDOW SEGITIGA -->
+          <g id="upDormerWindow">
+            <polygon points="307,88 319,69 331,88" fill="#0D9488"/>
+            <polygon points="309,88 319,72 329,88" fill="#14B8A6"/>
+            <line x1="307" y1="88" x2="319" y2="69" stroke="#F97316" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="319" y1="69" x2="331" y2="88" stroke="#F97316" stroke-width="1.5" stroke-linecap="round"/>
+            <rect x="312" y="77" width="14" height="13" fill="#FFFFFF" rx="1"/>
+            <polygon points="314,77 319,72 324,77" fill="#38BDF8"/>
+            <rect x="314" y="79" width="10" height="9" fill="#38BDF8"/>
+            <line x1="319" y1="79" x2="319" y2="88" stroke="#FFFFFF" stroke-width="0.8"/>
+            <line x1="314" y1="83.5" x2="324" y2="83.5" stroke="#FFFFFF" stroke-width="0.8"/>
+          </g>
+
+          <!-- 6. TERAS KAYU & PINTU MERAH -->
+          <g id="upFrontPorch">
+            <rect x="317" y="132" width="15" height="26" fill="#DC2626" rx="1.5"/>
+            <rect x="319" y="134" width="11" height="10" fill="#EF4444" rx="1"/>
+            <rect x="319" y="146" width="11" height="10" fill="#EF4444" rx="1"/>
+            <circle cx="328.5" cy="144" r="1.4" fill="#FBBF24" stroke="#B45309" stroke-width="0.4"/>
+            <polygon points="310,132 325,127 340,132" fill="#14B8A6"/>
+            <line x1="308" y1="132" x2="342" y2="132" stroke="#F97316" stroke-width="1.8" stroke-linecap="round"/>
+            <rect x="311" y="132" width="2.5" height="26" fill="#F472B6" rx="0.5"/>
+            <rect x="338" y="132" width="2.5" height="26" fill="#F472B6" rx="0.5"/>
+            <line x1="311" y1="146" x2="317" y2="146" stroke="#FFFFFF" stroke-width="1.2"/>
+            <line x1="311" y1="152" x2="317" y2="152" stroke="#FFFFFF" stroke-width="1.2"/>
+            <rect x="314" y="156" width="22" height="2.5" fill="#D97706" rx="0.5"/>
+            <rect x="312" y="158" width="26" height="2.5" fill="#B45309" rx="0.5"/>
+            <line x1="314" y1="156" x2="336" y2="156" stroke="#FEF3C7" stroke-width="0.8"/>
+          </g>
+        </g>
             </g>
+      <!-- ==================== HALAMAN DEPAN RUMAH UP (PEKARANGAN & KOTAK SURAT) ==================== -->
+      <!-- Jalan setapak batu paving menuju teras -->
+      <g id="upWalkway">
+        <ellipse cx="325" cy="161.5" rx="5" ry="1.8" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.4"/>
+        <ellipse cx="320" cy="163" rx="4.5" ry="1.6" fill="#CBD5E1" stroke="#94A3B8" stroke-width="0.4"/>
+        <ellipse cx="328" cy="163.5" rx="4.5" ry="1.6" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.4"/>
+      </g>
+
+      <!-- 7. PAGAR PIKET PUTIH DENGAN JALUR GERBANG TERBUKA MENUJU PINTU -->
+      <g id="upPicketFence">
+        <line x1="246" y1="152" x2="308" y2="152" stroke="#CBD5E1" stroke-width="1.2"/>
+        <line x1="246" y1="156" x2="308" y2="156" stroke="#CBD5E1" stroke-width="1.2"/>
+        <polygon points="246,158 246,148 247.5,146 249,148 249,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <polygon points="252,158 252,148 253.5,146 255,148 255,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <polygon points="258,158 258,148 259.5,146 261,148 261,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <polygon points="264,158 264,148 265.5,146 267,148 267,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <polygon points="270,158 270,148 271.5,146 273,148 273,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <polygon points="276,158 276,148 277.5,146 279,148 279,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <polygon points="282,158 282,148 283.5,146 285,148 285,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <polygon points="288,158 288,148 289.5,146 291,148 291,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <polygon points="294,158 294,148 295.5,146 297,148 297,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <polygon points="300,158 300,148 301.5,146 303,148 303,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <rect x="306" y="145" width="3" height="13" fill="#FFFFFF" stroke="#64748B" stroke-width="0.5"/>
+        <circle cx="307.5" cy="144" r="1.6" fill="#F59E0B" stroke="#B45309" stroke-width="0.4"/>
+
+        <!-- Gerbang Masuk Terbuka (x: 309 s.d. 340) -->
+        <rect x="340" y="145" width="3" height="13" fill="#FFFFFF" stroke="#64748B" stroke-width="0.5"/>
+        <circle cx="341.5" cy="144" r="1.6" fill="#F59E0B" stroke="#B45309" stroke-width="0.4"/>
+        <line x1="343" y1="152" x2="356" y2="152" stroke="#CBD5E1" stroke-width="1.2"/>
+        <line x1="343" y1="156" x2="356" y2="156" stroke="#CBD5E1" stroke-width="1.2"/>
+        <polygon points="345,158 345,148 346.5,146 348,148 348,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+        <polygon points="351,158 351,148 352.5,146 354,148 354,158" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.4"/>
+      </g>
+
+      <!-- 8. KOTAK SURAT CARL & ELLIE DENGAN TULISAN S ❤️ F -->
+      <g id="upMailbox">
+        <rect x="242" y="148" width="2.4" height="12" fill="#F59E0B" rx="0.5"/>
+        <path d="M240 148 L242 153 M246 148 L244 153" stroke="#F59E0B" stroke-width="1.2" stroke-linecap="round"/>
+        <rect x="239" y="146.5" width="8.5" height="2" fill="#2563EB" rx="0.4"/>
+        <path d="M238 146.5 L238 140 Q243 136.5 248 140 L248 146.5 Z" fill="#FEF9C3" stroke="#06B6D4" stroke-width="0.8"/>
+        <path d="M238 146.5 L238 140 Q240 137 242 140 L242 146.5 Z" fill="#F8FAFC" stroke="#06B6D4" stroke-width="0.6"/>
+        <path d="M247.5 146.5 L247.5 138.5 L250.5 140 L247.5 141.5" fill="#EF4444"/>
+        <text x="240.8" y="144.5" font-size="3.2" font-family="Arial, Helvetica, sans-serif" font-weight="900" fill="#0284C7">S</text>
+        <path d="M244.4 143.2 Q243.8 142.1 244.5 141.6 Q245 141.6 245.2 142.2 Q245.4 141.6 245.9 141.6 Q246.6 142.1 246 143.2 L245.2 144.2 Z" fill="#EF4444"/>
+        <text x="246" y="144.5" font-size="3.2" font-family="Arial, Helvetica, sans-serif" font-weight="900" fill="#0284C7">F</text>
+      </g>
+
+      <!-- 9. RERUMPUTAN & BUNGA ASTER/DAISY -->
+      <g id="upGardenFlowers">
+        <path d="M236 160 Q290 156 358 160 L358 162 L236 162 Z" fill="#4ADE80" opacity="0.6"/>
+        <circle cx="238" cy="158" r="1.5" fill="#F59E0B"/><circle cx="236.5" cy="158" r="1" fill="#FFFFFF"/><circle cx="239.5" cy="158" r="1" fill="#FFFFFF"/><circle cx="238" cy="156.5" r="1" fill="#FFFFFF"/>
+        <circle cx="266" cy="159" r="1.5" fill="#F59E0B"/><circle cx="264.5" cy="159" r="1" fill="#FFFFFF"/><circle cx="267.5" cy="159" r="1" fill="#FFFFFF"/><circle cx="266" cy="157.5" r="1" fill="#FFFFFF"/>
+        <circle cx="304" cy="160" r="1.5" fill="#F59E0B"/><circle cx="302.5" cy="160" r="1" fill="#FFFFFF"/><circle cx="305.5" cy="160" r="1" fill="#FFFFFF"/><circle cx="304" cy="158.5" r="1" fill="#FFFFFF"/>
+        <circle cx="350" cy="159" r="1.5" fill="#F59E0B"/><circle cx="348.5" cy="159" r="1" fill="#FFFFFF"/><circle cx="351.5" cy="159" r="1" fill="#FFFFFF"/><circle cx="350" cy="157.5" r="1" fill="#FFFFFF"/>
+      </g>
           </svg>
 
           <!-- Bubble Chat Safa di Detail Taman: independen di atas taman, tidak terbalik/terpotong -->
@@ -2810,50 +3094,76 @@
       if (navigator.vibrate) navigator.vibrate([30, 20, 30]);
     }
 
-    /**
-     * RUMAH FILM UP — BALON MENYESUAIKAN TABUNGAN
+        /**
+     * RUMAH FILM UP — BALON MENYESUAIKAN MINGGU TABUNGAN (1 MINGGU = 1 BALON)
      */
-    const UP_BALLOON_COLORS = ['#EF4444', '#F97316', '#FACC15', '#10B981', '#06B6D4', '#3B82F6', '#8B5CF6', '#EC4899', '#F43F5E'];
+    const UP_BALLOON_COLORS = [
+      '#EF4444', '#F97316', '#FACC15', '#10B981', '#06B6D4', 
+      '#3B82F6', '#8B5CF6', '#EC4899', '#F43F5E', '#F59E0B', 
+      '#6366F1', '#14B8A6', '#D946EF', '#FB7185'
+    ];
 
     function renderUpHouseBalloons() {
-      const count = Math.min(48, 8 + (APP_DATABASE.records.length * 3));
+      // 1 Minggu Tabungan = 1 Balon (Min 1 Balon Merah s.d. 52 Balon Rimbun)
+      const paidWeeks = Math.floor(APP_DATABASE.records.length / 2);
+      const count = Math.max(1, Math.min(52, paidWeeks || (APP_DATABASE.records.length > 0 ? 1 : 1)));
+      
       const homeG = document.getElementById('upBalloonsHome');
       const plantG = document.getElementById('upBalloonsPlant');
+      const houseHome = document.getElementById('upHouseGroupHome');
+      const housePlant = document.getElementById('upHouseGroupPlant');
 
-      // Small balloons for home card (smaller, tighter cluster)
-      if (homeG) {
-        let html = '';
+      // Animasi melayang saat mencapai target 52 minggu tabungan
+      const isFloating = count >= 52;
+      if (housePlant) housePlant.classList.toggle('up-house-floating', isFloating);
+      if (houseHome) houseHome.classList.toggle('up-house-floating', isFloating);
+
+      const goldenAngle = 2.399963229728653;
+      const cx0 = 338, cy0 = 70;
+
+      function buildBalloonCluster(scale) {
+        let svgStr = '';
+        let svgBln = '';
         for (let i = 0; i < count; i++) {
-          const c = UP_BALLOON_COLORS[i % UP_BALLOON_COLORS.length];
-          const cx = 216 + (i % 6) * 6 - 15;
-          const cy = 30 - Math.floor(i / 6) * 7;
-          html += `<g><circle cx="${cx}" cy="${cy}" r="4" fill="${c}" stroke="${c}" stroke-width="0.3"/>
-            <circle cx="${cx-1}" cy="${cy-1.5}" r="1.2" fill="#FFFFFF" opacity="0.6"/>
-            <path d="M${cx} ${cy+4} Q${cx+1} ${cy+8} ${216+2} ${40}" stroke="#94A3B8" stroke-width="0.4" fill="none"/></g>`;
+          let c = UP_BALLOON_COLORS[i % UP_BALLOON_COLORS.length];
+          let bx, by, r;
+          if (i === 0) {
+            c = '#EF4444';
+            bx = cx0 - 2 * scale;
+            by = cy0 - 17 * scale;
+            r = 5.2 * scale;
+          } else {
+            const dist = Math.sqrt(i / 52.0) * (20.0 * scale) + (3.8 * scale);
+            const theta = i * goldenAngle;
+            bx = cx0 + Math.cos(theta) * dist * 1.12;
+            by = (cy0 - 18 * scale) + Math.sin(theta) * dist * 0.8 - (Math.sqrt(count) * 0.65 * scale);
+            r = (4.0 + (i % 3) * 0.35) * scale;
+          }
+          const midX = (bx + cx0) / 2 + Math.sin(i * 1.5) * (1.5 * scale);
+          const midY = (by + r + cy0) / 2;
+          const knotY = by + r;
+          svgStr += `<path d="M${bx.toFixed(1)} ${knotY.toFixed(1)} Q${midX.toFixed(1)} ${midY.toFixed(1)} ${cx0} ${cy0}" stroke="#94A3B8" stroke-width="${(0.4 * scale).toFixed(2)}" fill="none" opacity="0.55"/>`;
+          const hlx = bx - r * 0.3;
+          const hly = by - r * 0.35;
+          const hlr = r * 0.28;
+          svgBln += `<g><ellipse cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" rx="${r.toFixed(1)}" ry="${(r * 1.12).toFixed(1)}" fill="${c}" stroke="${c}" stroke-width="${(0.3 * scale).toFixed(2)}"/>` +
+                    `<ellipse cx="${hlx.toFixed(1)}" cy="${hly.toFixed(1)}" rx="${hlr.toFixed(1)}" ry="${(hlr * 0.7).toFixed(1)}" fill="#FFFFFF" opacity="0.65" transform="rotate(-20 ${hlx.toFixed(1)} ${hly.toFixed(1)})"/>` +
+                    `<polygon points="${(bx - 1 * scale).toFixed(1)},${knotY.toFixed(1)} ${(bx + 1 * scale).toFixed(1)},${knotY.toFixed(1)} ${bx.toFixed(1)},${(knotY + 1.2 * scale).toFixed(1)}" fill="${c}"/></g>`;
         }
-        homeG.innerHTML = html;
+        return svgStr + svgBln;
       }
 
-      // Larger balloons for plant sheet
-      if (plantG) {
-        let html = '';
-        for (let i = 0; i < count; i++) {
-          const c = UP_BALLOON_COLORS[i % UP_BALLOON_COLORS.length];
-          const cx = 312 + (i % 6) * 8 - 20;
-          const cy = 44 - Math.floor(i / 6) * 9;
-          html += `<g><circle cx="${cx}" cy="${cy}" r="5.5" fill="${c}" stroke="${c}" stroke-width="0.4"/>
-            <circle cx="${cx-1.5}" cy="${cy-2}" r="1.8" fill="#FFFFFF" opacity="0.6"/>
-            <path d="M${cx} ${cy+5.5} Q${cx+1} ${cy+10} ${312+2} ${58}" stroke="#94A3B8" stroke-width="0.5" fill="none"/></g>`;
-        }
-        plantG.innerHTML = html;
-      }
+      if (homeG) homeG.innerHTML = buildBalloonCluster(1.0);
+      if (plantG) plantG.innerHTML = buildBalloonCluster(1.0);
     }
 
     function tapUpHouse() {
+      const paidWeeks = Math.floor(APP_DATABASE.records.length / 2);
+      const balloonCount = Math.max(1, Math.min(52, paidWeeks || (APP_DATABASE.records.length > 0 ? 1 : 1)));
       const total = APP_DATABASE.records.length * APP_DATABASE.config.nominal;
-      const balloonCount = Math.min(48, 8 + (APP_DATABASE.records.length * 3));
       const formatted = total.toLocaleString('id-ID');
-      showToast(`🎈 Rumah impian Faris & Saiba — Tabungan kita menerbangkan mimpi! (${balloonCount} balon, Rp${formatted})`, 'pink');
+      const floatMsg = balloonCount >= 52 ? ' 🎈✨ Rumah kita terbang melayang bebas!' : '';
+      showToast(`🎈 Rumah impian Faris & Saiba — Tabungan kita menerbangkan mimpi! (Minggu ${balloonCount.toString().padStart(2, '0')}: ${balloonCount} balon, Rp${formatted})${floatMsg}`, 'pink');
     }
 
     // Cegah gesture pinch-to-zoom & double-tap zoom pada iOS
