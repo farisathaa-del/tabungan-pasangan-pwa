@@ -210,6 +210,190 @@
       border-color: rgba(255, 255, 255, 0.08) !important;
       color: #F8FAFC !important;
     }
+    /* ── Night Theme: Sheet internals ──────────────────────────────────── */
+    /* Semua sheet-content inner cards & dividers */
+    body.night-theme .sheet-content .bg-neutral-50,
+    body.night-theme .sheet-content .bg-neutral-50\/50,
+    body.night-theme .sheet-content .bg-neutral-50\/80 {
+      background-color: #1E2330 !important;
+      border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    body.night-theme .sheet-content .text-neutral-700,
+    body.night-theme .sheet-content .text-neutral-800,
+    body.night-theme .sheet-content .text-neutral-900 {
+      color: #E2E8F0 !important;
+    }
+    body.night-theme .sheet-content .text-neutral-500,
+    body.night-theme .sheet-content .text-neutral-600 {
+      color: #94A3B8 !important;
+    }
+    body.night-theme .sheet-content label {
+      color: #CBD5E1 !important;
+    }
+    /* Upload area dashed border */
+    body.night-theme .sheet-content .border-dashed {
+      border-color: rgba(255, 255, 255, 0.15) !important;
+      background-color: #1E2330 !important;
+    }
+    /* Love note box in detailSheet */
+    body.night-theme .sheet-content .bg-neutral-50.border {
+      background-color: #1E2330 !important;
+      border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    /* Correction review amber box */
+    body.night-theme .sheet-content .bg-amber-50\/80,
+    body.night-theme .sheet-content .bg-amber-50 {
+      background-color: #1F1A0E !important;
+      border-color: rgba(251, 191, 36, 0.25) !important;
+    }
+    body.night-theme .sheet-content .text-amber-900 {
+      color: #FDE68A !important;
+    }
+    body.night-theme .sheet-content .bg-white\/80 {
+      background-color: #262D3D !important;
+      border-color: rgba(255, 255, 255, 0.08) !important;
+    }
+    body.night-theme .sheet-content .text-neutral-500.text-\[11px\] {
+      color: #94A3B8 !important;
+    }
+    /* Header close buttons inside sheets */
+    body.night-theme .sheet-content p.text-neutral-400,
+    body.night-theme .sheet-content p.text-xs.text-neutral-400 {
+      color: #64748B !important;
+    }
+    /* ── songPickerSheet: lagu item buttons ─────────────────────────────── */
+    body.night-theme #songPickerSheet .sheet-content .bg-rose-50\/50,
+    body.night-theme #songPickerSheet .sheet-content .bg-rose-50\/70,
+    body.night-theme #songPickerSheet .sheet-content .bg-rose-50 {
+      background-color: #2D1522 !important;
+      border-color: rgba(244, 63, 94, 0.2) !important;
+    }
+    body.night-theme #songPickerSheet .sheet-content .bg-rose-100 {
+      background-color: #3D1A28 !important;
+    }
+    body.night-theme #songPickerSheet .sheet-content .text-rose-600 {
+      color: #FDA4AF !important;
+    }
+    body.night-theme #songPickerSheet .sheet-content .text-rose-700 {
+      color: #FB7185 !important;
+    }
+    body.night-theme #songPickerSheet .sheet-content .text-neutral-800 {
+      color: #E2E8F0 !important;
+    }
+    body.night-theme #songPickerSheet .sheet-content .text-neutral-400 {
+      color: #64748B !important;
+    }
+    body.night-theme #songPickerSheet .sheet-content p.text-\[10px\].font-bold.text-neutral-500 {
+      color: #64748B !important;
+    }
+    /* ── monthPickerSheet ───────────────────────────────────────────────── */
+    body.night-theme #monthPickerSheet .sheet-content h3 {
+      color: #F8FAFC !important;
+    }
+    /* Inactive month buttons (class set via syncMonthPickerUI JS) */
+    body.night-theme #monthPickerSheet .sheet-content .month-picker-btn {
+      background-color: #1E2330 !important;
+      color: #CBD5E1 !important;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    /* Active month button keeps neutral-900 bg — white text stays fine */
+    body.night-theme #monthPickerSheet .sheet-content .month-picker-btn.bg-neutral-900,
+    body.night-theme #monthPickerSheet .sheet-content [class*="bg-neutral-900"] {
+      background-color: #4ADE80 !important;
+      color: #052E16 !important;
+    }
+    /* Year nav buttons */
+    body.night-theme #monthPickerSheet .sheet-content button.bg-neutral-100,
+    body.night-theme #monthPickerSheet .sheet-content button.hover\:bg-neutral-200 {
+      background-color: #1E2330 !important;
+      color: #CBD5E1 !important;
+    }
+    body.night-theme #pickerYearLabel {
+      color: #F8FAFC !important;
+    }
+    /* ── plantSheet internals ───────────────────────────────────────────── */
+    body.night-theme #plantSheet .sheet-content .bg-neutral-50 {
+      background-color: #1E2330 !important;
+    }
+    body.night-theme #plantSheet .sheet-content .text-neutral-500 {
+      color: #94A3B8 !important;
+    }
+    body.night-theme #plantSheet .sheet-content .text-neutral-900 {
+      color: #F8FAFC !important;
+    }
+    body.night-theme #plantSheet .sheet-content .bg-neutral-200 {
+      background-color: #262D3D !important;
+    }
+    body.night-theme #plantSheet .sheet-content .bg-rose-50\/70,
+    body.night-theme #plantSheet .sheet-content .bg-rose-50 {
+      background-color: #2D1522 !important;
+      border-color: rgba(244, 63, 94, 0.2) !important;
+    }
+    body.night-theme #plantSheet .sheet-content .bg-white {
+      background-color: #1E2330 !important;
+    }
+    body.night-theme #plantSheet .sheet-content .text-rose-600,
+    body.night-theme #plantSheet .sheet-content .text-rose-700 {
+      color: #FDA4AF !important;
+    }
+    body.night-theme #plantSheet .sheet-content .text-neutral-700 {
+      color: #CBD5E1 !important;
+    }
+    body.night-theme #plantSheet .sheet-content .text-neutral-800 {
+      color: #E2E8F0 !important;
+    }
+    body.night-theme #plantSheet .sheet-content button.bg-neutral-100 {
+      background-color: #262D3D !important;
+      color: #E2E8F0 !important;
+    }
+    /* ── historyFullSheet (full history drawer) ─────────────────────────── */
+    body.night-theme #historyFullSheet .sheet-content,
+    body.night-theme #historyFullSheet .sheet-content .bg-white {
+      background-color: #181B24 !important;
+      color: #F8FAFC !important;
+      border-color: rgba(255, 255, 255, 0.08) !important;
+    }
+    /* ── History tab: item cards & internal elements ────────────────────── */
+    body.night-theme #tabViewRiwayat .bg-white.rounded-2xl {
+      background-color: #1E2330 !important;
+      border-color: rgba(255, 255, 255, 0.08) !important;
+    }
+    body.night-theme #tabViewRiwayat .text-neutral-900 {
+      color: #F8FAFC !important;
+    }
+    body.night-theme #tabViewRiwayat .text-neutral-700 {
+      color: #CBD5E1 !important;
+    }
+    body.night-theme #tabViewRiwayat .text-neutral-400 {
+      color: #64748B !important;
+    }
+    body.night-theme #tabViewRiwayat .bg-neutral-100,
+    body.night-theme #tabViewRiwayat .bg-neutral-50\/80 {
+      background-color: #1E2330 !important;
+      border-color: rgba(255, 255, 255, 0.08) !important;
+    }
+    body.night-theme #tabViewRiwayat .text-neutral-700.font-mono,
+    body.night-theme #tabViewRiwayat .bg-neutral-100.px-2 {
+      background-color: #262D3D !important;
+      color: #94A3B8 !important;
+    }
+    body.night-theme #tabViewRiwayat .bg-rose-50\/60 {
+      background-color: #2D1522 !important;
+      border-color: rgba(244, 63, 94, 0.2) !important;
+    }
+    body.night-theme #tabViewRiwayat .text-rose-800 {
+      color: #FDA4AF !important;
+    }
+    body.night-theme #tabViewRiwayat .bg-emerald-50 {
+      background-color: rgba(6, 78, 59, 0.4) !important;
+    }
+    /* Active filter btn in riwayat */
+    body.night-theme #tabViewRiwayat #filterBtnAll,
+    body.night-theme #tabViewRiwayat #filterBtnA,
+    body.night-theme #tabViewRiwayat #filterBtnB {
+      background-color: #1E2330 !important;
+      color: #94A3B8 !important;
+    }
     @keyframes pulse-ring {
       0%, 100% {
         box-shadow: 0 0 0 0 rgba(24, 24, 27, 0.4);
