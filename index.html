@@ -142,6 +142,26 @@
     body.night-theme #totalSavingsValue {
       color: #4ADE80 !important;
     }
+    /* Night Garden Elements */
+    body.night-theme .garden-sun,
+    body.night-theme .garden-clouds {
+      display: none !important;
+    }
+    body.night-theme .garden-night-sky {
+      display: inline !important;
+    }
+    body.night-theme .garden-hill-back {
+      fill: #0c2017 !important;
+      opacity: 0.85 !important;
+    }
+    body.night-theme .garden-hill-front {
+      fill: #133324 !important;
+      opacity: 0.95 !important;
+    }
+    body.night-theme .plant-detail-garden {
+      background: linear-gradient(to bottom, #0a111a, #0d2119) !important;
+      border-color: rgba(34, 197, 94, 0.25) !important;
+    }
     @keyframes pulse-ring {
       0%, 100% {
         box-shadow: 0 0 0 0 rgba(24, 24, 27, 0.4);
@@ -434,12 +454,21 @@
           <!-- Background Taman Hijau Asri Melintang Seluruh Card (SVG) terpotong rapi sesuai rounded-3xl -->
           <div class="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none">
             <svg class="w-full h-full" viewBox="0 0 380 120" fill="none" preserveAspectRatio="none">
-              <!-- Sinar mentari lembut sudut kanan -->
-              <circle cx="340" cy="15" r="40" fill="#FEF08A" opacity="0.3"/>
+              <!-- Sinar mentari lembut sudut kanan (siang) -->
+              <circle class="garden-sun" cx="340" cy="15" r="40" fill="#FEF08A" opacity="0.3"/>
+              <!-- Bulan sabit & bintang malam (malam) -->
+              <g class="garden-night-sky hidden">
+                <circle cx="338" cy="20" r="14" fill="#FEF08A" opacity="0.9"/>
+                <circle cx="344" cy="17" r="13" fill="#111e2e"/>
+                <circle cx="40" cy="22" r="1.2" fill="#F8FAFC" opacity="0.8" class="animate-pulse"/>
+                <circle cx="100" cy="16" r="1.4" fill="#FEF08A" opacity="0.85"/>
+                <circle cx="160" cy="26" r="1.1" fill="#F8FAFC" opacity="0.7" class="animate-pulse"/>
+                <circle cx="230" cy="14" r="1.3" fill="#FEF08A" opacity="0.85"/>
+              </g>
               <!-- Bukit belakang pastel -->
-              <path d="M-10 80 Q100 55 220 70 Q300 80 390 60 L390 120 L-10 120 Z" fill="#BBF7D0" opacity="0.6"/>
+              <path class="garden-hill-back" d="M-10 80 Q100 55 220 70 Q300 80 390 60 L390 120 L-10 120 Z" fill="#BBF7D0" opacity="0.6"/>
               <!-- Bukit depan hijau muda asri -->
-              <path d="M-10 92 Q90 80 200 86 Q290 96 390 82 L390 120 L-10 120 Z" fill="#86EFAC" opacity="0.75"/>
+              <path class="garden-hill-front" d="M-10 92 Q90 80 200 86 Q290 96 390 82 L390 120 L-10 120 Z" fill="#86EFAC" opacity="0.75"/>
               <!-- Rumpun rumput organik bertebaran di sepanjang dasar card -->
               <path d="M20 95 L18 87 M20 95 L22 83 M20 95 L26 88" stroke="#22C55E" stroke-width="1.3" stroke-linecap="round"/>
               <path d="M120 98 L118 90 M120 98 L121 86 M120 98 L125 91" stroke="#16A34A" stroke-width="1.3" stroke-linecap="round"/>
@@ -757,18 +786,30 @@
         </div>
 
         <!-- Taman Hijau Asri Detail: Tanaman & Kucing Safa di Padang Rumput -->
-        <div class="relative w-full h-[190px] rounded-3xl bg-gradient-to-b from-sky-50 via-emerald-50 to-emerald-100/90 border border-emerald-200/80 overflow-hidden shadow-inner flex items-end justify-center select-none">
+        <div class="plant-detail-garden relative w-full h-[190px] rounded-3xl bg-gradient-to-b from-sky-50 via-emerald-50 to-emerald-100/90 border border-emerald-200/80 overflow-hidden shadow-inner flex items-end justify-center select-none">
           <!-- Background Taman Panorama Detail (SVG) -->
           <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 360 190" fill="none" preserveAspectRatio="none">
-            <!-- Mentari pagi hangat di langit kanan -->
-            <circle cx="315" cy="24" r="38" fill="#FEF08A" opacity="0.4"/>
-            <!-- Awan putih lembut melayang -->
-            <path d="M40 34 Q50 24 65 30 Q80 22 95 32 Q105 32 108 42 L35 42 Q30 38 40 34 Z" fill="#FFFFFF" opacity="0.75"/>
-            <path d="M220 44 Q230 36 242 40 Q252 32 264 41 Q272 41 275 48 L216 48 Q212 45 220 44 Z" fill="#FFFFFF" opacity="0.6"/>
+            <!-- Mentari pagi hangat di langit kanan (siang) -->
+            <circle class="garden-sun" cx="315" cy="24" r="38" fill="#FEF08A" opacity="0.4"/>
+            <!-- Awan putih lembut melayang (siang) -->
+            <g class="garden-clouds">
+              <path d="M40 34 Q50 24 65 30 Q80 22 95 32 Q105 32 108 42 L35 42 Q30 38 40 34 Z" fill="#FFFFFF" opacity="0.75"/>
+              <path d="M220 44 Q230 36 242 40 Q252 32 264 41 Q272 41 275 48 L216 48 Q212 45 220 44 Z" fill="#FFFFFF" opacity="0.6"/>
+            </g>
+            <!-- Malam: Bulan sabit & konstelasi bintang di panorama (malam) -->
+            <g class="garden-night-sky hidden">
+              <circle cx="310" cy="30" r="18" fill="#FEF08A" opacity="0.9"/>
+              <circle cx="317" cy="26" r="17" fill="#0d2119"/>
+              <circle cx="45" cy="28" r="1.3" fill="#F8FAFC" opacity="0.8" class="animate-pulse"/>
+              <circle cx="110" cy="20" r="1.5" fill="#FEF08A" opacity="0.85"/>
+              <circle cx="170" cy="32" r="1.2" fill="#F8FAFC" opacity="0.75" class="animate-pulse"/>
+              <circle cx="230" cy="18" r="1.6" fill="#FEF08A" opacity="0.8"/>
+              <circle cx="275" cy="35" r="1.2" fill="#F8FAFC" opacity="0.7" class="animate-pulse"/>
+            </g>
             <!-- Bukit belakang hijau pastel -->
-            <path d="M-20 135 Q80 108 180 122 Q280 140 380 118 L380 190 L-20 190 Z" fill="#BBF7D0" opacity="0.6"/>
+            <path class="garden-hill-back" d="M-20 135 Q80 108 180 122 Q280 140 380 118 L380 190 L-20 190 Z" fill="#BBF7D0" opacity="0.6"/>
             <!-- Bukit depan padang rumput segar -->
-            <path d="M-10 150 Q80 134 180 142 Q280 152 370 138 L370 190 L-10 190 Z" fill="#86EFAC" opacity="0.8"/>
+            <path class="garden-hill-front" d="M-10 150 Q80 134 180 142 Q280 152 370 138 L370 190 L-10 190 Z" fill="#86EFAC" opacity="0.8"/>
             <!-- Rumpun rumput kecil organik -->
             <path d="M30 156 L27 144 M30 156 L32 140 M30 156 L37 146" stroke="#22C55E" stroke-width="1.6" stroke-linecap="round"/>
             <path d="M110 162 L107 150 M110 162 L112 146 M110 162 L116 152" stroke="#16A34A" stroke-width="1.6" stroke-linecap="round"/>

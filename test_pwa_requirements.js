@@ -31,7 +31,7 @@ assert(html.includes('id="detailSheet"') && html.includes('class="sheet-content 
 assert(html.includes('id="koreksiSheet"') && html.includes('class="sheet-content bg-white'), 'Koreksi sheet must include .sheet-content');
 
 // 6. Service worker version bump
-assert(sw.includes("CACHE_NAME = 'tabungan-v21'"), 'Service worker cache must be bumped to v21');
+assert(sw.includes("CACHE_NAME = 'tabungan-v22'"), 'Service worker cache must be bumped to v22');
 
 // 7. Plant visual & drawer integration
 assert(html.includes('id="plantSheet"') && html.includes('class="sheet-content bg-white'), 'Plant sheet must exist with safe area');
@@ -90,9 +90,10 @@ assert(html.includes('function toggleMusic()') && html.includes('function playMu
 assert(!html.includes('tabungan berdua'), '"tabungan berdua" label must be removed from lock screen');
 assert(html.includes('بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ'), 'Basmalah must exist on lock screen header');
 
-// 17. Auto Night Mode starting at 18:30 (1110 mins)
+// 17. Auto Night Mode starting at 18:30 (1110 mins) & Night Garden Adaptation
 assert(html.includes('body.night-theme'), 'Night theme CSS rules must exist');
 assert(html.includes('mins >= 1110 || mins < 300'), 'Night mode threshold must start at 18:30 (1110 minutes)');
 assert(html.includes('function applyDayNightTheme()') && html.includes('function isNightTime()'), 'Night theme toggle functions must exist');
+assert(html.includes('.garden-night-sky') && html.includes('.plant-detail-garden'), 'Night garden SVG starry sky elements must exist');
 
 console.log('ALL PWA CHECKS PASSED (17/17)');
