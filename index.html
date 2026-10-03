@@ -175,11 +175,6 @@
       color: #A7F3D0 !important;
       border-color: rgba(52, 211, 153, 0.3) !important;
     }
-    body.night-theme #activeMonthBadge {
-      background-color: rgba(30, 41, 59, 0.8) !important;
-      color: #CBD5E1 !important;
-      border-color: rgba(255, 255, 255, 0.15) !important;
-    }
     body.night-theme .tabungan-bersama-card span.text-emerald-800\/80,
     body.night-theme .tabungan-bersama-card span.text-emerald-700\/80 {
       color: #6EE7B7 !important;
@@ -912,8 +907,7 @@
               <span id="totalSavingsValue" class="text-2xl md:text-3xl font-black text-emerald-950 tracking-tight block">Rp0</span>
               <div id="monthSubTotal" class="text-[11px] font-semibold text-emerald-700">Bulan ini: Rp0</div>
               <div class="flex items-center space-x-2 pt-0.5">
-                <span id="plantStageBadge" class="text-[10px] font-bold text-emerald-800 bg-white/85 px-2.5 py-0.5 rounded-full border border-emerald-200/80 shadow-xs">🌱 benih & tunas</span>
-                <span id="activeMonthBadge" class="text-[10px] font-semibold text-emerald-700 bg-white/70 px-2 py-0.5 rounded-full border border-emerald-200/60">-- ----</span>
+                <span id="plantStageBadge" class="text-[10px] font-bold text-emerald-800 bg-white/85 px-2.5 py-0.5 rounded-full border border-emerald-200/80 shadow-xs whitespace-nowrap inline-block">🌱 benih &amp; tunas</span>
               </div>
             </div>
 
@@ -2125,10 +2119,8 @@
 
     function updateMonthDisplay() {
       const label = document.getElementById('navMonthYearLabel');
-      const badge = document.getElementById('activeMonthBadge');
       const str = `${MONTH_SHORT_NAMES[viewMonth]} ${viewYear}`;
       if (label) label.textContent = str;
-      if (badge) badge.textContent = str;
     }
 
     /**
