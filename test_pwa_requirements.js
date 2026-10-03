@@ -31,7 +31,7 @@ assert(html.includes('id="detailSheet"') && html.includes('class="sheet-content 
 assert(html.includes('id="koreksiSheet"') && html.includes('class="sheet-content bg-white'), 'Koreksi sheet must include .sheet-content');
 
 // 6. Service worker version bump
-assert(sw.includes("CACHE_NAME = 'tabungan-v8'"), 'Service worker cache must be bumped to v8');
+assert(sw.includes("CACHE_NAME = 'tabungan-v9'"), 'Service worker cache must be bumped to v9');
 
 // 7. Plant visual & drawer integration
 assert(html.includes('id="plantSheet"') && html.includes('class="sheet-content bg-white'), 'Plant sheet must exist with safe area');
@@ -39,8 +39,9 @@ assert(html.includes('id="plantSvgMini"'), 'Mini plant SVG container must exist'
 assert(html.includes('openPlantSheet()'), 'openPlantSheet trigger must exist');
 assert(html.includes('renderPlantVisuals()'), 'renderPlantVisuals function must exist');
 
-// 8. Logo PWA & explicit user select check
-assert(html.includes('./icons/icon-192.png'), 'PWA logo icon must be integrated');
+// 8. PWA icon in head & tracking line illustration check
+assert(html.includes('./icons/icon-192.png'), 'PWA logo icon must be integrated in head/manifest');
+assert(html.includes('animate-pulse'), 'Lock screen must have pulsing tracking graphic');
 assert(!html.includes('onclick="enterAppWithDefault()"'), 'Automatic enter on click anywhere/logo must be removed');
 
 // 9. Saiba personalized styling & History avatars
