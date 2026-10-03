@@ -31,7 +31,7 @@ assert(html.includes('id="detailSheet"') && html.includes('class="sheet-content 
 assert(html.includes('id="koreksiSheet"') && html.includes('class="sheet-content bg-white'), 'Koreksi sheet must include .sheet-content');
 
 // 6. Service worker version bump
-assert(sw.includes("CACHE_NAME = 'tabungan-v7'"), 'Service worker cache must be bumped to v7');
+assert(sw.includes("CACHE_NAME = 'tabungan-v8'"), 'Service worker cache must be bumped to v8');
 
 // 7. Plant visual & drawer integration
 assert(html.includes('id="plantSheet"') && html.includes('class="sheet-content bg-white'), 'Plant sheet must exist with safe area');
@@ -47,4 +47,11 @@ assert(!html.includes('onclick="enterAppWithDefault()"'), 'Automatic enter on cl
 assert(html.includes('bg-rose-50/70'), 'Saiba card must have soft rose styling');
 assert(html.includes("item.user === 'A' ? 'F' : 'S'"), 'History list must show F and S avatars');
 
-console.log('ALL PWA CHECKS PASSED (9/9)');
+// 10. Strict JS syntax compilation check (prevent uncaught runtime breaks)
+const scriptMatch = html.match(/<script>([\s\S]*?)<\/script>/);
+assert(scriptMatch, 'Script tag must exist in index.html');
+assert.doesNotThrow(() => {
+  new Function(scriptMatch[1]);
+}, 'JavaScript inside index.html must have valid syntax without duplicates or compilation errors');
+
+console.log('ALL PWA CHECKS PASSED (10/10)');

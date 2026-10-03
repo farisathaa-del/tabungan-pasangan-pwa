@@ -1220,7 +1220,6 @@
       if (labelEl) labelEl.textContent = `${weekLabel} (${MONTH_SHORT_NAMES[viewMonth]} ${viewYear}) · ${currentUser.name}`;
 
       // Role-based submit button styling
-      const btnSubmit = document.getElementById('btnSubmitProof');
       if (btnSubmit) {
         if (currentUser.role === 'B') {
           btnSubmit.className = 'btn-press flex-1 py-3 rounded-full bg-rose-500 text-xs md:text-sm font-semibold text-white hover:bg-rose-600 disabled:opacity-40 transition flex items-center justify-center space-x-2';
