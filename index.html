@@ -139,6 +139,10 @@
     body.night-theme #timelineUserB .ring-active-week {
       --tw-ring-offset-color: #23161F !important;
     }
+    body.night-theme #timelineUserA span.text-neutral-400,
+    body.night-theme #timelineUserB span.text-neutral-400 {
+      color: #94A3B8 !important;
+    }
     body.night-theme .sheet-content {
       background-color: #181B24 !important;
       color: #F8FAFC !important;
@@ -212,7 +216,7 @@
       color: #F1F5F9 !important;
     }
     body.night-theme #tabViewRiwayat p.text-neutral-400 {
-      color: #64748B !important;
+      color: #94A3B8 !important;
     }
     body.night-theme #historyCountBadge {
       background-color: rgba(6, 78, 59, 0.6) !important;
@@ -273,7 +277,7 @@
       color: #F8FAFC !important;
     }
     body.night-theme #tabViewRiwayat .history-card .text-neutral-400 {
-      color: #64748B !important;
+      color: #94A3B8 !important;
     }
     body.night-theme #tabViewRiwayat .history-status-badge {
       background-color: rgba(6, 78, 59, 0.4) !important;
@@ -334,7 +338,7 @@
     /* Header close buttons inside sheets */
     body.night-theme .sheet-content p.text-neutral-400,
     body.night-theme .sheet-content p.text-xs.text-neutral-400 {
-      color: #64748B !important;
+      color: #94A3B8 !important;
     }
     /* ── songPickerSheet: lagu item buttons ─────────────────────────────── */
     body.night-theme #songPickerSheet .sheet-content .bg-rose-50\/50,
@@ -700,7 +704,7 @@
         </div>
 
         <!-- Tombol '+' Minimalis untuk Setor Minggu Ini -->
-        <button onclick="openUploadSheet()" title="Setor Minggu Ini" class="btn-press w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-neutral-900 text-white flex items-center justify-center hover:bg-neutral-800 transition shadow-sm">
+        <button id="btnHeaderSetor" onclick="openUploadSheet()" title="Setor Minggu Ini" class="btn-press w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-neutral-900 text-white flex items-center justify-center hover:bg-neutral-800 transition shadow-sm">
           <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
@@ -1100,7 +1104,7 @@
         </div>
 
         <!-- Kolom Upload Screenshot -->
-        <div onclick="document.getElementById('fileInputProof').click()" class="border border-dashed border-neutral-300 hover:border-neutral-900 rounded-2xl p-5 text-center cursor-pointer transition bg-neutral-50/50">
+        <div id="uploadDropZone" onclick="document.getElementById('fileInputProof').click()" class="border border-dashed border-neutral-300 hover:border-neutral-900 rounded-2xl p-5 text-center cursor-pointer transition bg-neutral-50/50">
           <input type="file" id="fileInputProof" accept="image/*" class="hidden" onchange="handleFileSelected(event, 'setoran')">
           <div id="uploadPrompt" class="space-y-1.5">
             <svg class="w-7 h-7 mx-auto text-neutral-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
@@ -2073,6 +2077,16 @@
         userDot.className = `w-2 h-2 rounded-full ${role === 'A' ? 'bg-emerald-500' : 'bg-rose-400'}`;
       }
 
+      // ponytail: adaptive setor (+) button styling per user role
+      const btnHeaderSetor = document.getElementById('btnHeaderSetor');
+      if (btnHeaderSetor) {
+        if (role === 'B') {
+          btnHeaderSetor.className = 'btn-press w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-gradient-to-r from-rose-500 to-pink-500 text-white flex items-center justify-center hover:from-rose-600 hover:to-pink-600 transition shadow-sm shadow-rose-300/60 ring-2 ring-rose-200/50';
+        } else {
+          btnHeaderSetor.className = 'btn-press w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-neutral-900 text-white flex items-center justify-center hover:bg-neutral-800 transition shadow-sm';
+        }
+      }
+
       const lockScreen = document.getElementById('darkLockScreen');
       if (lockScreen) {
         lockScreen.classList.add('-translate-y-full');
@@ -2589,12 +2603,15 @@
       const labelEl = document.getElementById('uploadSheetWeekLabel');
       if (labelEl) labelEl.textContent = `${weekLabel} (${MONTH_SHORT_NAMES[viewMonth]} ${viewYear}) · ${currentUser.name}`;
 
-      // Role-based submit button styling
+      // Role-based submit button & dropzone styling
+      const uploadZone = document.getElementById('uploadDropZone');
       if (btnSubmit) {
         if (currentUser.role === 'B') {
-          btnSubmit.className = 'btn-press flex-1 py-3 rounded-full bg-rose-500 text-xs md:text-sm font-semibold text-white hover:bg-rose-600 disabled:opacity-40 transition flex items-center justify-center space-x-2';
+          btnSubmit.className = 'btn-press flex-1 py-3 rounded-full bg-gradient-to-r from-rose-500 to-pink-500 text-xs md:text-sm font-semibold text-white hover:from-rose-600 hover:to-pink-600 shadow-md shadow-rose-200/50 disabled:opacity-40 transition flex items-center justify-center space-x-2';
+          if (uploadZone) uploadZone.className = 'border-2 border-dashed border-rose-300 hover:border-rose-400 rounded-2xl p-5 text-center cursor-pointer transition bg-rose-50/40';
         } else {
           btnSubmit.className = 'btn-press flex-1 py-3 rounded-full bg-neutral-900 text-xs md:text-sm font-semibold text-white hover:bg-neutral-800 disabled:opacity-40 transition flex items-center justify-center space-x-2';
+          if (uploadZone) uploadZone.className = 'border border-dashed border-neutral-300 hover:border-neutral-900 rounded-2xl p-5 text-center cursor-pointer transition bg-neutral-50/50';
         }
       }
 
