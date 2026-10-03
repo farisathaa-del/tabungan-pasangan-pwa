@@ -31,7 +31,7 @@ assert(html.includes('id="detailSheet"') && html.includes('class="sheet-content 
 assert(html.includes('id="koreksiSheet"') && html.includes('class="sheet-content bg-white'), 'Koreksi sheet must include .sheet-content');
 
 // 6. Service worker version bump
-assert(sw.includes("CACHE_NAME = 'tabungan-v9'"), 'Service worker cache must be bumped to v9');
+assert(sw.includes("CACHE_NAME = 'tabungan-v10'"), 'Service worker cache must be bumped to v10');
 
 // 7. Plant visual & drawer integration
 assert(html.includes('id="plantSheet"') && html.includes('class="sheet-content bg-white'), 'Plant sheet must exist with safe area');
@@ -48,11 +48,19 @@ assert(!html.includes('onclick="enterAppWithDefault()"'), 'Automatic enter on cl
 assert(html.includes('bg-rose-50/70'), 'Saiba card must have soft rose styling');
 assert(html.includes("item.user === 'A' ? 'F' : 'S'"), 'History list must show F and S avatars');
 
-// 10. Strict JS syntax compilation check (prevent uncaught runtime breaks)
+// 10. Safa the digital cat mascot integration
+assert(html.includes('id="safaContainer"'), 'Safa container must exist');
+assert(html.includes('id="safaSvgMini"'), 'Safa mini SVG must exist');
+assert(html.includes('id="safaBubbleMini"'), 'Safa speech bubble must exist');
+assert(html.includes('id="safaModalIcon"'), 'Safa modal icon must exist in plant drawer');
+assert(html.includes('function getSafaStatus()'), 'getSafaStatus logic must exist');
+assert(html.includes('function tapSafaMeow()'), 'tapSafaMeow interactive function must exist');
+
+// 11. Strict JS syntax compilation check (prevent uncaught runtime breaks)
 const scriptMatch = html.match(/<script>([\s\S]*?)<\/script>/);
 assert(scriptMatch, 'Script tag must exist in index.html');
 assert.doesNotThrow(() => {
   new Function(scriptMatch[1]);
 }, 'JavaScript inside index.html must have valid syntax without duplicates or compilation errors');
 
-console.log('ALL PWA CHECKS PASSED (10/10)');
+console.log('ALL PWA CHECKS PASSED (11/11)');

@@ -84,6 +84,22 @@
     .ring-active-week {
       animation: pulse-ring 2.5s infinite;
     }
+    @keyframes safaWalkBob {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-3px) rotate(2deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
+    }
+    @keyframes safaHeartFloat {
+      0% { transform: translateY(0px) scale(0.8); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-10px) scale(1.1); opacity: 0; }
+    }
+    .safa-walking-anim {
+      animation: safaWalkBob 0.5s ease-in-out infinite;
+    }
+    .safa-heart-anim {
+      animation: safaHeartFloat 1.8s ease-in-out infinite;
+    }
   </style>
 </head>
 
@@ -257,8 +273,18 @@
               <span id="activeMonthBadge" class="text-[10px] font-semibold text-neutral-500 bg-white/70 px-2 py-0.5 rounded-full border border-neutral-200/60">-- ----</span>
             </div>
           </div>
-          <div class="flex flex-col items-end shrink-0">
-            <div id="plantSvgMini" class="h-[65px] w-[55px] flex items-center justify-center"></div>
+          <div class="flex flex-col items-end shrink-0 relative">
+            <div class="relative w-[115px] h-[68px] flex items-center justify-between select-none">
+              <!-- Pot Tanaman Miniatur -->
+              <div id="plantSvgMini" class="h-[65px] w-[50px] flex items-center justify-center"></div>
+              <!-- Kucing Safa Miniatur Interaktif -->
+              <div id="safaContainer" class="relative z-20 cursor-pointer" onclick="event.stopPropagation(); tapSafaMeow();">
+                <div id="safaBubbleMini" class="hidden absolute -top-8 right-0 bg-white border border-rose-200 text-rose-600 text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-md whitespace-nowrap z-30">
+                  meow! ♥
+                </div>
+                <div id="safaSvgMini" class="w-[50px] h-[50px] flex items-center justify-center"></div>
+              </div>
+            </div>
             <span class="text-[9px] text-neutral-400 font-medium mt-0.5">ketuk detail ›</span>
           </div>
         </div>
@@ -546,6 +572,20 @@
           <div class="flex items-center justify-between text-xs">
             <span class="text-neutral-500">minggu lunas</span>
             <span id="plantWeeksPaid" class="font-semibold text-neutral-900 font-mono">0 dari 52</span>
+          </div>
+        </div>
+
+        <!-- Card Safa si Kucing Cinta -->
+        <div class="bg-rose-50/70 border border-rose-100 rounded-2xl p-3.5 flex items-center space-x-3 select-none">
+          <div id="safaModalIcon" class="w-12 h-12 bg-white rounded-xl shadow-xs flex items-center justify-center shrink-0"></div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center space-x-1.5">
+              <span class="text-xs font-bold text-neutral-800">safa si kucing cinta 🐾</span>
+              <span id="safaStatusBadge" class="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-white text-rose-600 border border-rose-200">aktif</span>
+            </div>
+            <p id="safaModalDesc" class="text-[11px] text-neutral-500 mt-0.5 leading-snug">
+              safa menjaga tanaman cinta kalian. tidur lelap di malam hari, dan aktif berjalan riang saat kalian berdua kompak lunas setiap minggu.
+            </p>
           </div>
         </div>
 
@@ -938,6 +978,7 @@
       if (containerB) containerB.innerHTML = renderCirclesForUser('B', timeline);
 
       checkFullMonthCelebration();
+      renderSafaVisuals();
     }
 
     function renderCirclesForUser(role, timeline) {
@@ -1701,6 +1742,7 @@
           </div>`;
         }).join('');
       }
+      renderSafaVisuals();
     }
 
     function openPlantSheet() {
@@ -1715,6 +1757,7 @@
 
       // Update progress + stage list
       renderPlantVisuals();
+      renderSafaVisuals();
 
       sheet.classList.remove('hidden');
     }
@@ -1722,6 +1765,157 @@
     function closePlantSheet() {
       const sheet = document.getElementById('plantSheet');
       if (sheet) sheet.classList.add('hidden');
+    }
+
+    /**
+     * SAFA — KUCING DIGITAL PENJAGA TABUNGAN CINTA
+     */
+    function getSafaStatus() {
+      const hour = new Date().getHours();
+      if (hour >= 22 || hour < 6) {
+        return { mode: 'night_sleep', title: 'safa tidur malam', badge: 'tidur malam', desc: 'shhh.. safa bobo di bantal empuk, selamat tidur sayang ♥' };
+      }
+      const timeline = getMonthTimeline(viewYear, viewMonth);
+      const currentWeek = timeline.find(w => w.isCurrentActiveWeek) || timeline[0];
+      const farisPaid = APP_DATABASE.records.some(r => r.dayId === currentWeek.id && r.user === 'A' && r.year === viewYear && r.monthIndex === viewMonth);
+      const saibaPaid = APP_DATABASE.records.some(r => r.dayId === currentWeek.id && r.user === 'B' && r.year === viewYear && r.monthIndex === viewMonth);
+
+      if (!farisPaid && !saibaPaid) {
+        return { mode: 'day_idle', title: 'safa rebahan malas', badge: 'nunggu setoran', desc: 'safa rebahan malas menunggu setoran minggu ini..' };
+      }
+      if (!farisPaid || !saibaPaid) {
+        return { mode: 'waiting', title: 'safa nunggu pasangan', badge: 'setengah jalan', desc: '1 orang sudah setor! safa penasaran nungguin pasangan setor agar kompak.' };
+      }
+      return { mode: 'walking', title: 'safa jalan keliling pot', badge: 'kompak lunas!', desc: 'faris & saiba kompak lunas! safa aktif berjalan riang mengelilingi pot bunga.' };
+    }
+
+    function renderSafaSvg(mode, isLarge) {
+      const vw = 56, vh = 56;
+      const sz = isLarge ? '56' : '48';
+
+      let extra = '';
+      const head = `<circle cx="28" cy="26" r="12" fill="#fff" stroke="#d1d5db" stroke-width="1"/>`;
+      const ears = `<polygon points="19,20 14,10 24,17" fill="#fff" stroke="#d1d5db" stroke-width="1"/><polygon points="37,20 42,10 32,17" fill="#fff" stroke="#d1d5db" stroke-width="1"/>`;
+      const innerEars = `<polygon points="19,20 16,12 23,18" fill="#fbcfe8"/><polygon points="37,20 40,12 33,18" fill="#fbcfe8"/>`;
+      const nose = `<ellipse cx="28" cy="27" rx="1.5" ry="1" fill="#f9a8d4"/>`;
+      const blush = `<circle cx="21" cy="29" r="2.5" fill="#fecaca" opacity="0.6"/><circle cx="35" cy="29" r="2.5" fill="#fecaca" opacity="0.6"/>`;
+      const whiskers = `<line x1="16" y1="26" x2="8" y2="24" stroke="#d1d5db" stroke-width="0.8"/><line x1="16" y1="28" x2="8" y2="30" stroke="#d1d5db" stroke-width="0.8"/><line x1="40" y1="26" x2="48" y2="24" stroke="#d1d5db" stroke-width="0.8"/><line x1="40" y1="28" x2="48" y2="30" stroke="#d1d5db" stroke-width="0.8"/>`;
+      const tail = `<path d="M40 42 Q50 36 48 28" stroke="#d1d5db" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+
+      if (mode === 'night_sleep') {
+        extra = `
+          <ellipse cx="28" cy="46" rx="20" ry="6" fill="#fbcfe8"/>
+          <ellipse cx="28" cy="42" rx="13" ry="9" fill="#fff" stroke="#d1d5db" stroke-width="1"/>
+          ${head}
+          ${ears}${innerEars}
+          <path d="M23 25 Q25 27 27 25" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <path d="M29 25 Q31 27 33 25" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          ${blush}${nose}${whiskers}
+          <path d="M40 44 Q48 40 46 32" stroke="#d1d5db" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <text x="38" y="18" font-size="7" fill="#a78bfa" font-weight="bold" font-family="sans-serif">z</text>
+          <text x="42" y="12" font-size="5" fill="#c4b5fd" font-weight="bold" font-family="sans-serif">z</text>
+          <text x="45" y="7" font-size="4" fill="#ddd6fe" font-weight="bold" font-family="sans-serif">z</text>
+        `;
+      } else if (mode === 'day_idle') {
+        extra = `
+          <ellipse cx="28" cy="46" rx="18" ry="5" fill="#fbcfe8" opacity="0.4"/>
+          <ellipse cx="28" cy="44" rx="14" ry="8" fill="#fff" stroke="#d1d5db" stroke-width="1"/>
+          ${head}${ears}${innerEars}
+          <path d="M23 25 Q25 27 27 25" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <path d="M29 25 Q31 27 33 25" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          ${blush}${nose}${whiskers}
+          <ellipse cx="28" cy="30" rx="3" ry="2.5" fill="#fb7185" opacity="0.7"/>
+          <path d="M38 44 Q48 40 46 32" stroke="#d1d5db" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M18 44 L14 42 M18 46 L14 46" stroke="#d1d5db" stroke-width="1.5" stroke-linecap="round"/>
+        `;
+      } else if (mode === 'waiting') {
+        extra = `
+          <ellipse cx="28" cy="48" rx="10" ry="4" fill="#fbcfe8" opacity="0.3"/>
+          <ellipse cx="28" cy="42" rx="10" ry="12" fill="#fff" stroke="#d1d5db" stroke-width="1"/>
+          ${head}${ears}${innerEars}
+          <circle cx="24" cy="25" r="3" fill="#1f2937"/>
+          <circle cx="32" cy="25" r="3" fill="#1f2937"/>
+          <circle cx="24.5" cy="24.5" r="1.2" fill="#fff"/>
+          <circle cx="32.5" cy="24.5" r="1.2" fill="#fff"/>
+          ${blush}${nose}${whiskers}
+          <path d="M20 35 Q24 38 28 35 Q32 38 36 35" stroke="#374151" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+          <path d="M28 48 L28 54" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+          <path d="M24 52 L28 54 L32 52" stroke="#d1d5db" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <text x="42" y="18" font-size="8" fill="#f59e0b">✦</text>
+        `;
+      } else if (mode === 'walking') {
+        extra = `
+          <g class="safa-walking-anim" style="transform-origin:28px 32px">
+          <ellipse cx="28" cy="46" rx="10" ry="6" fill="#fff" stroke="#d1d5db" stroke-width="1"/>
+          ${head}${ears}${innerEars}
+          <path d="M23 25 Q25 23 27 25" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <path d="M29 25 Q31 23 33 25" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          ${blush}${nose}${whiskers}
+          <!-- pink ribbon collar -->
+          <path d="M18 33 L20 37 L24 35 L28 38 L32 35 L36 37 L38 33" fill="#f472b6" stroke="#ec4899" stroke-width="0.5"/>
+          <!-- golden bell -->
+          <circle cx="28" cy="38" r="2.5" fill="#f59e0b" stroke="#d97706" stroke-width="0.5"/>
+          <circle cx="28" cy="40" r="1" fill="#d97706"/>
+          <!-- walking legs -->
+          <line x1="23" y1="50" x2="20" y2="54" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+          <line x1="33" y1="50" x2="36" y2="54" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+          ${tail}
+          <!-- floating hearts -->
+          <text x="10" y="16" class="safa-heart-anim" font-size="7" fill="#f472b6">♥</text>
+          <text x="0" y="28" class="safa-heart-anim" font-size="5" fill="#f9a8d4" style="animation-delay:0.5s">♥</text>
+          <text x="44" y="14" class="safa-heart-anim" font-size="6" fill="#ec4899" style="animation-delay:0.9s">♥</text>
+          </g>
+        `;
+      }
+
+      return `<svg viewBox="0 0 ${vw} ${vh}" xmlns="http://www.w3.org/2000/svg" class="w-[${sz}px] h-[${sz}px]">${extra}</svg>`;
+    }
+
+    function renderSafaVisuals() {
+      const status = getSafaStatus();
+      const miniEl = document.getElementById('safaSvgMini');
+      if (miniEl) miniEl.innerHTML = renderSafaSvg(status.mode, false);
+
+      const modalIcon = document.getElementById('safaModalIcon');
+      if (modalIcon) modalIcon.innerHTML = renderSafaSvg(status.mode, true);
+
+      const badgeEl = document.getElementById('safaStatusBadge');
+      if (badgeEl) badgeEl.textContent = status.badge;
+
+      const descEl = document.getElementById('safaModalDesc');
+      if (descEl) descEl.textContent = status.desc;
+    }
+
+    function tapSafaMeow() {
+      const status = getSafaStatus();
+      let messages = [];
+      if (status.mode === 'night_sleep') {
+        messages = ['shhh.. safa bobo, selamat tidur sayang ♥', 'ngantuk.. besok kita nabung lagi yaa~', 'safa mimpiin faris & saiba selalu bahagia ♥'];
+      } else if (status.mode === 'day_idle') {
+        messages = ['nguap~ safa nunggu setoran minggu ini..', 'yuk mulai sisihkan tabungan cinta kita!', 'safa laper, butuh semangat tabungan! 🐾'];
+      } else if (status.mode === 'waiting') {
+        messages = ['safa nungguin kamu nih, yuk kompak!', 'setengah jalan lagi lunas berdua!', 'pasti kompak minggu ini, ayo sayang! ♥'];
+      } else if (status.mode === 'walking') {
+        messages = ['meow! faris & saiba hebat banget! ♥', 'purrr.. tanaman cinta kita makin rimbun!', 'sayang saiba banyak-banyak! 🐾', 'yeay! kompak terus ya kalian! ✨'];
+      }
+      const msg = messages[Math.floor(Math.random() * messages.length)];
+      const bubble = document.getElementById('safaBubbleMini');
+      if (!bubble) return;
+      bubble.textContent = msg;
+      bubble.classList.remove('hidden');
+      bubble.classList.add('scale-95', 'opacity-0');
+      // force reflow
+      void bubble.offsetHeight;
+      bubble.classList.remove('scale-95', 'opacity-0');
+      bubble.classList.add('scale-100', 'opacity-100');
+      setTimeout(() => {
+        bubble.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+          bubble.classList.add('hidden');
+          bubble.classList.remove('scale-95', 'opacity-0', 'scale-100', 'opacity-100');
+        }, 200);
+      }, 2500);
+      if (navigator.vibrate) navigator.vibrate([30, 20, 30]);
     }
 
     // Cegah gesture pinch-to-zoom & double-tap zoom pada iOS
