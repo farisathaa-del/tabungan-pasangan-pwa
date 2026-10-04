@@ -54,6 +54,15 @@
       transform: scale(0.97);
       transition: transform 0.1s ease;
     }
+    /* ponytail: sheet slide-up via transform on .sheet-content, display:none kept for cheap idle */
+    .sheet-content {
+      transition: transform 0.24s cubic-bezier(0.32, 0.72, 0, 1);
+      transform: translateY(0);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .sheet-content { transition: none; }
+      .animate-pulse { animation: none !important; }
+    }
     /* iOS Safe Area & Native app feel */
     @supports (padding-top: env(safe-area-inset-top)) {
       header {
@@ -703,9 +712,9 @@
     <div id="darkLockScreen" class="absolute inset-0 z-40 bg-[#111114] text-white flex flex-col justify-between p-6 md:p-12 overflow-hidden transition-transform duration-500 ease-in-out">
       
       <!-- Lapisan Cahaya Ambient Pink Elegan -->
-      <div class="absolute -top-24 -right-20 w-80 md:w-96 h-80 md:h-96 bg-gradient-to-br from-rose-500/25 via-pink-600/15 to-transparent rounded-full blur-3xl pointer-events-none animate-pulse" style="animation-duration: 6s;"></div>
-      <div class="absolute top-1/3 -left-28 w-80 h-80 bg-gradient-to-tr from-pink-500/15 via-rose-500/10 to-transparent rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-20 right-0 w-80 h-80 bg-gradient-to-t from-rose-950/30 to-pink-900/10 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="absolute -top-24 -right-20 w-80 md:w-96 h-80 md:h-96 rounded-full pointer-events-none" style="background:radial-gradient(circle at 50% 50%, rgba(244,63,94,0.28) 0%, rgba(219,39,119,0.16) 40%, transparent 72%)"></div>
+      <div class="absolute top-1/3 -left-28 w-80 h-80 rounded-full pointer-events-none" style="background:radial-gradient(circle at 50% 50%, rgba(236,72,153,0.20) 0%, rgba(244,63,94,0.10) 42%, transparent 72%)"></div>
+      <div class="absolute -bottom-20 right-0 w-80 h-80 rounded-full pointer-events-none" style="background:radial-gradient(circle at 50% 50%, rgba(136,19,55,0.34) 0%, rgba(131,24,67,0.16) 45%, transparent 74%)"></div>
 
       <!-- Header Pembuka Bersih Minimalis -->
       <div class="relative z-10 pt-2 md:pt-4 flex items-center justify-between">
@@ -740,10 +749,10 @@
         <div class="pt-1">
           <p class="text-[11px] text-neutral-400 mb-2.5 font-medium">pilih pengguna untuk masuk:</p>
           <div class="grid grid-cols-2 gap-3 w-full">
-            <button id="btnUserFaris" onclick="selectUserAndEnter('A', 'faris')" class="btn-press py-3.5 px-4 rounded-2xl bg-neutral-900/80 backdrop-blur-md border border-neutral-700/80 text-center hover:border-neutral-600 hover:bg-neutral-800/80 transition shadow-sm">
+            <button id="btnUserFaris" onclick="selectUserAndEnter('A', 'faris')" class="btn-press py-3.5 px-4 rounded-2xl bg-[#17171B] border border-neutral-700/80 text-center hover:border-neutral-600 hover:bg-neutral-800/80 transition shadow-sm">
               <span class="text-xs font-bold text-white lowercase">faris</span>
             </button>
-            <button id="btnUserSaiba" onclick="selectUserAndEnter('B', 'saiba')" class="btn-press py-3.5 px-4 rounded-2xl bg-neutral-900/80 backdrop-blur-md border border-neutral-700/80 text-center hover:border-rose-900/60 hover:bg-neutral-800/80 transition shadow-sm">
+            <button id="btnUserSaiba" onclick="selectUserAndEnter('B', 'saiba')" class="btn-press py-3.5 px-4 rounded-2xl bg-[#17171B] border border-neutral-700/80 text-center hover:border-rose-900/60 hover:bg-neutral-800/80 transition shadow-sm">
               <span class="text-xs font-bold text-white lowercase">saiba <span class="text-rose-400">❤️</span></span>
             </button>
           </div>
@@ -940,7 +949,7 @@
               <span id="totalSavingsValue" class="text-2xl md:text-3xl font-black text-emerald-950 tracking-tight block leading-tight">Rp0</span>
               <div id="monthSubTotal" class="text-[11px] font-semibold text-emerald-800/80">Bulan ini: Rp0</div>
               <div class="flex items-center space-x-2 pt-0.5">
-                <span id="plantStageBadge" class="text-[10px] font-bold text-emerald-900 bg-white/95 backdrop-blur-sm px-2.5 py-0.5 rounded-full border border-emerald-200/90 shadow-2xs whitespace-nowrap inline-block">🌱 benih &amp; tunas</span>
+                <span id="plantStageBadge" class="text-[10px] font-bold text-emerald-900 bg-white px-2.5 py-0.5 rounded-full border border-emerald-200/90 shadow-2xs whitespace-nowrap inline-block">🌱 benih &amp; tunas</span>
               </div>
             </div>
 
@@ -958,7 +967,7 @@
               </div>
 
               <!-- Bubble Chat Safa di Atas Pot -->
-              <div id="safaBubbleMini" class="hidden absolute -top-10 left-1/2 -translate-x-1/2 min-w-[100px] max-w-[140px] bg-white/98 backdrop-blur-md border border-rose-300 text-rose-600 text-[10px] font-bold px-3 py-1 rounded-2xl shadow-xl whitespace-normal break-words text-center leading-snug z-50 pointer-events-none transition-all ring-2 ring-rose-100/80">
+              <div id="safaBubbleMini" class="hidden absolute -top-10 left-1/2 -translate-x-1/2 min-w-[100px] max-w-[140px] bg-white border border-rose-300 text-rose-600 text-[10px] font-bold px-3 py-1 rounded-2xl shadow-xl whitespace-normal break-words text-center leading-snug z-50 pointer-events-none transition-opacity ring-2 ring-rose-100/80">
                 meow! ♥
               </div>
             </div>
@@ -1068,7 +1077,7 @@
     <!-- ====================================================================== -->
     <!-- DRAWER: UPLOAD BUKTI SETORAN (DENGAN LOVE NOTE SINGKAT)               -->
     <!-- ====================================================================== -->
-    <div id="uploadSheet" class="absolute inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex flex-col justify-end transition-opacity">
+    <div id="uploadSheet" class="absolute inset-0 z-50 bg-black/50 hidden flex flex-col justify-end transition-opacity">
       <div class="sheet-content bg-white rounded-t-3xl px-6 pt-5 pb-8 md:p-8 space-y-3.5 max-h-[85%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
         <div class="flex items-center justify-between">
           <div>
@@ -1121,7 +1130,7 @@
     <!-- ====================================================================== -->
     <!-- DRAWER: DETAIL BUKTI TRANSFER & REVIEW KOREKSI PASANGAN               -->
     <!-- ====================================================================== -->
-    <div id="detailSheet" class="absolute inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex flex-col justify-end transition-opacity">
+    <div id="detailSheet" class="absolute inset-0 z-50 bg-black/50 hidden flex flex-col justify-end transition-opacity">
       <div class="sheet-content bg-white rounded-t-3xl px-6 pt-5 pb-8 md:p-8 space-y-3.5 max-h-[85%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
         <div class="flex items-center justify-between">
           <div>
@@ -1150,7 +1159,7 @@
           <div id="detailImageLoading" class="absolute inset-0 flex items-center justify-center">
             <div class="w-8 h-8 border-2 border-neutral-300 border-t-rose-400 rounded-full animate-spin"></div>
           </div>
-          <div class="absolute bottom-2.5 right-2.5 bg-black/60 backdrop-blur-md text-white text-[10px] font-medium px-2.5 py-1 rounded-full flex items-center space-x-1 opacity-90 group-hover:opacity-100 transition">
+          <div class="absolute bottom-2.5 right-2.5 bg-black/70 text-white text-[10px] font-medium px-2.5 py-1 rounded-full flex items-center space-x-1 opacity-90 group-hover:opacity-100 transition">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" />
             </svg>
@@ -1214,7 +1223,7 @@
     <!-- ====================================================================== -->
     <!-- DRAWER: FORM PENGAJUAN KOREKSI (ALASAN + SCREENSHOT BARU)             -->
     <!-- ====================================================================== -->
-    <div id="koreksiSheet" class="absolute inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex flex-col justify-end transition-opacity">
+    <div id="koreksiSheet" class="absolute inset-0 z-50 bg-black/50 hidden flex flex-col justify-end transition-opacity">
       <div class="sheet-content bg-white rounded-t-3xl px-6 pt-5 pb-8 md:p-8 space-y-4 max-h-[85%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
         <div class="flex items-center justify-between">
           <div>
@@ -1261,7 +1270,7 @@
     <!-- ====================================================================== -->
     <!-- DRAWER: TANAMAN TABUNGAN CINTA (52 MINGGU KOMITMEN)                  -->
     <!-- ====================================================================== -->
-    <div id="plantSheet" class="absolute inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex flex-col justify-end transition-opacity">
+    <div id="plantSheet" class="absolute inset-0 z-50 bg-black/50 hidden flex flex-col justify-end transition-opacity">
       <div class="sheet-content bg-white rounded-t-3xl px-6 pt-5 pb-8 md:p-8 space-y-4 max-h-[85%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
         <div class="flex items-center justify-between">
           <div>
@@ -1320,7 +1329,7 @@
           </svg>
 
           <!-- Bubble Chat Safa di Detail Taman: independen di atas taman, tidak terbalik/terpotong -->
-          <div id="safaDetailBubble" class="hidden absolute top-2 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-sm border border-rose-200 text-rose-600 text-[11px] font-semibold px-3 py-1 rounded-full shadow-md whitespace-normal text-center max-w-[220px] leading-tight z-30 pointer-events-none transition-all">
+          <div id="safaDetailBubble" class="hidden absolute top-2 left-1/2 -translate-x-1/2 bg-white border border-rose-200 text-rose-600 text-[11px] font-semibold px-3 py-1 rounded-full shadow-md whitespace-normal text-center max-w-[220px] leading-tight z-30 pointer-events-none transition-opacity">
             meow! ♥
           </div>
 
@@ -1346,7 +1355,7 @@
             <span id="plantProgressPercent" class="font-bold text-neutral-900 font-mono">0%</span>
           </div>
           <div class="w-full h-2 bg-neutral-200 rounded-full overflow-hidden">
-            <div id="plantProgressBar" class="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full transition-all duration-700" style="width:0%"></div>
+            <div id="plantProgressBar" class="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full transition-[width] duration-700" style="width:0%"></div>
           </div>
           <div class="flex items-center justify-between text-xs">
             <span class="text-neutral-500">minggu lunas</span>
@@ -1383,7 +1392,7 @@
     <!-- ====================================================================== -->
     <!-- DRAWER: PEMILIH LAGU (SONG PICKER)                                    -->
     <!-- ====================================================================== -->
-    <div id="songPickerSheet" class="absolute inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex flex-col justify-end transition-opacity">
+    <div id="songPickerSheet" class="absolute inset-0 z-50 bg-black/50 hidden flex flex-col justify-end transition-opacity">
       <div class="sheet-content bg-white rounded-t-3xl px-6 pt-5 pb-8 md:p-8 space-y-3.5 max-h-[70%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
         <div class="flex items-center justify-between">
           <div>
@@ -1450,7 +1459,7 @@
     <!-- ====================================================================== -->
     <!-- DRAWER: PEMILIH BULAN (MONTH PICKER SHEET)                            -->
     <!-- ====================================================================== -->
-    <div id="monthPickerSheet" class="absolute inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex flex-col justify-end transition-opacity">
+    <div id="monthPickerSheet" class="absolute inset-0 z-50 bg-black/50 hidden flex flex-col justify-end transition-opacity">
       <div class="sheet-content bg-white rounded-t-3xl px-6 pt-5 pb-8 md:p-8 space-y-4 max-h-[70%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
         <div class="flex items-center justify-between">
           <h3 class="text-base md:text-lg font-bold text-neutral-900">pilih bulan &amp; tahun</h3>
@@ -1495,7 +1504,7 @@
     <!-- ====================================================================== -->
     <!-- MODAL LIGHTBOX FULLSCREEN BUKTI TRANSFER (ZOOM VIEWER)                 -->
     <!-- ====================================================================== -->
-    <div id="fullscreenModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md hidden flex flex-col items-center justify-between p-4 md:p-8" onclick="closeFullscreenProof()">
+    <div id="fullscreenModal" class="fixed inset-0 z-50 bg-black/98 hidden flex flex-col items-center justify-between p-4 md:p-8" onclick="closeFullscreenProof()">
       <div class="w-full flex justify-between items-center text-white/80 pt-2 px-2">
         <span id="fullscreenTitle" class="text-xs font-mono">bukti transfer</span>
         <button onclick="closeFullscreenProof()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition">
@@ -1511,7 +1520,7 @@
     <!-- ====================================================================== -->
     <!-- TOAST NOTIFICATION DINAMIS (NETRAL UNTUK FARIS, PINK CINTA UNTUK SAIBA)-->
     <!-- ====================================================================== -->
-    <div id="toastMessage" class="fixed top-14 left-1/2 -translate-x-1/2 px-5 py-2.5 rounded-full shadow-xl pointer-events-none opacity-0 transition-all duration-300 z-50 text-xs md:text-sm font-medium whitespace-nowrap">
+    <div id="toastMessage" class="fixed top-14 left-1/2 -translate-x-1/2 px-5 py-2.5 rounded-full shadow-xl pointer-events-none opacity-0 transition-opacity duration-300 z-50 text-xs md:text-sm font-medium whitespace-nowrap">
       pesan
     </div>
 
@@ -1718,12 +1727,11 @@
       const audio = getAudioEl();
       const playIcon = document.getElementById('songPickerPlayIcon');
       if (playIcon) playIcon.textContent = audio && !audio.paused ? '⏸' : '▶';
-      sheet.classList.remove('hidden');
+      openSheetById('songPickerSheet');
     }
 
     function closeSongPicker() {
-      const sheet = document.getElementById('songPickerSheet');
-      if (sheet) sheet.classList.add('hidden');
+      closeSheetById('songPickerSheet');
     }
 
     function selectSong(songId) {
@@ -1825,9 +1833,9 @@
       toast.innerHTML = text;
 
       if (mode === 'pink') {
-        toast.className = 'fixed top-3 left-1/2 -translate-x-1/2 max-w-[85vw] bg-gradient-to-r from-rose-500 to-pink-500 text-white text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-xl shadow-rose-500/30 ring-2 ring-rose-200 pointer-events-none opacity-100 transition-all duration-300 z-50 text-center leading-snug whitespace-normal break-words';
+        toast.className = 'fixed top-3 left-1/2 -translate-x-1/2 max-w-[85vw] bg-gradient-to-r from-rose-500 to-pink-500 text-white text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-xl shadow-rose-500/30 ring-2 ring-rose-200 pointer-events-none opacity-100 transition-opacity duration-300 z-50 text-center leading-snug whitespace-normal break-words';
       } else {
-        toast.className = 'fixed top-3 left-1/2 -translate-x-1/2 max-w-[88vw] bg-neutral-900 text-white text-xs md:text-sm font-medium px-5 py-2.5 rounded-2xl shadow-xl pointer-events-none opacity-100 transition-all duration-300 z-50 text-center leading-snug whitespace-normal break-words';
+        toast.className = 'fixed top-3 left-1/2 -translate-x-1/2 max-w-[88vw] bg-neutral-900 text-white text-xs md:text-sm font-medium px-5 py-2.5 rounded-2xl shadow-xl pointer-events-none opacity-100 transition-opacity duration-300 z-50 text-center leading-snug whitespace-normal break-words';
       }
 
       setTimeout(() => {
@@ -1995,14 +2003,13 @@
       pickerYear = viewYear;
       const sheet = document.getElementById('monthPickerSheet');
       if (!sheet) return;
-      sheet.classList.remove('hidden');
+      openSheetById('monthPickerSheet');
       // Sync year label and styling
       syncMonthPickerUI();
     }
 
     function closeMonthPicker() {
-      const sheet = document.getElementById('monthPickerSheet');
-      if (sheet) sheet.classList.add('hidden');
+      closeSheetById('monthPickerSheet');
     }
 
     function changePickerYear(dir) {
@@ -2458,13 +2465,40 @@
         }
       }
 
-      const sheet = document.getElementById('uploadSheet');
-      if (sheet) sheet.classList.remove('hidden');
+      openSheetById('uploadSheet');
+    }
+
+    function openSheetById(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      clearTimeout(el.__closeTimer);
+      const panel = el.querySelector('.sheet-content');
+      el.classList.remove('hidden');
+      if (panel) {
+        panel.style.transform = 'translateY(102%)';
+        void panel.offsetHeight;
+        panel.style.transform = '';
+      }
+    }
+
+    function closeSheetById(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const panel = el.querySelector('.sheet-content');
+      if (!panel) { el.classList.add('hidden'); return; }
+      panel.style.transform = 'translateY(102%)';
+      el.__closeTimer = setTimeout(function() {
+        el.classList.add('hidden');
+        panel.style.transform = '';
+      }, 240);
+    }
+
+    function playHaptic(ms) {
+      if (navigator.vibrate) navigator.vibrate(ms || 10);
     }
 
     function closeUploadSheet() {
-      const sheet = document.getElementById('uploadSheet');
-      if (sheet) sheet.classList.add('hidden');
+      closeSheetById('uploadSheet');
     }
 
     function executeSetoranSubmission() {
@@ -2511,24 +2545,60 @@
         note: noteText
       };
 
+      // ponytail: optimistic write - UI updates instantly, rolls back if backend rejects
+      const optimisticRecord = {
+        id: 'OPT-' + Date.now(),
+        __optimistic: true,
+        year: viewYear,
+        monthIndex: viewMonth,
+        dayId: targetWeek.id,
+        labelMinggu: 'Minggu ' + targetWeek.id,
+        user: currentUser.role,
+        userName: currentUser.name,
+        nominal: (APP_DATABASE.config && APP_DATABASE.config.nominal) || 100000,
+        status: 'Tepat Waktu',
+        timestamp: 'baru saja',
+        previewUrl: selectedImageBase64,
+        note: noteText,
+        dayIdNote: targetWeek.id
+      };
+
+      APP_DATABASE.records.push(optimisticRecord);
+      playHaptic(12);
+      closeUploadSheet();
+      renderAllTimelines();
+      renderSummary();
+      renderFullHistory();
+      checkPartnerPresence();
+      showToast('bukti transfer berhasil dicatat');
+
+      function rollbackOptimistic() {
+        const i = APP_DATABASE.records.indexOf(optimisticRecord);
+        if (i > -1) APP_DATABASE.records.splice(i, 1);
+        renderAllTimelines();
+        renderSummary();
+        renderFullHistory();
+      }
+
       callBackend('submitSetoran', payload,
         function(response) {
           resetSubmitBtn();
           if (response && response.success) {
-            APP_DATABASE.records.push(response.record);
+            const i = APP_DATABASE.records.indexOf(optimisticRecord);
+            if (i > -1) APP_DATABASE.records[i] = response.record;
             saveToLocalStorage();
-            closeUploadSheet();
             renderAllTimelines();
             renderSummary();
             renderFullHistory();
             checkPartnerPresence();
-            showToast('bukti transfer berhasil dicatat');
           } else {
+            rollbackOptimistic();
             showToast(response.message || 'gagal menyimpan setoran');
           }
         },
         function(err) {
           resetSubmitBtn();
+          rollbackOptimistic();
           showToast('kesalahan jaringan: ' + err.toString());
         }
       );
@@ -2634,13 +2704,11 @@
         }
       }
 
-      const detailEl = document.getElementById('detailSheet');
-      if (detailEl) detailEl.classList.remove('hidden');
+      openSheetById('detailSheet');
     }
 
     function closeDetailSheet() {
-      const detailEl = document.getElementById('detailSheet');
-      if (detailEl) detailEl.classList.add('hidden');
+      closeSheetById('detailSheet');
     }
 
     /**
@@ -2668,13 +2736,11 @@
       if (btnSubmit) btnSubmit.setAttribute('disabled', 'true');
       if (labelEl) labelEl.textContent = `minggu ${activeRecordInDetail.dayId} · ${currentUser.name}`;
 
-      const kSheet = document.getElementById('koreksiSheet');
-      if (kSheet) kSheet.classList.remove('hidden');
+      openSheetById('koreksiSheet');
     }
 
     function closeKoreksiSheet() {
-      const kSheet = document.getElementById('koreksiSheet');
-      if (kSheet) kSheet.classList.add('hidden');
+      closeSheetById('koreksiSheet');
     }
 
     function executeKoreksiSubmission() {
@@ -2970,12 +3036,11 @@
       renderSafaVisuals();
       renderUpHouseBalloons();
 
-      sheet.classList.remove('hidden');
+      openSheetById('plantSheet');
     }
 
     function closePlantSheet() {
-      const sheet = document.getElementById('plantSheet');
-      if (sheet) sheet.classList.add('hidden');
+      closeSheetById('plantSheet');
     }
 
     /**
@@ -3402,6 +3467,13 @@
     } else {
       bindUserButtonsDirectly();
     }
+
+    // ponytail: one delegated listener gives every .btn-press a light tap tick, no per-element wiring
+    document.addEventListener('pointerdown', function(e) {
+      if (e.pointerType === 'mouse') return;
+      const t = e.target && e.target.closest ? e.target.closest('.btn-press') : null;
+      if (t) playHaptic(8);
+    }, { passive: true });
 
     // Cegah gesture pinch-to-zoom & double-tap zoom pada iOS
     document.addEventListener('gesturestart', function(e) { e.preventDefault(); }, { passive: false });
