@@ -653,6 +653,16 @@
   <!-- SINGLE UNIFIED CONTAINER: Fleksibel Mobile Layar Penuh hingga Desktop Lapang -->
   <div id="appContainer" class="relative w-full h-full overflow-hidden flex flex-col">
 
+    <!-- UI/UX PRO MAX: Atmospheric Ambient Mesh Layer -->
+    <div class="ambient-layer absolute inset-0 pointer-events-none overflow-hidden z-0">
+      <div class="absolute -top-24 -right-16 w-[420px] h-[420px] rounded-full bg-gradient-to-br from-rose-300/45 via-pink-200/35 to-transparent blur-[85px]"></div>
+      <div class="absolute top-1/6 -left-20 w-[380px] h-[380px] rounded-full bg-gradient-to-tr from-pink-200/40 via-rose-100/30 to-transparent blur-[80px]"></div>
+      <div class="absolute bottom-10 -left-16 w-[440px] h-[440px] rounded-full bg-gradient-to-tr from-emerald-200/40 via-teal-100/30 to-transparent blur-[85px]"></div>
+      <div class="absolute bottom-28 -right-16 w-[380px] h-[380px] rounded-full bg-teal-200/30 blur-[80px]"></div>
+      <div class="absolute top-1/2 left-1/4 w-[320px] h-[320px] rounded-full bg-amber-100/25 blur-[75px]"></div>
+    </div>
+
+
     <!-- ====================================================================== -->
     <!-- HALAMAN PEMBUKA APLIKASI (OVERLAY GELAP DENGAN AMBIENT PINK GLOW)      -->
     <!-- ====================================================================== -->
@@ -711,7 +721,7 @@
     <!-- ====================================================================== -->
     <!-- TOP BAR (TOMBOL PROFIL PENGGUNA, NAVIGASI BULAN, AKSI TAMBAH SETORAN) -->
     <!-- ====================================================================== -->
-    <header class="whitespace-nowrap shrink-0 pt-3 md:pt-4 px-2.5 sm:px-6 md:px-10 pb-2.5 flex items-center justify-between bg-[#FAFAFC] z-20 border-b border-neutral-100/60">
+    <header class="whitespace-nowrap shrink-0 pt-3 md:pt-4 px-2.5 sm:px-6 md:px-10 pb-2.5 flex items-center justify-between bg-white/50 backdrop-blur-xl z-20 border-b border-rose-100/40 shadow-xs">
       <!-- Tombol Profil Pengguna: Klik untuk kembali ke Layar Pembuka -->
       <button onclick="openOpeningScreen()" title="Ganti Pengguna / Buka Layar Pembuka" class="btn-press shrink-0 whitespace-nowrap flex items-center space-x-2.5 py-1.5 px-3.5 rounded-full bg-neutral-200/60 hover:bg-neutral-200 transition">
         <span id="activeUserIndicator" class="w-2 h-2 rounded-full bg-emerald-500"></span>
@@ -763,7 +773,7 @@
     </header>
 
     <!-- KEHADIRAN PASANGAN (PARTNER PRESENCE PULSE) -->
-    <div id="partnerPresenceBar" class="hidden px-6 md:px-10 py-1.5 bg-rose-50/70 border-b border-rose-100/60 flex items-center justify-between text-[11px] text-rose-800 font-medium">
+    <div id="partnerPresenceBar" class="hidden px-6 md:px-10 py-1.5 bg-rose-50/50 backdrop-blur-md border-b border-rose-100/50 flex items-center justify-between text-[11px] text-rose-800 font-medium">
       <div class="flex items-center space-x-2">
         <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
         <span id="partnerPresenceText">pasangan baru saja setor ✨</span>
