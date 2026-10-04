@@ -1407,7 +1407,7 @@
           <span class="text-xl" id="songPickerIcon">🎵</span>
           <div class="flex-1 min-w-0">
             <p class="text-xs font-bold text-neutral-800 lowercase">sedang diputar</p>
-            <p id="songPickerCurrentTitle" class="text-sm font-semibold text-rose-700 truncate">Adele - Lovesong</p>
+            <p id="songPickerCurrentTitle" class="text-sm font-semibold text-rose-700 truncate">Married Life - Michael Giacchino</p>
           </div>
           <button onclick="toggleMusic()" id="songPickerPlayBtn" class="btn-press w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 transition shadow-xs">
             <span id="songPickerPlayIcon">⏸</span>
@@ -1417,13 +1417,21 @@
         <!-- Daftar Lagu Bawaan -->
         <div class="space-y-1.5">
           <p class="text-[10px] font-bold text-neutral-500 uppercase tracking-wide">lagu bawaan</p>
+          <button onclick="selectSong('married')" id="songBtnMarried" class="btn-press w-full flex items-center space-x-3 px-3.5 py-3 rounded-2xl bg-rose-50/50 border border-rose-100 text-left hover:bg-rose-50 transition">
+            <span class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">🎈</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-bold text-neutral-800">Married Life - Michael Giacchino</p>
+              <p class="text-[10px] text-neutral-400">04:11 · tema rumah balon (Up)</p>
+            </div>
+            <span id="songCheckMarried" class="w-5 h-5 rounded-full bg-rose-500 text-white flex items-center justify-center text-[10px]">✓</span>
+          </button>
           <button onclick="selectSong('adele')" id="songBtnAdele" class="btn-press w-full flex items-center space-x-3 px-3.5 py-3 rounded-2xl bg-rose-50/50 border border-rose-100 text-left hover:bg-rose-50 transition">
             <span class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">🎵</span>
             <div class="flex-1 min-w-0">
               <p class="text-xs font-bold text-neutral-800">Adele - Lovesong</p>
               <p class="text-[10px] text-neutral-400">05:16 · lagu cinta klasik</p>
             </div>
-            <span id="songCheckAdele" class="w-5 h-5 rounded-full bg-rose-500 text-white flex items-center justify-center text-[10px]">✓</span>
+            <span id="songCheckAdele" class="w-5 h-5 rounded-full bg-rose-500 text-white flex items-center justify-center text-[10px] hidden">✓</span>
           </button>
           <button onclick="selectSong('harry')" id="songBtnHarry" class="btn-press w-full flex items-center space-x-3 px-3.5 py-3 rounded-2xl bg-rose-50/50 border border-rose-100 text-left hover:bg-rose-50 transition">
             <span class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">🌹</span>
@@ -1717,7 +1725,7 @@
     /**
      * PEMILIH LAGU (SONG PICKER)
      */
-    let currentSong = 'adele';
+    let currentSong = 'married';
     let customAudioUrl = null;
 
     function openSongPicker() {
@@ -1737,35 +1745,25 @@
     function selectSong(songId) {
       const audio = getAudioEl();
       if (!audio) return;
-      if (songId === 'adele') {
-        if (customAudioUrl) {
-          URL.revokeObjectURL(customAudioUrl);
-          customAudioUrl = null;
-        }
-        audio.src = './audio/adele-lovesong.mp3';
-        currentSong = 'adele';
-        document.getElementById('songCheckAdele').classList.remove('hidden');
-        document.getElementById('songCheckHarry').classList.add('hidden');
-        document.getElementById('songPickerCurrentTitle').textContent = 'Adele - Lovesong';
-        document.getElementById('songPickerIcon').textContent = '🎵';
-        audio.removeAttribute('data-user-muted');
-        audio.load();
-        audio.play().catch(() => updateMusicUI(false));
-      } else if (songId === 'harry') {
-        if (customAudioUrl) {
-          URL.revokeObjectURL(customAudioUrl);
-          customAudioUrl = null;
-        }
-        audio.src = './audio/harry-styles-roses.mp3';
-        currentSong = 'harry';
-        document.getElementById('songCheckHarry').classList.remove('hidden');
-        document.getElementById('songCheckAdele').classList.add('hidden');
-        document.getElementById('songPickerCurrentTitle').textContent = 'Harry Styles - Coming Up Roses';
-        document.getElementById('songPickerIcon').textContent = '🌹';
-        audio.removeAttribute('data-user-muted');
-        audio.load();
-        audio.play().catch(() => updateMusicUI(false));
+      const meta = SONG_META[songId];
+      if (!meta) return;
+      if (customAudioUrl) {
+        URL.revokeObjectURL(customAudioUrl);
+        customAudioUrl = null;
       }
+      audio.src = meta.file;
+      currentSong = songId;
+      Object.keys(SONG_META).forEach(function(k) {
+        const el = document.getElementById(SONG_META[k].check);
+        if (el) el.classList.toggle('hidden', k !== songId);
+      });
+      const titleEl = document.getElementById('songPickerCurrentTitle');
+      const iconEl = document.getElementById('songPickerIcon');
+      if (titleEl) titleEl.textContent = meta.title;
+      if (iconEl) iconEl.textContent = meta.icon;
+      audio.removeAttribute('data-user-muted');
+      audio.load();
+      audio.play().catch(() => updateMusicUI(false));
     }
 
     function handleCustomAudio(event) {
@@ -1782,8 +1780,10 @@
       audio.src = customAudioUrl;
       currentSong = 'custom';
       // Update UI
-      document.getElementById('songCheckAdele').classList.add('hidden');
-      document.getElementById('songCheckHarry').classList.add('hidden');
+      Object.keys(SONG_META).forEach(function(k) {
+        const el = document.getElementById(SONG_META[k].check);
+        if (el) el.classList.add('hidden');
+      });
       const fileName = file.name.replace(/\.[^/.]+$/, '').substring(0, 30);
       document.getElementById('songPickerCurrentTitle').textContent = fileName;
       document.getElementById('songPickerIcon').textContent = '🎶';
@@ -1845,6 +1845,12 @@
 
     // ponytail: native HTML5 Audio element for romantic bg music
     let isMusicPlaying = false;
+    const SONG_META = {
+      married: { file: './audio/married-life.mp3', title: 'Married Life - Michael Giacchino', icon: '🎈', check: 'songCheckMarried' },
+      adele: { file: './audio/adele-lovesong.mp3', title: 'Adele - Lovesong', icon: '🎵', check: 'songCheckAdele' },
+      harry: { file: './audio/harry-styles-roses.mp3', title: 'Harry Styles - Coming Up Roses', icon: '🌹', check: 'songCheckHarry' }
+    };
+
     function getAudioEl() {
       const audio = document.getElementById('bgMusic');
       if (audio && !audio.hasAttribute('data-init-bound')) {
@@ -3491,7 +3497,7 @@
 
   <!-- ponytail: native HTML5 Audio element for romantic bg music -->
   <audio id="bgMusic" loop preload="none">
-    <source src="./audio/adele-lovesong.mp3" type="audio/mpeg">
+    <source src="./audio/married-life.mp3" type="audio/mpeg">
   </audio>
 </body>
 </html>
