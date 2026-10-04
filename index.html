@@ -1146,7 +1146,10 @@
 
         <!-- Wadah Gambar dengan Indikator Ketuk Layar Penuh -->
         <div id="detailImageContainer" onclick="openFullscreenProof()" class="group relative rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-100 max-h-56 flex items-center justify-center cursor-zoom-in">
-          <img id="detailSheetImg" src="" alt="Detail Bukti Transfer" class="w-full h-full object-contain">
+          <img id="detailSheetImg" src="" alt="Detail Bukti Transfer" class="w-full h-full object-contain opacity-0">
+          <div id="detailImageLoading" class="absolute inset-0 flex items-center justify-center">
+            <div class="w-8 h-8 border-2 border-neutral-300 border-t-rose-400 rounded-full animate-spin"></div>
+          </div>
           <div class="absolute bottom-2.5 right-2.5 bg-black/60 backdrop-blur-md text-white text-[10px] font-medium px-2.5 py-1 rounded-full flex items-center space-x-1 opacity-90 group-hover:opacity-100 transition">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" />
@@ -2581,6 +2584,13 @@
         if (imgEl) {
           imgEl.classList.add('opacity-0');
           imgEl.classList.remove('hidden');
+          imgEl.onload = function() {
+            imgEl.classList.remove('opacity-0');
+            if (imgLoading) imgLoading.classList.add('hidden');
+          };
+          imgEl.onerror = function() {
+            if (imgLoading) imgLoading.classList.add('hidden');
+          };
           imgEl.src = imageUrl;
           imgEl.alt = `Bukti Transfer Minggu ${record.dayId || 1}`;
         }
