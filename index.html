@@ -113,11 +113,14 @@
       border-color: rgba(244, 63, 94, 0.3) !important;
     }
     body.night-theme nav {
-      background-color: rgba(15, 17, 23, 0.96) !important;
-      border-top-color: rgba(255, 255, 255, 0.08) !important;
+      background-color: transparent !important;
+      border-top-color: transparent !important;
     }
     body.night-theme nav button {
-      color: #94A3B8 !important;
+      color: #64748B;
+    }
+    body.night-theme nav button.text-white {
+      color: #F8FAFC;
     }
     body.night-theme section.bg-white {
       background-color: #181B24 !important;
@@ -226,6 +229,16 @@
     }
     body.night-theme #tabViewRiwayat p.text-neutral-400 {
       color: #94A3B8 !important;
+    }
+
+    /* bottom nav capsule — night */
+    body.night-theme #bottomNav {
+      background: rgba(24,27,36,.94);
+      border-color: rgba(255,255,255,.10);
+      box-shadow: 0 10px 28px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    body.night-theme #navRiwayatBtn.text-neutral-400:hover {
+      color: #CBD5E1;
     }
     body.night-theme #historyCountBadge {
       background-color: rgba(6, 78, 59, 0.6) !important;
@@ -1054,24 +1067,23 @@
     <!-- ====================================================================== -->
     <!-- DOCK NAVIGASI BAWAH: HANYA 2 MENU (HOME & RIWAYAT)                     -->
     <!-- ====================================================================== -->
-    <nav class="shrink-0 px-12 md:px-24 border-t border-neutral-100 flex items-start justify-around bg-[#FAFAFC] z-20">
-      
-      <!-- 1. Menu Home (Tracking Lingkaran Mingguan) -->
-      <button onclick="switchTab('home')" id="navHomeBtn" title="Beranda Tracking" class="btn-press flex flex-col items-center justify-center text-neutral-900 transition">
-        <svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 3.172l8 6.4V20a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4h-4v4a1 1 0 01-1 1H5a1 1 0 01-1-1V9.572l8-6.4z"/>
-        </svg>
-        <span id="navHomeIndicator" class="w-1.5 h-1.5 rounded-full bg-neutral-900 mt-1"></span>
-      </button>
+    <nav aria-label="Navigasi utama" class="shrink-0 px-4 pt-2 pb-4 z-20">
+      <!-- floating capsule: active pill slides 280ms, colour follows user -->
+      <div id="bottomNav" class="relative mx-auto h-14 rounded-full px-[5px] flex items-center max-w-xl bg-white border border-neutral-200 shadow-[0_10px_28px_rgba(0,0,0,.12)]">
+        <div id="navPill" class="absolute top-[5px] bottom-[5px] left-[5px] w-[calc(50%-5px)] rounded-full bg-gradient-to-br from-neutral-700 to-neutral-900 shadow-[0_6px_16px_rgba(0,0,0,.28)] transition-transform duration-[280ms] ease-[cubic-bezier(.32,.72,0,1)]"></div>
 
-      <!-- 2. Menu Riwayat (Daftar Riwayat Bukti Setoran) -->
-      <button onclick="switchTab('riwayat')" id="navRiwayatBtn" title="Riwayat Setoran" class="btn-press flex flex-col items-center justify-center text-neutral-400 hover:text-neutral-900 transition">
-        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-          <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-        </svg>
-        <span id="navRiwayatIndicator" class="w-1.5 h-1.5 rounded-full bg-transparent mt-1"></span>
-      </button>
+        <button onclick="switchTab('home')" id="navHomeBtn" title="Beranda Tracking" class="btn-press relative z-10 flex-1 h-full grid place-items-center text-white transition-colors">
+          <svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 3.172l8 6.4V20a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4h-4v4a1 1 0 01-1 1H5a1 1 0 01-1-1V9.572l8-6.4z"/>
+          </svg>
+        </button>
 
+        <button onclick="switchTab('riwayat')" id="navRiwayatBtn" title="Riwayat Setoran" class="btn-press relative z-10 flex-1 h-full grid place-items-center text-neutral-400 hover:text-neutral-500 transition-colors">
+          <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+        </button>
+      </div>
     </nav>
 
     <!-- ====================================================================== -->
@@ -1925,6 +1937,7 @@
       }
 
       // ponytail: adaptive setor (+) button styling per user role
+      updateNavPillColor();
       const btnHeaderSetor = document.getElementById('btnHeaderSetor');
       if (btnHeaderSetor) {
         if (role === 'B') {
@@ -2077,48 +2090,39 @@
       currentTab = target;
       const homeView = document.getElementById('tabViewHome');
       const riwayatView = document.getElementById('tabViewRiwayat');
+      const pill = document.getElementById('navPill');
       const navHomeBtn = document.getElementById('navHomeBtn');
       const navRiwayatBtn = document.getElementById('navRiwayatBtn');
-      const dotHome = document.getElementById('navHomeIndicator');
-      const dotRiwayat = document.getElementById('navRiwayatIndicator');
+      const isHome = target === 'home';
 
-      if (target === 'home') {
-        if (homeView) {
-          homeView.classList.remove('hidden');
-          homeView.scrollTop = 0;
-        }
-        if (riwayatView) riwayatView.classList.add('hidden');
-
-        if (navHomeBtn) {
-          navHomeBtn.classList.remove('text-neutral-400');
-          navHomeBtn.classList.add('text-neutral-900');
-        }
-        if (navRiwayatBtn) {
-          navRiwayatBtn.classList.remove('text-neutral-900');
-          navRiwayatBtn.classList.add('text-neutral-400');
-        }
-        if (dotHome) dotHome.classList.replace('bg-transparent', 'bg-neutral-900');
-        if (dotRiwayat) dotRiwayat.classList.replace('bg-neutral-900', 'bg-transparent');
-      } else {
-        if (homeView) homeView.classList.add('hidden');
-        if (riwayatView) {
-          riwayatView.classList.remove('hidden');
-          riwayatView.scrollTop = 0;
-        }
-
-        if (navHomeBtn) {
-          navHomeBtn.classList.remove('text-neutral-900');
-          navHomeBtn.classList.add('text-neutral-400');
-        }
-        if (navRiwayatBtn) {
-          navRiwayatBtn.classList.remove('text-neutral-400');
-          navRiwayatBtn.classList.add('text-neutral-900');
-        }
-        if (dotHome) dotHome.classList.replace('bg-neutral-900', 'bg-transparent');
-        if (dotRiwayat) dotRiwayat.classList.replace('bg-transparent', 'bg-neutral-900');
-
-        renderFullHistory();
+      if (homeView) {
+        homeView.classList.toggle('hidden', !isHome);
+        if (isHome) homeView.scrollTop = 0;
       }
+      if (riwayatView) {
+        riwayatView.classList.toggle('hidden', isHome);
+        if (!isHome) {
+          riwayatView.scrollTop = 0;
+          renderFullHistory();
+        }
+      }
+
+      // sliding pill: 100% of own width = exactly one slot
+      if (pill) pill.style.transform = isHome ? 'translateX(0)' : 'translateX(100%)';
+      const activeCls = 'btn-press relative z-10 flex-1 h-full grid place-items-center transition-colors ';
+      if (navHomeBtn) navHomeBtn.className = activeCls + (isHome ? 'text-white' : 'text-neutral-400 hover:text-neutral-500');
+      if (navRiwayatBtn) navRiwayatBtn.className = activeCls + (isHome ? 'text-neutral-400 hover:text-neutral-500' : 'text-white');
+    }
+
+    /** pill colour follows logged-in user: faris = dark, saiba = rose */
+    function updateNavPillColor() {
+      const pill = document.getElementById('navPill');
+      if (!pill) return;
+      const rose = currentUser.role === 'B';
+      pill.className = 'absolute top-[5px] bottom-[5px] left-[5px] w-[calc(50%-5px)] rounded-full transition-transform duration-[280ms] ease-[cubic-bezier(.32,.72,0,1)] '
+        + (rose
+          ? 'bg-gradient-to-br from-rose-500 to-pink-500 shadow-[0_6px_18px_rgba(244,63,94,.45)]'
+          : 'bg-gradient-to-br from-neutral-700 to-neutral-900 shadow-[0_6px_16px_rgba(0,0,0,.28)]');
     }
 
     /**
