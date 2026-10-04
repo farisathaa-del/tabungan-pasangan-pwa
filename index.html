@@ -901,7 +901,7 @@
             </div>
 
             <!-- SISI TENGAH: PANGGUNG TAMAN POT & KUCING SAFA (UNIFIED STAGE: Kucing Mengelilingi Pot, Tidak Masuk ke Rumah) -->
-            <div id="homeGardenCenterStage" class="relative z-20 w-[100px] h-[70px] flex items-end justify-center select-none shrink-0 pointer-events-none self-end -mb-1">
+            <div id="homeGardenCenterStage" class="relative z-35 w-[100px] h-[70px] flex items-end justify-center select-none shrink-0 pointer-events-none self-end -mb-1">
               <!-- Bayangan Tanah Rumput untuk Pot -->
               <div class="absolute left-1/2 -translate-x-1/2 bottom-0 w-[44px] h-[8px] bg-emerald-950/20 rounded-full blur-[1.5px] pointer-events-none z-0"></div>
 
@@ -914,7 +914,7 @@
               </div>
 
               <!-- Bubble Chat Safa di Atas Pot -->
-              <div id="safaBubbleMini" class="hidden absolute -top-8 left-1/2 -translate-x-1/2 max-w-[160px] bg-white/95 backdrop-blur-sm border border-rose-200 text-rose-600 text-[10px] font-semibold px-2.5 py-0.5 rounded-full shadow-md whitespace-nowrap text-center leading-tight z-40 pointer-events-none transition-all">
+              <div id="safaBubbleMini" class="hidden absolute -top-10 left-1/2 -translate-x-1/2 min-w-[100px] max-w-[140px] bg-white/98 backdrop-blur-md border border-rose-300 text-rose-600 text-[10px] font-bold px-3 py-1 rounded-2xl shadow-xl whitespace-normal break-words text-center leading-snug z-50 pointer-events-none transition-all ring-2 ring-rose-100/80">
                 meow! ♥
               </div>
             </div>
@@ -3111,13 +3111,13 @@
       const status = getSafaStatus();
       let messages = [];
       if (status.mode === 'night_sleep') {
-        messages = ['shhh.. safa bobo, selamat tidur sayang ♥', 'ngantuk.. besok kita nabung lagi yaa~', 'safa mimpiin faris & saiba selalu bahagia ♥'];
+        messages = ['shhh.. safa bobo ♥', 'ngantuk.. besok nabung lagi ya~', 'safa mimpiin faris & saiba ♥'];
       } else if (status.mode === 'day_idle') {
-        messages = ['nguap~ safa nunggu setoran minggu ini..', 'yuk mulai sisihkan tabungan cinta kita!', 'safa laper, butuh semangat tabungan! 🐾'];
+        messages = ['nguap~ safa nunggu setoran.. 🐾', 'yuk sisihkan tabungan cinta kita!', 'safa laper, butuh semangat! 🌱'];
       } else if (status.mode === 'waiting') {
-        messages = ['safa nungguin kamu nih, yuk kompak!', 'setengah jalan lagi lunas berdua!', 'pasti kompak minggu ini, ayo sayang! ♥'];
+        messages = ['safa nungguin kamu nih! ♥', 'setengah jalan lagi lunas berdua!', 'pasti kompak minggu ini, ayo! ✨'];
       } else if (status.mode === 'walking') {
-        messages = ['meow! faris & saiba hebat banget! ♥', 'purrr.. tanaman cinta kita makin rimbun!', 'sayang saiba banyak-banyak! 🐾', 'yeay! kompak terus ya kalian! ✨'];
+        messages = ['meow! faris & saiba hebat! ♥', 'purrr.. tanaman cinta rimbun! 🌸', 'sayang saiba banyak-banyak! 🐾', 'yeay! kompak terus ya! ✨'];
       }
       const msg = messages[Math.floor(Math.random() * messages.length)];
       const bubble = document.getElementById('safaBubbleMini');
