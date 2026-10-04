@@ -237,6 +237,9 @@
     body.night-theme #historyTotalSaiba {
       color: #FDA4AF !important;
     }
+    body.night-theme #historySummaryCard .text-neutral-800 {
+      color: #E2E8F0 !important;
+    }
     body.night-theme #historySummaryCard .text-emerald-800\/80 {
       color: #6EE7B7 !important;
     }
@@ -989,7 +992,7 @@
     <!-- ====================================================================== -->
     <!-- TAB 2: RIWAYAT SETORAN (DIKELOMPOKKAN PER BULAN)                       -->
     <!-- ====================================================================== -->
-    <main id="tabViewRiwayat" class="hidden flex-1 overflow-y-auto no-scrollbar px-6 md:px-10 py-4 md:py-5 space-y-4">
+    <main id="tabViewRiwayat" class="relative z-10 hidden flex-1 overflow-y-auto no-scrollbar px-6 md:px-10 py-4 md:py-5 space-y-4">
       
       <div class="flex items-center justify-between">
         <div>
@@ -2313,7 +2316,7 @@
                       </div>
                     </div>
                     <div class="text-right ${isSaiba ? 'pr-7' : ''}">
-                      <span class="text-xs font-bold text-neutral-900 font-mono block">Rp100.000</span>
+                      <span class="text-xs font-bold text-neutral-900 font-mono block">Rp${(Number(item.nominal) || 100000).toLocaleString('id-ID')}</span>
                       <span class="text-[10px] font-semibold text-emerald-700 lowercase bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded-full history-status-badge whitespace-nowrap inline-block">
                         ${statusStr}
                       </span>
