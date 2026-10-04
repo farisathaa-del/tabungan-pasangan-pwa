@@ -1735,6 +1735,14 @@
       const audio = getAudioEl();
       const playIcon = document.getElementById('songPickerPlayIcon');
       if (playIcon) playIcon.textContent = audio && !audio.paused ? '⏸' : '▶';
+      // ponytail: re-sync label/icon from SONG_META so the sheet never shows a stale track
+      const meta = SONG_META[currentSong];
+      if (meta) {
+        const titleEl = document.getElementById('songPickerCurrentTitle');
+        const iconEl = document.getElementById('songPickerIcon');
+        if (titleEl) titleEl.textContent = meta.title;
+        if (iconEl) iconEl.textContent = meta.icon;
+      }
       openSheetById('songPickerSheet');
     }
 
