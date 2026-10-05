@@ -1945,9 +1945,6 @@
     let isWeeklyFlowerOpen = false;
 
     function checkWeeklyFlowerPopup() {
-      const sessionUser = localStorage.getItem('tabungan_session_user');
-      /* Pop-up otomatis muncul jika dibuka sebagai Saiba (role B) */
-      if (sessionUser !== 'B' && (!currentUser || currentUser.role !== 'B')) return;
       const data = getWeeklyFlowerData();
       const seenKey = localStorage.getItem('tabungan_weekly_flower_seen');
       if (seenKey === data.weekKey) return;
@@ -2389,6 +2386,7 @@
 
       // ponytail: adaptive setor (+) button styling per user role
       updateNavPillColor();
+      checkWeeklyFlowerPopup();
       const btnHeaderSetor = document.getElementById('btnHeaderSetor');
       if (btnHeaderSetor) {
         if (role === 'B') {
@@ -3917,6 +3915,10 @@
     window.openSongPicker = openSongPicker;
     window.closeSongPicker = closeSongPicker;
     window.selectSong = selectSong;
+    window.openWeeklyFlowerEnvelope = openWeeklyFlowerEnvelope;
+    window.closeWeeklyFlowerModal = closeWeeklyFlowerModal;
+    window.showWeeklyFlowerModal = showWeeklyFlowerModal;
+    window.checkWeeklyFlowerPopup = checkWeeklyFlowerPopup;
     window.tapUpHouse = tapUpHouse;
 
     function bindUserButtonsDirectly() {
