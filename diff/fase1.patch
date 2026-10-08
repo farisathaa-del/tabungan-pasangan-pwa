@@ -1,0 +1,369 @@
+diff --git a/index.html b/index.html
+index f02ca49..bd4fdae 100644
+--- a/index.html
++++ b/index.html
+@@ -2157,6 +2157,60 @@
+       }
+     }
+ 
++    /* ── Helper perhitungan (Fase 1) ──────────────────────────────────
++       Semua total uang dihitung dari nominal tiap record, bukan jumlah
++       record. Sebelumnya memakai `records.length * config.nominal`, yang
++       salah begitu nominal tidak seragam atau ada record duplikat. */
++
++    function getNominal() {
++      const n = APP_DATABASE.config && Number(APP_DATABASE.config.nominal);
++      return Number.isFinite(n) && n > 0 ? n : 100000;
++    }
++
++    function sumNominal(records) {
++      if (!Array.isArray(records)) return 0;
++      return records.reduce((total, r) => {
++        const n = Number(r && r.nominal);
++        return total + (Number.isFinite(n) ? n : getNominal());
++      }, 0);
++    }
++
++    /** Perbandingan bulan yang tahan beda tipe ("10" vs 10) dari server. */
++    function isRecordInMonth(record, year, month) {
++      return Boolean(record) &&
++        Number(record.year) === Number(year) &&
++        Number(record.monthIndex) === Number(month);
++    }
++
++    function weekKey(record) {
++      return `${record.year}|${record.monthIndex}|${record.dayId}`;
++    }
++
++    /**
++     * Minggu yang sudah lunas: ada setoran dari Faris (A) DAN Saidah (B).
++     * Pengganti Math.floor(records.length / 2) yang ikut naik saat ada
++     * record duplikat dan tidak peduli salah satu belum menyusul.
++     */
++    function countFullyPaidWeeks(records) {
++      if (!Array.isArray(records)) return 0;
++      const slots = new Map();
++      records.forEach(r => {
++        if (!r) return;
++        const key = weekKey(r);
++        if (!slots.has(key)) slots.set(key, { A: false, B: false });
++        if (r.user === 'A') slots.get(key).A = true;
++        else if (r.user === 'B') slots.get(key).B = true;
++      });
++      let count = 0;
++      slots.forEach(slot => { if (slot.A && slot.B) count++; });
++      return count;
++    }
++
++    /** Jumlah minggu lunas di seluruh periode — dasar progres tanaman & balon. */
++    function getTotalPaidWeeks() {
++      return countFullyPaidWeeks(APP_DATABASE.records);
++    }
++
+     const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbzFL7OpHVTdM2JBaZtQrwsSQ6f1V6mqCaLCBe92uP9LJPIObS_0vWxVVB_d_qsD6zbD/exec';
+ 
+     function updateThemeColor(color) {
+@@ -2657,11 +2711,10 @@
+ 
+     function renderCirclesForUser(role, timeline) {
+       return timeline.map(item => {
+-        const record = APP_DATABASE.records.find(r => 
+-          r.dayId === item.id && 
+-          r.user === role && 
+-          r.year === viewYear && 
+-          r.monthIndex === viewMonth
++        const record = APP_DATABASE.records.find(r =>
++          r && String(r.dayId) === String(item.id) &&
++          r.user === role &&
++          isRecordInMonth(r, viewYear, viewMonth)
+         );
+         const isDone = Boolean(record);
+         const isCurrentActiveRole = currentUser.role === role;
+@@ -2716,13 +2769,17 @@
+       if (!banner) return;
+ 
+       const timeline = getMonthTimeline(viewYear, viewMonth);
+-      const totalRequired = timeline.length * 2;
+-      const filledCount = APP_DATABASE.records.filter(r => r.year === viewYear && r.monthIndex === viewMonth).length;
+-
+-      if (filledCount >= totalRequired && totalRequired > 0) {
++      const monthRecords = APP_DATABASE.records.filter(r => isRecordInMonth(r, viewYear, viewMonth));
++      // "Komplit" = setiap minggu punya setoran dari KEDUA orang.
++      // Sebelumnya dihitung dari jumlah record, sehingga banner bisa tampil
++      // padahal masih ada lingkaran kosong di layar.
++      const paidWeeks = countFullyPaidWeeks(monthRecords);
++      const totalWeeks = timeline.length;
++
++      if (totalWeeks > 0 && paidWeeks >= totalWeeks) {
+         banner.classList.remove('hidden');
+         const monthFull = MONTH_FULL_NAMES[viewMonth];
+-        const totalRp = (totalRequired * APP_DATABASE.config.nominal).toLocaleString('id-ID');
++        const totalRp = sumNominal(monthRecords).toLocaleString('id-ID');
+         if (bannerText) {
+           bannerText.textContent = `Bulan ${monthFull} komplit! Faris & Saiba berhasil mengumpulkan Rp${totalRp} bersama.`;
+         }
+@@ -2732,9 +2789,10 @@
+     }
+ 
+     function renderSummary() {
+-      const monthRecords = APP_DATABASE.records.filter(r => r.year === viewYear && r.monthIndex === viewMonth);
+-      const monthTotal = monthRecords.length * APP_DATABASE.config.nominal;
+-      const grandTotal = APP_DATABASE.records.length * APP_DATABASE.config.nominal;
++      const monthRecords = APP_DATABASE.records.filter(r => isRecordInMonth(r, viewYear, viewMonth));
++      // Jumlah rupiah dari nominal tiap record, bukan jumlah record x nominal.
++      const monthTotal = sumNominal(monthRecords);
++      const grandTotal = sumNominal(APP_DATABASE.records);
+       const valEl = document.getElementById('totalSavingsValue');
+       if (valEl) valEl.textContent = 'Rp' + grandTotal.toLocaleString('id-ID');
+       const subEl = document.getElementById('monthSubTotal');
+@@ -2788,12 +2846,11 @@
+       const farisEl = document.getElementById('historyTotalFaris');
+       const saibaEl = document.getElementById('historyTotalSaiba');
+       if (summaryCard) {
+-        const nominal = (APP_DATABASE.config && APP_DATABASE.config.nominal) || 100000;
+-        const farisCount = records.filter(r => r.user === 'A').length;
+-        const saibaCount = records.filter(r => r.user === 'B').length;
+-        const totalAll = records.length * nominal;
+-        const totalFaris = farisCount * nominal;
+-        const totalSaiba = saibaCount * nominal;
++        const farisRecords = records.filter(r => r && r.user === 'A');
++        const saibaRecords = records.filter(r => r && r.user === 'B');
++        const totalAll = sumNominal(records);
++        const totalFaris = sumNominal(farisRecords);
++        const totalSaiba = sumNominal(saibaRecords);
+         if (totalEl) totalEl.textContent = 'Rp' + totalAll.toLocaleString('id-ID');
+         if (farisEl) farisEl.textContent = 'Rp' + totalFaris.toLocaleString('id-ID');
+         if (saibaEl) saibaEl.textContent = 'Rp' + totalSaiba.toLocaleString('id-ID');
+@@ -3053,11 +3110,10 @@
+       if (targetUploadWeekId) {
+         targetWeek = timeline.find(d => d.id === targetUploadWeekId);
+       } else {
+-        targetWeek = timeline.find(d => !APP_DATABASE.records.some(r => 
+-          r.dayId === d.id && 
++        targetWeek = timeline.find(d => !APP_DATABASE.records.some(r =>
++          r && String(r.dayId) === String(d.id) &&
+           r.user === currentUser.role &&
+-          r.year === viewYear &&
+-          r.monthIndex === viewMonth
++          isRecordInMonth(r, viewYear, viewMonth)
+         ));
+       }
+ 
+@@ -3087,7 +3143,7 @@
+         labelMinggu: 'Minggu ' + targetWeek.id,
+         user: currentUser.role,
+         userName: currentUser.name,
+-        nominal: (APP_DATABASE.config && APP_DATABASE.config.nominal) || 100000,
++        nominal: getNominal(),
+         status: 'Tepat Waktu',
+         timestamp: 'baru saja',
+         previewUrl: selectedImageBase64,
+@@ -3513,7 +3569,7 @@
+     }
+ 
+     function renderPlantVisuals() {
+-      const totalPaidWeeks = Math.floor(APP_DATABASE.records.length / 2);
++      const totalPaidWeeks = getTotalPaidWeeks();
+       const { stage, pct, weeks } = getPlantStage(totalPaidWeeks);
+ 
+       // Mini SVG
+@@ -3558,7 +3614,7 @@
+       if (!sheet) return;
+ 
+       // Render large SVG with current stage
+-      const totalPaidWeeks = Math.floor(APP_DATABASE.records.length / 2);
++      const totalPaidWeeks = getTotalPaidWeeks();
+       const { stage } = getPlantStage(totalPaidWeeks);
+       const largeEl = document.getElementById('plantSvgLarge');
+       if (largeEl) largeEl.innerHTML = renderPlantSvg(stage, true);
+@@ -3584,8 +3640,8 @@
+       }
+       const timeline = getMonthTimeline(viewYear, viewMonth);
+       const currentWeek = timeline.find(w => w.isCurrentActiveWeek) || timeline[0];
+-      const farisPaid = APP_DATABASE.records.some(r => r.dayId === currentWeek.id && r.user === 'A' && r.year === viewYear && r.monthIndex === viewMonth);
+-      const saibaPaid = APP_DATABASE.records.some(r => r.dayId === currentWeek.id && r.user === 'B' && r.year === viewYear && r.monthIndex === viewMonth);
++      const farisPaid = APP_DATABASE.records.some(r => r && String(r.dayId) === String(currentWeek.id) && r.user === 'A' && isRecordInMonth(r, viewYear, viewMonth));
++      const saibaPaid = APP_DATABASE.records.some(r => r && String(r.dayId) === String(currentWeek.id) && r.user === 'B' && isRecordInMonth(r, viewYear, viewMonth));
+ 
+       if (!farisPaid && !saibaPaid) {
+         return { mode: 'day_idle', title: 'safa rebahan malas', badge: 'nunggu setoran', desc: 'safa rebahan malas menunggu setoran minggu ini..' };
+@@ -3871,9 +3927,9 @@
+     ];
+ 
+     function renderUpHouseBalloons() {
+-      // 1 Minggu Tabungan = 1 Balon (Min 1 Balon Merah s.d. 52 Balon Rimbun)
+-      const paidWeeks = Math.floor(APP_DATABASE.records.length / 2);
+-      const count = Math.max(1, Math.min(52, paidWeeks || (APP_DATABASE.records.length > 0 ? 1 : 1)));
++      // 1 Minggu Tabungan Lunas = 1 Balon (Min 1 s.d. 52 Balon Rimbun)
++      const paidWeeks = getTotalPaidWeeks();
++      const count = Math.max(1, Math.min(52, paidWeeks));
+       
+       const homeG = document.getElementById('upBalloonsHome');
+       const plantG = document.getElementById('upBalloonsPlant');
+@@ -4037,25 +4093,34 @@
+   'use strict';
+   var RM = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+   var $ = function(id){ return document.getElementById(id); };
+-  var fxDelay = 0, lastTotal = null, raf = 0, tmr = 0;
++  var fxDelay = 0, lastTotal = null, raf = 0, tmr = 0, safety = 0;
+ 
+   function fmt(n){ return 'Rp' + n.toLocaleString('id-ID'); }
+   function bump(el){ if (RM || !el) return; el.classList.remove('fx-bump'); void el.offsetWidth; el.classList.add('fx-bump'); setTimeout(function(){ el.classList.remove('fx-bump'); }, 520); }
+ 
+   /* hitung naik untuk total tabungan */
+   function countTo(el, to, delay){
+-    cancelAnimationFrame(raf); clearTimeout(tmr);
++    cancelAnimationFrame(raf); clearTimeout(tmr); clearTimeout(safety);
+     var from = lastTotal == null ? 0 : lastTotal;
+     lastTotal = to;
+     if (RM || from === to) { el.textContent = fmt(to); return; }
++    var dur = 850;
++    /* Animasi hanya hiasan: angka finalsSelalu ditulis. Sebelumnya elemen
++       diisi nilai lama lalu diserahkan ke requestAnimationFrame; kalau rAF
++       tidak berjalan (tab tidak aktif, browser hemat animasi) total yang
++       tampil macet di nilai lama — bahkan "Rp0" placeholder — tanpa batas
++       waktu. Itu berarti user melihat nominal tabungan yang salah. */
++    var settle = function(){ clearTimeout(safety); el.textContent = fmt(to); };
+     el.textContent = fmt(from);
++    safety = setTimeout(settle, (delay || 0) + dur + 250);
+     tmr = setTimeout(function(){
+-      var t0 = 0, dur = 850;
++      if (document.hidden) { settle(); return; }
++      var t0 = 0;
+       (function step(ts){
+         if (!t0) t0 = ts;
+         var p = Math.min(1, (ts - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+         el.textContent = fmt(Math.round(from + (to - from) * e));
+-        if (p < 1) raf = requestAnimationFrame(step); else bump(el);
++        if (p < 1) raf = requestAnimationFrame(step); else { settle(); bump(el); }
+       })(performance.now());
+     }, delay || 0);
+   }
+@@ -4146,7 +4211,10 @@
+ 
+   /* total: hitung naik; kalau setoran baru, tunggu koin mendarat */
+   wrap('renderSummary', function(){
+-    var el = $('totalSavingsValue'), to = readTotal();
++    /* Angka diambil dari data, bukan dari teks di DOM. Kalau dibaca dari DOM,
++       saat animasi sedang berjalan nilainya antara, sehingga total bisa
++       "meng mundur" ke angka yang lebih kecil. */
++    var el = $('totalSavingsValue'), to = typeof sumNominal === 'function' ? sumNominal(APP_DATABASE.records) : readTotal();
+     if (el && to != null) countTo(el, to, fxDelay);
+   });
+ 
+@@ -4176,7 +4244,7 @@
+       Array.prototype.forEach.call(t.children, function(c, i){ c.style.setProperty('--i', i); });
+     });
+     if (home && !RM) { home.classList.remove('fx-enter'); void home.offsetWidth; home.classList.add('fx-enter'); setTimeout(function(){ home.classList.remove('fx-enter'); }, 2200); }
+-    var el = $('totalSavingsValue'), to = readTotal();
++    var el = $('totalSavingsValue'), to = typeof sumNominal === 'function' ? sumNominal(APP_DATABASE.records) : readTotal();
+     if (el && to != null) { lastTotal = 0; countTo(el, to, 700); }
+   });
+ 
+@@ -4447,5 +4515,105 @@ body.night-theme .hx-cs{background:radial-gradient(ellipse at center,rgba(0,0,0,
+   if (img.complete) fit(); img.addEventListener('load', fit); addEventListener('resize', fit);
+ })();
+ </script>
++
++<!-- ============================================================
++     MOCK MODE — hanya aktif bila URL memuat ?preview=1
++     Men-stub window.callBackend sehingga TIDAK ada request yang
++     menyentuh Google Apps Script asli. Dipakai untuk menguji alur
++     submit/upload/koreksi tanpa menghasilkan record di Sheet pasangan.
++     ============================================================ -->
++<script id="mock-mode">
++(function(){
++  if (!/[?&]preview=1\b/.test(location.search)) return;
++
++  var REAL = window.callBackend;
++  var now = new Date();
++  var Y = now.getFullYear(), M = now.getMonth();
++  var LOG = [];
++
++  function iso(d){ return d.toISOString(); }
++  function seed(){
++    var out = [], statuses = ['Tepat Waktu','Tepat Waktu','Terlambat','Tepat Waktu'];
++    var notes = ['', 'transfer pagi', '', 'maaf kemarin Males', '', 'setelah shift'];
++    // bulan berjalan + 2 bulan sebelumnya, jumlahOmong varied supaya terlihat efek Fase 1
++    [0, 1, 2].forEach(function(back){
++      var d = new Date(Y, M - back, 1);
++      var y = d.getFullYear(), mi = d.getMonth();
++      var weeks = Math.min(5, Math.ceil(new Date(y, mi + 1, 0).getDate() / 7));
++      for (var w = 1; w <= weeks; w++) {
++        // tidak semua minggu terisi duo -> supaya terlihat bug total lama
++        ['A', 'B'].forEach(function(u, ui){
++          if (back === 0 && w > 3) return;              // bulan ini belum selesai
++          if (back > 0 && (w + ui) % 5 === 0) return;   // ada yang bolong
++          var ts = new Date(y, mi, Math.min(w * 7, 28), 9 + ui, 15);
++          out.push({
++            id: 'mock-' + back + '-' + w + u,
++            year: y, monthIndex: mi, dayId: w,
++            labelMinggu: 'Minggu ' + w,
++            user: u, userName: u === 'A' ? 'faris' : 'saiba',
++            // nominal tidak seragam supaya bug "jumlah record x nominal" terlihat
++            nominal: (back === 1 || w === 3) ? 150000 : 100000,
++            status: statuses[(w + ui + back) % statuses.length],
++            timestamp: iso(ts),
++            previewUrl: '', note: notes[(w + ui) % notes.length]
++          });
++        });
++      }
++    });
++    return out;
++  }
++
++  window.callBackend = function(action, payload, onSuccess, onFailure){
++    LOG.push(action);
++    console.info('[mock] callBackend:', action, payload || '');
++    var delay = 180;
++    setTimeout(function(){
++      try {
++        if (action === 'getDashboardData') {
++          return onSuccess && onSuccess({
++            success: true,
++            records: seed(),
++            koreksiList: [],
++            config: { nominal: 100000, namaA: 'faris', namaB: 'saiba' }
++          });
++        }
++        if (action === 'submitSetoran') {
++          return onSuccess && onSuccess({
++            success: true,
++            record: Object.assign({ id: 'mock-' + Date.now() }, payload || {})
++          });
++        }
++        if (action === 'submitKoreksi') {
++          return onSuccess && onSuccess({
++            success: true,
++            koreksi: Object.assign({ id: 'k-' + Date.now(), status: 'Menunggu' }, payload || {})
++          });
++        }
++        if (action === 'resolveKoreksi') {
++          return onSuccess && onSuccess({ success: true });
++        }
++        return onSuccess && onSuccess({ success: true });
++      } catch (e) {
++        console.warn('[mock] handler gagal', e);
++        return onFailure && onFailure(e);
++      }
++    }, delay);
++  };
++
++  // tandai jelas di UI supaya tidak tertukar dengan data sungguhan
++  addEventListener('DOMContentLoaded', function(){
++    try {
++      var b = document.createElement('div');
++      b.textContent = 'MOCK MODE — data contoh, backend GAS tidak disentuh';
++      b.setAttribute('style', 'position:fixed;bottom:0;left:0;right:0;z-index:99999;' +
++        'background:#7C3AED;color:#fff;font:600 11px/1.6 system-ui;text-align:center;' +
++        'padding:4px 8px;letter-spacing:.02em');
++      document.body.appendChild(b);
++    } catch (e) {}
++  });
++
++  console.info('[mock] aktif — callBackend asli:', REAL);
++})();
++</script>
+ </body>
+ </html>
+\ No newline at end of file

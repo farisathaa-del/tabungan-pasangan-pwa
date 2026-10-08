@@ -52,6 +52,8 @@
     <a class="btn vio" href="../" target="_blank">Buka app (backend asli)</a>
     <a class="btn" href="../preview/baseline-mock.html" target="_blank">Versi asli</a>
     <button class="btn" onclick="location.reload()">Muat ulang</button>
+    <a class="btn" href="../preview/xss-lama.html" target="_blank">Uji XSS: sebelum</a>
+    <a class="btn" href="../preview/xss-baru.html" target="_blank">Uji XSS: sesudah</a>
   </div>
 </header>
 
@@ -87,7 +89,7 @@
 <script>
 const PHASES = [
   ['0','Lengkapi artefak PWA (manifest, sw.js, icons) + repo git','p0','d07d432'],
-  ['1','Angka uang & progres dari sum(nominal), bukan jumlah record','p0',''],
+  ['1','Angka uang & progres dari sum(nominal), bukan jumlah record','p0','b5e85ca'],
   ['2','escapeHtml() untuk love-note, status, label, id','p0',''],
   ['3','Timeout/AbortController, cek res.ok, guard sinkronisasi','p1',''],
   ['4','Anti-duplikat submit, persist config, validasi response','p1',''],

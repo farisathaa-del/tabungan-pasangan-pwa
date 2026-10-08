@@ -4653,5 +4653,105 @@ body.night-theme .hx-cs{background:radial-gradient(ellipse at center,rgba(0,0,0,
   console.info('[mock] aktif — callBackend asli:', REAL);
 })();
 </script>
+<!-- ============================================================
+     MOCK MODE — hanya aktif bila URL memuat ?preview=1
+     Men-stub window.callBackend sehingga TIDAK ada request yang
+     menyentuh Google Apps Script asli. Dipakai untuk menguji alur
+     submit/upload/koreksi tanpa menghasilkan record di Sheet pasangan.
+     ============================================================ -->
+<script id="mock-mode">
+(function(){
+  /* mock aktif: fixture uji XSS */
+
+  var REAL = window.callBackend;
+  var now = new Date();
+  var Y = now.getFullYear(), M = now.getMonth();
+  var LOG = [];
+
+  function iso(d){ return d.toISOString(); }
+  function seed(){
+    var out = [], statuses = ['Tepat Waktu','Tepat Waktu','Terlambat','Tepat Waktu'];
+    var notes = ['<img src=x onerror="window.__XSS=1">', '<img src=x onerror="window.__XSS=1">', '<img src=x onerror="window.__XSS=1">', '<img src=x onerror="window.__XSS=1">', '<img src=x onerror="window.__XSS=1">', '<img src=x onerror="window.__XSS=1">'];
+    // bulan berjalan + 2 bulan sebelumnya, jumlahOmong varied supaya terlihat efek Fase 1
+    [0, 1, 2].forEach(function(back){
+      var d = new Date(Y, M - back, 1);
+      var y = d.getFullYear(), mi = d.getMonth();
+      var weeks = Math.min(5, Math.ceil(new Date(y, mi + 1, 0).getDate() / 7));
+      for (var w = 1; w <= weeks; w++) {
+        // tidak semua minggu terisi duo -> supaya terlihat bug total lama
+        ['A', 'B'].forEach(function(u, ui){
+          if (back === 0 && w > 3) return;              // bulan ini belum selesai
+          if (back > 0 && (w + ui) % 5 === 0) return;   // ada yang bolong
+          var ts = new Date(y, mi, Math.min(w * 7, 28), 9 + ui, 15);
+          out.push({
+            id: (w === 1 && ui === 0 ? window.__EVIL_ID : 'mock-') + back + '-' + w + u,
+            year: y, monthIndex: mi, dayId: w,
+            labelMinggu: 'Minggu ' + w,
+            user: u, userName: u === 'A' ? 'faris' : 'saiba',
+            // nominal tidak seragam supaya bug "jumlah record x nominal" terlihat
+            nominal: (back === 1 || w === 3) ? 150000 : 100000,
+            status: statuses[(w + ui + back) % statuses.length],
+            timestamp: iso(ts),
+            previewUrl: '', note: notes[(w + ui) % notes.length]
+          });
+        });
+      }
+    });
+    return out;
+  }
+
+  window.callBackend = function(action, payload, onSuccess, onFailure){
+    LOG.push(action);
+    console.info('[mock] callBackend:', action, payload || '');
+    var delay = 180;
+    setTimeout(function(){
+      try {
+        if (action === 'getDashboardData') {
+          return onSuccess && onSuccess({
+            success: true,
+            records: seed(),
+            koreksiList: [],
+            config: { nominal: 100000, namaA: 'faris', namaB: 'saiba' }
+          });
+        }
+        if (action === 'submitSetoran') {
+          return onSuccess && onSuccess({
+            success: true,
+            record: Object.assign({ id: 'mock-' + Date.now() }, payload || {})
+          });
+        }
+        if (action === 'submitKoreksi') {
+          return onSuccess && onSuccess({
+            success: true,
+            koreksi: Object.assign({ id: 'k-' + Date.now(), status: 'Menunggu' }, payload || {})
+          });
+        }
+        if (action === 'resolveKoreksi') {
+          return onSuccess && onSuccess({ success: true });
+        }
+        return onSuccess && onSuccess({ success: true });
+      } catch (e) {
+        console.warn('[mock] handler gagal', e);
+        return onFailure && onFailure(e);
+      }
+    }, delay);
+  };
+
+  // tandai jelas di UI supaya tidak tertukar dengan data sungguhan
+  addEventListener('DOMContentLoaded', function(){
+    try {
+      var b = document.createElement('div');
+      b.textContent = 'MOCK MODE — data contoh, backend GAS tidak disentuh';
+      b.setAttribute('style', 'position:fixed;bottom:0;left:0;right:0;z-index:99999;' +
+        'background:#7C3AED;color:#fff;font:600 11px/1.6 system-ui;text-align:center;' +
+        'padding:4px 8px;letter-spacing:.02em');
+      document.body.appendChild(b);
+    } catch (e) {}
+  });
+
+  console.info('[mock] aktif — callBackend asli:', REAL);
+})();
+</script>
+<script>window.__EVIL_ID = "x1'),window.__XSSID=1);//";</script>
 </body>
 </html>
