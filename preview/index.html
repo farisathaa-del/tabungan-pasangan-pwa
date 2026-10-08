@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preview — Tabungan Faris &amp; Saidah</title>
+<style>
+  :root{--ink:#18181B;--mut:#71717A;--line:#E4E4E7;--bg:#FAFAFC;--leaf:#10B981;--violet:#7C3AED}
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.6 'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+  header{padding:18px 24px;border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:10}
+  h1{margin:0 0 2px;font-size:18px}
+  .sub{color:var(--mut);font-size:13px}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  a.btn,button.btn{display:inline-block;padding:7px 13px;border:1px solid var(--line);border-radius:8px;
+    background:#fff;color:var(--ink);text-decoration:none;font-size:13px;cursor:pointer}
+  a.btn.pri,button.btn.pri{background:var(--leaf);border-color:var(--leaf);color:#fff}
+  a.btn.vio{background:var(--violet);border-color:var(--violet);color:#fff}
+  .wrap{padding:20px 24px 60px;max-width:1500px;margin:0 auto}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:22px;overflow:hidden}
+  .panel h2{margin:0;padding:12px 16px;font-size:14px;border-bottom:1px solid var(--line);
+    background:#FAFAFC;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .panel .body{padding:16px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-weight:600;color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+  tr:last-child td{border-bottom:0}
+  code{background:#F4F4F5;padding:1px 5px;border-radius:4px;font-size:12px}
+  .pill{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600}
+  .p0{background:#FEE2E2;color:#B91C1C}.p1{background:#FEF3C7;color:#B45309}
+  .p2{background:#DBEAFE;color:#1D4ED8}.p3{background:#F4F4F5;color:#52525B}
+  .cmp{position:relative;height:760px;background:#111;color:#fff;overflow:hidden}
+  .cmp iframe{position:absolute;top:0;height:100%;width:100%;border:0}
+  .cmp .l{clip-path:inset(0 calc(100% - var(--split)) 0 0)}
+  .cmp .r{clip-path:inset(0 0 0 var(--split))}
+  .handle{position:absolute;top:0;bottom:0;left:var(--split);width:2px;background:#fff;cursor:ew-resize;z-index:5}
+  .handle::after{content:'⇄';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    background:#fff;color:#111;border-radius:99px;width:34px;height:34px;display:grid;place-items:center;
+    font-size:15px;box-shadow:0 2px 10px rgba(0,0,0,.5)}
+  .tag{position:absolute;top:10px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;z-index:6;
+    background:rgba(0,0,0,.65);color:#fff;letter-spacing:.03em}
+  .tag.l{left:10px}.tag.r{right:10px}
+  .hint{color:var(--mut);font-size:12px;margin-top:8px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Preview — Checklist Tabungan Mingguan</h1>
+  <div class="sub">Bandingkan versi asli (<code>backup/baseline</code>) dengan versi hasil perbaikan. Geser garis tengah.</div>
+  <div class="bar">
+    <a class="btn pri" href="../?preview=1" target="_blank">Buka app (mock mode)</a>
+    <a class="btn vio" href="../" target="_blank">Buka app (backend asli)</a>
+    <a class="btn" href="../backup/baseline/index-downloads.html" target="_blank">Versi asli</a>
+    <button class="btn" onclick="location.reload()">Muat ulang</button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="panel">
+    <h2><span>Perbandingan langsung — kiri: SEBELUM · kanan: SESUDAH</span>
+      <span class="hint">buka app dalam mock mode agar tidak menyentuh backend asli</span></h2>
+    <div class="cmp" id="cmp">
+      <span class="tag l">SEBELUM</span><span class="tag r">SESUDAH</span>
+      <iframe class="l" src="../backup/baseline/index-downloads.html" loading="lazy"></iframe>
+      <iframe class="r" src="../?preview=1" loading="lazy"></iframe>
+      <div class="handle" id="h"></div>
+    </div>
+    <div class="body"><div class="hint">Geser garis tengah, atau klik-tahan lalu geser.</div></div>
+  </div>
+
+  <div class="panel">
+    <h2><span>Riwayat perbaikan</span></h2>
+    <div class="body">
+      <table>
+        <thead><tr><th style="width:70px">Fase</th><th>Perubahan</th><th style="width:80px">Status</th><th style="width:150px">Commit</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="hint" style="margin-top:12px">
+        Diff lengkap per fase: <code>diff/</code> · riwayat git: <code>git log --oneline</code> di folder app
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const PHASES = [
+  ['0','Lengkapi artefak PWA (manifest, sw.js, icons) + repo git','p0','d07d432'],
+  ['1','Angka uang & progres dari sum(nominal), bukan jumlah record','p0',''],
+  ['2','escapeHtml() untuk love-note, status, label, id','p0',''],
+  ['3','Timeout/AbortController, cek res.ok, guard sinkronisasi','p1',''],
+  ['4','Anti-duplikat submit, persist config, validasi response','p1',''],
+  ['5','Buang dead code: rumput SVG, hxBob, tapUpHouse lama','p2',''],
+  ['6','Perbaiki class yang tidak ter-generate (bg-black/98, z-*)','p2',''],
+  ['7','Null-guard, aksesibilitas, Escape/focus-trap','p3','']
+];
+document.getElementById('rows').innerHTML = PHASES.map(([f,d,c,h]) =>
+  `<tr><td><b>Fase ${f}</b></td><td>${d}</td>
+   <td><span class="pill ${c}">${c==='p0'?'p0':c==='p1'?'p1':c==='p2'?'p2':'p3'}</span></td>
+   <td>${h ? '<code>'+h+'</code>' : '<span class="hint">menunggu</span>'}</td></tr>`).join('');
+
+const cmp = document.getElementById('cmp'), h = document.getElementById('h');
+let down = false;
+const set = x => cmp.style.setProperty('--split', Math.max(0, Math.min(100, x)) + '%');
+set(50);
+cmp.addEventListener('pointerdown', e => { down = true; cmp.setPointerCapture(e.pointerId); set(e.clientX - cmp.getBoundingClientRect().left); });
+cmp.addEventListener('pointermove', e => { if (down) set(e.clientX - cmp.getBoundingClientRect().left); });
+addEventListener('pointerup', () => down = false);
+</script>
+</body>
+</html>
