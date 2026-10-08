@@ -20,10 +20,10 @@
   <!-- Tailwind CSS CDN -->
   
   
-  <!-- Google Fonts: Plus Jakarta Sans & Space Grotesk -->
+  <!-- Google Fonts: Fraunces (heading) & Plus Jakarta Sans (body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,400..800,0..100,0..1&family=Nunito:wght@400..800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,400..800,0..100,0..1&family=Plus+Jakarta+Sans:wght@400..800&display=swap" rel="stylesheet">
 
   <style>
     /* tinggi berbasis % — 100vh/100dvh di dalam iframe iOS = viewport parent (bug), salah tinggi */
@@ -41,7 +41,7 @@
       user-select: none;
     }
     .font-mono {
-      font-family: 'Space Grotesk', monospace;
+      font-family: 'Plus Jakarta Sans', sans-serif;
     }
     .no-scrollbar::-webkit-scrollbar {
       display: none;
@@ -708,8 +708,9 @@
     .sheet-content::before{content:"";display:block;width:36px;height:4px;border-radius:99px;background:rgba(24,24,27,.14);margin:-8px auto 12px}
     body.night-theme .sheet-content::before{background:rgba(255,255,255,.2)}
 
-    /* tipografi: angka sejajar, total pakai Space Grotesk supaya senada dengan angka lain */
-    #totalSavingsValue{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-.025em;transform-origin:left center}
+    /* tipografi: angka sejajar. Font keluarga Plus Jakarta Sans selalu ditimpa theme-v2
+       di bawah ini (spesifisitas lebih tinggi), jadi aturan ini hanya menjaga transform-origin. */
+    #totalSavingsValue{transform-origin:left center}
     #totalSavingsValue,#monthSubTotal,#historyTotalAmount,.font-mono{font-variant-numeric:tabular-nums}
     h1,h2,h3{text-wrap:balance}
 
@@ -723,7 +724,7 @@
 
     /* partikel & koin efek setoran */
     .fx-piece{position:fixed;pointer-events:none;z-index:9999;line-height:1;will-change:transform,opacity}
-    .fx-coin{width:20px;height:20px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FEF08A,#EAB308 70%);box-shadow:0 2px 6px rgba(161,98,7,.45);display:grid;place-items:center;font:700 8px/1 'Space Grotesk',sans-serif;color:#713F12}
+    .fx-coin{width:20px;height:20px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FEF08A,#EAB308 70%);box-shadow:0 2px 6px rgba(161,98,7,.45);display:grid;place-items:center;font:700 8px/1 'Plus Jakarta Sans',sans-serif;color:#713F12}
     .fx-ff{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:inherit;display:none;z-index:15}
     body.night-theme .fx-ff{display:block}
     .fx-ff i{position:absolute;width:3px;height:3px;border-radius:50%;background:#FEF08A;box-shadow:0 0 7px 2px rgba(254,240,138,.7);opacity:0}
@@ -4771,9 +4772,9 @@ body.night-theme .hx-light{background:linear-gradient(255deg,rgba(147,197,253,.2
 </script>
 <style id="theme-v2">
 /* ===== THEME V2 ===== */
-body.font-sans,body{font-family:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif}
-body h1,body h2,body h3,body h4,body #totalSavingsValue,body #btnUserFaris span,body #btnUserSaiba span{font-family:'Fraunces',Georgia,serif;font-optical-sizing:auto;font-variation-settings:'SOFT' 100,'WONK' 1;letter-spacing:-.01em}
-body .font-mono,body #navMonthYearLabel{font-family:'Nunito',sans-serif;font-weight:700;font-variant-numeric:tabular-nums}
+body.font-sans,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif}
+body h1,body h2,body h3,body h4,body #totalSavingsValue,body #btnUserFaris span,body #btnUserSaiba span{font-family:'Fraunces',Georgia,serif;font-optical-sizing:auto;font-variation-settings:'SOFT' 0,'WONK' 0;letter-spacing:-.015em}
+body .font-mono,body #navMonthYearLabel{font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-variant-numeric:tabular-nums}
 body #totalSavingsValue{font-weight:700;letter-spacing:-.02em}
 body .tabungan-bersama-card span.uppercase,body #historySummaryCard span.uppercase{text-transform:none;letter-spacing:.01em;font-weight:800}
 
