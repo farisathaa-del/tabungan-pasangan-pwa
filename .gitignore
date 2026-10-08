@@ -1,0 +1,3 @@
+preview/screenshots/*.png
+preview/.server.pid
+preview/.server.log
