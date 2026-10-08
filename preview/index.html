@@ -84,18 +84,41 @@
     </div>
   </div>
 
+  <div class="panel">
+    <h2><span>Hasil pengukuran &mdash; data contoh identik, 22 record, jumlah sebenarnya Rp2.800.000</span></h2>
+    <div class="body">
+      <table>
+        <thead><tr><th>Gejala</th><th style="width:190px">Sebelum</th><th style="width:190px">Sesudah</th></tr></thead>
+        <tbody>
+          <tr><td>Total terkumpul di layar</td><td><b>Rp0</b> (placeholder)</td><td><b>Rp2.800.000</b></td></tr>
+          <tr><td>Love-note berisi <code>&lt;img onerror&gt;</code></td><td><b>1 eksekusi JS</b>, 22 img tersuntik</td><td>0 eksekusi</td></tr>
+          <tr><td>Server tidak merespons saat submit</td><td>toast <b>"berhasil dicatat"</b>, lalu data hilang saat reload</td><td>toast jujur, tombol aktif lagi</td></tr>
+          <tr><td>Submit 2&times; ke minggu yang sama</td><td><b>1 POST dobel</b></td><td>0 POST, ditolak</td></tr>
+          <tr><td>Backdrop lightbox</td><td><code>rgba(0,0,0,0)</code></td><td><code>rgba(0,0,0,0.85)</code></td></tr>
+          <tr><td>Sheet dengan <code>role="dialog"</code></td><td>0</td><td>8</td></tr>
+          <tr><td>Class tanpa rule di CSS</td><td>9</td><td>5 (sengaja)</td></tr>
+          <tr><td>Id duplikat / exception</td><td>0 / 0</td><td>0 / 0</td></tr>
+        </tbody>
+      </table>
+      <div class="hint" style="margin-top:12px">
+        Rincian tiap fase ada di <code>CHANGELOG.md</code> · diff per fase di <code>diff/</code> ·
+        riwayat: <code>git log --oneline</code>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
 const PHASES = [
-  ['0','Lengkapi artefak PWA (manifest, sw.js, icons) + repo git','p0','d07d432'],
-  ['1','Angka uang & progres dari sum(nominal), bukan jumlah record','p0','b5e85ca'],
-  ['2','escapeHtml() untuk love-note, status, label, id','p0',''],
-  ['3','Timeout/AbortController, cek res.ok, guard sinkronisasi','p1',''],
-  ['4','Anti-duplikat submit, persist config, validasi response','p1',''],
-  ['5','Buang dead code: rumput SVG, hxBob, tapUpHouse lama','p2',''],
-  ['6','Perbaiki class yang tidak ter-generate (bg-black/98, z-*)','p2',''],
-  ['7','Null-guard, aksesibilitas, Escape/focus-trap','p3','']
+  ['0','Lengkapi artefak PWA (manifest, sw.js, icons) + repo git + localhost:8088','p0','d07d432'],
+  ['1','Angka uang dari sum(nominal), bukan jumlah record; progres dari minggu lunas','p0','b5e85ca'],
+  ['2','escapeHtml() untuk love-note, status, label, id','p0','3a4db11'],
+  ['3','AbortController + timeout, res.ok, guard sinkronisasi ganda','p0','6975895'],
+  ['4','Anti-duplikat submit, persist config, validasi response','p1','3129287'],
+  ['5','Buang dead code: rumput SVG, hxBob, tapUpHouse lama','p2','d0c01dc'],
+  ['6','Class yang tidak ter-generate (bg-black/98, z-35/25/15)','p2','9086561'],
+  ['7','Batas error init, null-guard, aksesibilitas, Escape','p3','2b62ab0']
 ];
 document.getElementById('rows').innerHTML = PHASES.map(([f,d,c,h]) =>
   `<tr><td><b>Fase ${f}</b></td><td>${d}</td>

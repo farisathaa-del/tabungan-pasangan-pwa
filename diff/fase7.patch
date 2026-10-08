@@ -1,0 +1,358 @@
+diff --git a/index.html b/index.html
+index 31af84d..ae5fb68 100644
+--- a/index.html
++++ b/index.html
+@@ -699,7 +699,12 @@
+     #totalSavingsValue,#monthSubTotal,#historyTotalAmount,.font-mono{font-variant-numeric:tabular-nums}
+     h1,h2,h3{text-wrap:balance}
+ 
+-    /* fokus keyboard dikembalikan (aturan lama menghapus semua outline) */
++    /* label khusus pembaca layar (Tailwind menyediakan .sr-only, tapi kita
++     definisikan sendiri supaya tidak bergantung hasil generate) */
++  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
++    clip:rect(0,0,0,0);white-space:nowrap;border-width:0}
++
++  /* fokus keyboard dikembalikan (aturan lama menghapus semua outline) */
+     body button:focus-visible,body input:focus-visible,body textarea:focus-visible,body [tabindex]:focus-visible{outline:2px solid var(--leaf)!important;outline-offset:2px}
+ 
+     /* partikel & koin efek setoran */
+@@ -796,10 +801,10 @@
+         <div class="pt-1">
+           <p class="text-[11px] text-neutral-400 mb-2.5 font-medium">pilih pengguna untuk masuk:</p>
+           <div class="grid grid-cols-2 gap-3 w-full">
+-            <button id="btnUserFaris" onclick="selectUserAndEnter('A', 'faris')" class="btn-press py-3.5 px-4 rounded-2xl bg-[#17171B] border border-neutral-700/80 text-center hover:border-neutral-600 hover:bg-neutral-800/80 transition shadow-sm">
++            <button id="btnUserFaris" type="button" aria-label="masuk sebagai faris" class="btn-press py-3.5 px-4 rounded-2xl bg-[#17171B] border border-neutral-700/80 text-center hover:border-neutral-600 hover:bg-neutral-800/80 transition shadow-sm">
+               <span class="text-xs font-bold text-white lowercase">faris</span>
+             </button>
+-            <button id="btnUserSaiba" onclick="selectUserAndEnter('B', 'saiba')" class="btn-press py-3.5 px-4 rounded-2xl bg-[#17171B] border border-neutral-700/80 text-center hover:border-rose-900/60 hover:bg-neutral-800/80 transition shadow-sm">
++            <button id="btnUserSaiba" type="button" aria-label="masuk sebagai saiba" class="btn-press py-3.5 px-4 rounded-2xl bg-[#17171B] border border-neutral-700/80 text-center hover:border-rose-900/60 hover:bg-neutral-800/80 transition shadow-sm">
+               <span class="text-xs font-bold text-white lowercase">saiba <span class="text-rose-400">❤️</span></span>
+             </button>
+           </div>
+@@ -1245,7 +1250,7 @@
+     <!-- ====================================================================== -->
+     <!-- DRAWER: UPLOAD BUKTI SETORAN (DENGAN LOVE NOTE SINGKAT)               -->
+     <!-- ====================================================================== -->
+-    <div id="uploadSheet" class="absolute inset-0 z-50 bg-black/50 hidden flex flex-col justify-end transition-opacity">
++    <div id="uploadSheet" role="dialog" aria-modal="true" aria-label="kirim bukti setoran" class="absolute inset-0 z-50 bg-black/50 hidden flex flex-col justify-end transition-opacity">
+       <div class="sheet-content bg-white rounded-t-3xl px-6 pt-5 pb-8 md:p-8 space-y-3.5 max-h-[85%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
+         <div class="flex items-center justify-between">
+           <div>
+@@ -1279,7 +1284,8 @@
+             </span>
+             <span id="noteCharCounter" class="text-neutral-400 font-mono text-[10px]">0/40</span>
+           </div>
+-          <input type="text" id="inputDepositNote" maxlength="40" placeholder="" class="w-full px-4 py-2.5 rounded-2xl bg-neutral-50 border border-neutral-200 text-xs text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 transition" oninput="updateNoteCounter(this)">
++          <label for="inputDepositNote" class="sr-only">catatan cinta (opsional)</label>
++          <input type="text" id="inputDepositNote" maxlength="40" aria-describedby="noteCharCounter" placeholder="" class="w-full px-4 py-2.5 rounded-2xl bg-neutral-50 border border-neutral-200 text-xs text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 transition" oninput="updateNoteCounter(this)">
+         </div>
+ 
+         <!-- Tombol Aksi -->
+@@ -1298,7 +1304,7 @@
+     <!-- ====================================================================== -->
+     <!-- DRAWER: DETAIL BUKTI TRANSFER & REVIEW KOREKSI PASANGAN               -->
+     <!-- ====================================================================== -->
+-    <div id="detailSheet" class="absolute inset-0 z-50 bg-black/50 hidden flex flex-col justify-end transition-opacity">
++    <div id="detailSheet" role="dialog" aria-modal="true" aria-label="detail bukti setoran" class="absolute inset-0 z-50 bg-black/50 hidden flex flex-col justify-end transition-opacity">
+       <div class="sheet-content bg-white rounded-t-3xl px-6 pt-5 pb-8 md:p-8 space-y-3.5 max-h-[85%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
+         <div class="flex items-center justify-between">
+           <div>
+@@ -1323,7 +1329,7 @@
+ 
+         <!-- Wadah Gambar dengan Indikator Ketuk Layar Penuh -->
+         <div id="detailImageContainer" onclick="openFullscreenProof()" class="group relative rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-100 max-h-56 flex items-center justify-center cursor-zoom-in">
+-          <img id="detailSheetImg" src="" alt="Detail Bukti Transfer" class="w-full h-full object-contain opacity-0">
++          <img id="detailSheetImg" alt="Detail Bukti Transfer" class="w-full h-full object-contain opacity-0">
+           <div id="detailImageLoading" class="absolute inset-0 flex items-center justify-center">
+             <div class="w-8 h-8 border-2 border-neutral-300 border-t-rose-400 rounded-full animate-spin"></div>
+           </div>
+@@ -1360,7 +1366,7 @@
+           <div>
+             <p class="font-medium text-neutral-500 text-[11px] mb-1.5">Bukti transfer baru:</p>
+             <div onclick="openFullscreenNewProof()" class="rounded-xl overflow-hidden border border-amber-200 bg-neutral-900 max-h-40 flex items-center justify-center cursor-zoom-in">
+-              <img id="correctionReviewImg" src="" alt="Bukti Baru" class="max-h-40 object-contain">
++              <img id="correctionReviewImg" alt="Bukti Baru" class="max-h-40 object-contain">
+             </div>
+           </div>
+           <div class="flex items-center space-x-2 pt-1">
+@@ -1391,7 +1397,7 @@
+     <!-- ====================================================================== -->
+     <!-- DRAWER: FORM PENGAJUAN KOREKSI (ALASAN + SCREENSHOT BARU)             -->
+     <!-- ====================================================================== -->
+-    <div id="koreksiSheet" class="absolute inset-0 z-50 bg-black/50 hidden flex flex-col justify-end transition-opacity">
++    <div id="koreksiSheet" role="dialog" aria-modal="true" aria-label="pengajuan koreksi" class="absolute inset-0 z-50 bg-black/50 hidden flex flex-col justify-end transition-opacity">
+       <div class="sheet-content bg-white rounded-t-3xl px-6 pt-5 pb-8 md:p-8 space-y-4 max-h-[85%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
+         <div class="flex items-center justify-between">
+           <div>
+@@ -1404,7 +1410,7 @@
+         </div>
+ 
+         <div class="space-y-1.5">
+-          <label class="text-xs font-bold text-neutral-700">alasan koreksi</label>
++          <label for="koreksiReasonInput" class="text-xs font-bold text-neutral-700">alasan koreksi</label>
+           <input type="text" id="koreksiReasonInput" placeholder="Contoh: salah screenshot / struk buram" class="w-full px-4 py-3 rounded-2xl bg-neutral-50 border border-neutral-200 text-xs md:text-sm text-neutral-900 focus:outline-none focus:border-neutral-900 transition">
+         </div>
+ 
+@@ -1438,7 +1444,7 @@
+     <!-- ====================================================================== -->
+     <!-- DRAWER: TANAMAN TABUNGAN CINTA (52 MINGGU KOMITMEN)                  -->
+     <!-- ====================================================================== -->
+-    <div id="plantSheet" class="absolute inset-0 z-50 bg-black/50 hidden flex flex-col justify-end transition-opacity">
++    <div id="plantSheet" role="dialog" aria-modal="true" aria-label="tanaman tabungan" class="absolute inset-0 z-50 bg-black/50 hidden flex flex-col justify-end transition-opacity">
+       <div class="sheet-content bg-white rounded-t-3xl px-6 pt-5 pb-8 md:p-8 space-y-4 max-h-[85%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
+         <div class="flex items-center justify-between">
+           <div>
+@@ -1682,7 +1688,7 @@
+     <!-- ====================================================================== -->
+     <!-- DRAWER: PEMILIH LAGU (SONG PICKER)                                    -->
+     <!-- ====================================================================== -->
+-    <div id="songPickerSheet" class="absolute inset-0 z-50 bg-black/50 hidden flex flex-col justify-end transition-opacity">
++    <div id="songPickerSheet" role="dialog" aria-modal="true" aria-label="pilih lagu" class="absolute inset-0 z-50 bg-black/50 hidden flex flex-col justify-end transition-opacity">
+       <div class="sheet-content bg-white rounded-t-3xl px-6 pt-5 pb-8 md:p-8 space-y-3.5 max-h-[70%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
+         <div class="flex items-center justify-between">
+           <div>
+@@ -1757,7 +1763,7 @@
+     <!-- ====================================================================== -->
+     <!-- DRAWER: PEMILIH BULAN (MONTH PICKER SHEET)                            -->
+     <!-- ====================================================================== -->
+-    <div id="monthPickerSheet" class="absolute inset-0 z-50 bg-black/50 hidden flex flex-col justify-end transition-opacity">
++    <div id="monthPickerSheet" role="dialog" aria-modal="true" aria-label="pilih bulan" class="absolute inset-0 z-50 bg-black/50 hidden flex flex-col justify-end transition-opacity">
+       <div class="sheet-content bg-white rounded-t-3xl px-6 pt-5 pb-8 md:p-8 space-y-4 max-h-[70%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
+         <div class="flex items-center justify-between">
+           <h3 class="text-base md:text-lg font-bold text-neutral-900">pilih bulan &amp; tahun</h3>
+@@ -1768,13 +1774,13 @@
+ 
+         <!-- Year Navigator -->
+         <div class="flex items-center justify-center space-x-6">
+-          <button onclick="changePickerYear(-1)" class="btn-press w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 flex items-center justify-center transition">
++          <button type="button" onclick="changePickerYear(-1)" aria-label="tahun sebelumnya" class="btn-press w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 flex items-center justify-center transition">
+             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+               <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+             </svg>
+           </button>
+           <span id="pickerYearLabel" class="text-sm font-bold text-neutral-800 font-mono w-16 text-center">2026</span>
+-          <button onclick="changePickerYear(1)" class="btn-press w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 flex items-center justify-center transition">
++          <button type="button" onclick="changePickerYear(1)" aria-label="tahun berikutnya" class="btn-press w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 flex items-center justify-center transition">
+             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+               <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+             </svg>
+@@ -1802,7 +1808,7 @@
+     <!-- ====================================================================== -->
+     <!-- MODAL LIGHTBOX FULLSCREEN BUKTI TRANSFER (ZOOM VIEWER)                 -->
+     <!-- ====================================================================== -->
+-    <div id="fullscreenModal" class="fixed inset-0 z-50 bg-black/85 hidden flex flex-col items-center justify-between p-4 md:p-8" onclick="closeFullscreenProof()">
++    <div id="fullscreenModal" role="dialog" aria-modal="true" aria-label="bukti transfer layar penuh" class="fixed inset-0 z-50 bg-black/85 hidden flex flex-col items-center justify-between p-4 md:p-8" onclick="closeFullscreenProof()">
+       <div class="w-full flex justify-between items-center text-white/80 pt-2 px-2">
+         <span id="fullscreenTitle" class="text-xs font-mono">bukti transfer</span>
+         <button onclick="closeFullscreenProof()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition">
+@@ -1810,7 +1816,7 @@
+         </button>
+       </div>
+       <div class="flex-1 w-full max-w-4xl flex items-center justify-center p-2" onclick="event.stopPropagation()">
+-        <img id="fullscreenImg" src="" alt="Bukti Transfer Penuh" class="max-w-full max-h-[82vh] object-contain rounded-lg shadow-2xl">
++        <img id="fullscreenImg" alt="Bukti Transfer Penuh" class="max-w-full max-h-[82vh] object-contain rounded-lg shadow-2xl">
+       </div>
+       <p class="text-neutral-400 text-xs pb-3">ketuk di luar gambar untuk menutup</p>
+     </div>
+@@ -1820,7 +1826,7 @@
+     <!-- ====================================================================== -->
+     <!-- MODAL POPUP WEEKLY FLOWER (SURAT CINTA & BUKET BUNGA SETIAP AWAL MINGGU) -->
+     <!-- ====================================================================== -->
+-    <div id="weeklyFlowerModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex flex-col items-center justify-between p-6 select-none transition-all duration-500">
++    <div id="weeklyFlowerModal" role="dialog" aria-modal="true" aria-label="bunga mingguan" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex flex-col items-center justify-between p-6 select-none transition-all duration-500">
+       
+       <!-- Top Title Only & Close Button -->
+       <div class="w-full flex justify-between items-center pt-2 px-2 z-30">
+@@ -1840,7 +1846,7 @@
+         <div id="wfCardContainer" class="absolute z-30 flex flex-col items-center justify-center transition-all duration-700 pointer-events-none opacity-0 translate-y-16 scale-75">
+           <div class="rounded-3xl bg-gradient-to-b from-[#FFFDF9] via-[#FAF6EE] to-[#F5ECE0] p-2.5 shadow-[0_25px_40px_-10px_rgba(0,0,0,0.85)] border border-[#EADBCC]">
+             <div class="rounded-2xl overflow-hidden bg-white shadow-inner border border-amber-100/60 p-1 flex items-center justify-center">
+-              <img id="wfCardImg" src="" alt="Weekly Flower" class="w-60 h-60 object-contain rounded-xl drop-shadow-xs">
++              <img id="wfCardImg" alt="Weekly Flower" class="w-60 h-60 object-contain rounded-xl drop-shadow-xs">
+             </div>
+             <p id="wfCardName" class="text-center font-serif text-sm font-semibold text-neutral-800 pt-2 pb-0.5 tracking-wide"></p>
+             <p id="wfCardSub" class="text-center text-[11px] text-neutral-500 pb-1"></p>
+@@ -2056,25 +2062,39 @@
+       if (modal) modal.classList.add('hidden');
+     }
+ 
+-    document.addEventListener('DOMContentLoaded', () => {
+-      applyDayNightTheme();
+-      loadCachedData();
+-      updateMonthDisplay();
+-      renderAllTimelines();
+-      renderSummary();
+-      renderPlantVisuals();
+-      renderFullHistory();
+-      checkPartnerPresence();
+-      renderUpHouseBalloons();
+-      syncWithGoogleBackend();
+-      checkWeeklyFlowerPopup();
++    /* Inisialisasi dibungkus per langkah. Sebelumnya satu lemparan pada
++       render mana pun mematikan seluruh sisa inisialisasi - termasuk
++       syncWithGoogleBackend() - sehingga app diam-diam menampilkan cache
++       lama selamanya tanpa satu pun pesan error ke pengguna. */
++    function safeStep(label, fn) {
++      try {
++        fn();
++      } catch (e) {
++        console.error('[init] ' + label + ' gagal:', e);
++      }
++    }
+ 
+-      if ('serviceWorker' in navigator) {
+-        try {
+-          if (window.location.protocol.startsWith('http') && !window.location.hostname.includes('googleusercontent.com')) {
+-            navigator.serviceWorker.register('./sw.js').then((reg) => {
+-              reg.update();
+-            }).catch((err) => console.warn('SW:', err));
++    function runAppInit() {
++      safeStep('applyDayNightTheme', applyDayNightTheme);
++      safeStep('loadCachedData', loadCachedData);
++      safeStep('updateMonthDisplay', updateMonthDisplay);
++      safeStep('renderAllTimelines', renderAllTimelines);
++      safeStep('renderSummary', renderSummary);
++      safeStep('renderPlantVisuals', renderPlantVisuals);
++      safeStep('renderFullHistory', renderFullHistory);
++      safeStep('checkPartnerPresence', checkPartnerPresence);
++      safeStep('renderUpHouseBalloons', renderUpHouseBalloons);
++      safeStep('syncWithGoogleBackend', syncWithGoogleBackend);
++      safeStep('checkWeeklyFlowerPopup', checkWeeklyFlowerPopup);
++    }
++
++    function initServiceWorker() {
++      if (!('serviceWorker' in navigator)) return;
++      try {
++        if (window.location.protocol.startsWith('http') && !window.location.hostname.includes('googleusercontent.com')) {
++          navigator.serviceWorker.register('./sw.js').then((reg) => {
++            reg.update();
++          }).catch((err) => console.warn('SW:', err));
+ 
+             let refreshing = false;
+             navigator.serviceWorker.addEventListener('controllerchange', () => {
+@@ -2087,8 +2107,18 @@
+         } catch (e) {
+           console.warn('SW disabled in sandbox:', e);
+         }
+-      }
+-    });
++    }
++
++    if (document.readyState === 'loading') {
++      document.addEventListener('DOMContentLoaded', runAppInit);
++    } else {
++      /* Script ini berada di akhir body, jadi DOMContentLoaded bisa sudah
++         lewat - terutama saat halaman datang dari cache service worker.
++         Tidak ada pengecekan readyState sebelumnya, dan kalau event sudah
++         terlewat init tidak pernah jalan sama sekali. */
++      runAppInit();
++    }
++    safeStep('initServiceWorker', initServiceWorker);
+ 
+     /**
+      * SINKRONISASI DATA DARI GOOGLE APPS SCRIPT / LOCAL CACHE
+@@ -2460,11 +2490,19 @@
+         if (el) el.classList.add('hidden');
+       });
+       const fileName = file.name.replace(/\.[^/.]+$/, '').substring(0, 30);
+-      document.getElementById('songPickerCurrentTitle').textContent = fileName;
+-      document.getElementById('songPickerIcon').textContent = '🎶';
+-      document.getElementById('customAudioFileName').textContent = file.name;
+-      document.getElementById('customAudioPreview').classList.remove('hidden');
+-      document.getElementById('customAudioPrompt').classList.add('hidden');
++      /* Semua akses DOM di sini sebelumnya tanpa null-guard, padahal
++         jalur lain (selectSong) menjaganya. Satu baris markup berubah
++         sudah cukup untuk membuat TypeError saat memilih lagu custom. */
++      const titleEl = document.getElementById('songPickerCurrentTitle');
++      const iconEl = document.getElementById('songPickerIcon');
++      const nameEl = document.getElementById('customAudioFileName');
++      const previewEl = document.getElementById('customAudioPreview');
++      const promptEl = document.getElementById('customAudioPrompt');
++      if (titleEl) titleEl.textContent = fileName;
++      if (iconEl) iconEl.textContent = '🎶';
++      if (nameEl) nameEl.textContent = file.name;
++      if (previewEl) previewEl.classList.remove('hidden');
++      if (promptEl) promptEl.classList.add('hidden');
+       audio.removeAttribute('data-user-muted');
+       audio.load();
+       audio.play().catch(() => updateMusicUI(false));
+@@ -2609,6 +2647,10 @@
+       const lockScreen = document.getElementById('darkLockScreen');
+       if (lockScreen) {
+         lockScreen.classList.add('-translate-y-full');
++        /* Tanpa ini tombol di layar pembuka tetap bisa difokus walau sudah
++           bergeser keluar layar, jadi urutan tab masuk ke elemen tak terlihat. */
++        lockScreen.setAttribute('inert', '');
++        lockScreen.setAttribute('aria-hidden', 'true');
+       }
+       const isNight = applyDayNightTheme();
+       updateThemeColor(isNight ? '#0F1117' : '#FAFAFC');
+@@ -2638,6 +2680,8 @@
+       const lockScreen = document.getElementById('darkLockScreen');
+       if (lockScreen) {
+         lockScreen.classList.remove('-translate-y-full');
++        lockScreen.removeAttribute('inert');
++        lockScreen.removeAttribute('aria-hidden');
+       }
+       updateThemeColor('#111114');
+     }
+@@ -2653,13 +2697,13 @@
+       const partnerRole = currentUser.role === 'A' ? 'B' : 'A';
+       const partnerName = partnerRole === 'A' ? 'faris' : 'saiba';
+ 
+-      const partnerRecords = APP_DATABASE.records.filter(r => r.user === partnerRole);
++      const partnerRecords = APP_DATABASE.records.filter(r => r && r.user === partnerRole);
+       if (partnerRecords.length > 0) {
+         const latest = partnerRecords[partnerRecords.length - 1];
+         const label = latest.labelMinggu || latest.label || (latest.dayId ? 'minggu ' + latest.dayId : 'minggu ini');
+         bar.classList.remove('hidden');
+         if (textEl) {
+-          textEl.textContent = `${partnerName} baru saja setor ${label.toLowerCase()} ✨`;
++          textEl.textContent = `${partnerName} baru saja setor ${String(label || '').toLowerCase()} ✨`;
+         }
+       } else {
+         bar.classList.add('hidden');
+@@ -3148,12 +3192,17 @@
+       openSheetById('uploadSheet');
+     }
+ 
++    /* Id sheet yang sedang terbuka, untuk navigasi keyboard. */
++    let openSheetId = null;
++
+     function openSheetById(id) {
+       const el = document.getElementById(id);
+       if (!el) return;
+       clearTimeout(el.__closeTimer);
+-      const panel = el.querySelector('.sheet-content');
++      openSheetId = id;
+       el.classList.remove('hidden');
++      el.removeAttribute('aria-hidden');
++      const panel = el.querySelector('.sheet-content');
+       if (panel) {
+         panel.style.transform = 'translateY(102%)';
+         void panel.offsetHeight;
+@@ -3161,9 +3210,24 @@
+       }
+     }
+ 
++    /* Navigasi keyboard: Escape menutup sheet yang terbuka. Sebelumnya tidak
++       ada sama sekali. Sheet adalah sibling di dalam DOM, bukan dialog, jadi
++       tanpa ini fokus keyboard bisa masuk ke konten di belakang sheet. */
++    document.addEventListener('keydown', function(e) {
++      if (e.key !== 'Escape' || !openSheetId) return;
++      const id = openSheetId;
++      openSheetId = null;
++      if (id === 'weeklyFlowerModal') closeWeeklyFlowerModal();
++      else if (id === 'detailSheet') closeDetailSheet();
++      else if (id === 'uploadSheet') closeUploadSheet();
++      else if (id === 'koreksiSheet') closeKoreksiSheet();
++      else closeSheetById(id);
++    });
++
+     function closeSheetById(id) {
+       const el = document.getElementById(id);
+       if (!el) return;
++      if (openSheetId === id) openSheetId = null;
+       const panel = el.querySelector('.sheet-content');
+       if (!panel) { el.classList.add('hidden'); return; }
+       panel.style.transform = 'translateY(102%)';
