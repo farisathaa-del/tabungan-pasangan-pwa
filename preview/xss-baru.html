@@ -640,54 +640,6 @@
       border-bottom: 1px dashed rgba(255, 255, 255, 0.5);
     }
 
-    /* Animasi Balon Lepas Terbang ke Langit saat Rumah Diketuk */
-    @keyframes balloonFlyAway {
-      0% {
-        transform: translate(0, 0) rotate(0deg) scale(1);
-        opacity: 1;
-      }
-      15% {
-        transform: translate(8px, -60px) rotate(4deg) scale(1.03);
-        opacity: 1;
-      }
-      40% {
-        transform: translate(-14px, -220px) rotate(-5deg) scale(1.08);
-        opacity: 0.95;
-      }
-      70% {
-        transform: translate(16px, -500px) rotate(6deg) scale(1.15);
-        opacity: 0.65;
-      }
-      100% {
-        transform: translate(-10px, -850px) rotate(-4deg) scale(1.25);
-        opacity: 0;
-      }
-    }
-
-    .balloon-fly-away {
-      animation: balloonFlyAway 2.5s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
-      pointer-events: none;
-      z-index: 50 !important;
-    }
-
-    @keyframes balloonReturn {
-      0% {
-        transform: translate(0, -35px) scale(0.3);
-        opacity: 0;
-      }
-      70% {
-        transform: translate(0, 3px) scale(1.06);
-        opacity: 1;
-      }
-      100% {
-        transform: translate(0, 0) scale(1);
-        opacity: 1;
-      }
-    }
-
-    .balloon-return {
-      animation: balloonReturn 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
-    }
 
   
     /* Hilangkan semua kotak tap highlight & focus outline di mobile / desktop */
@@ -1987,6 +1939,10 @@
     /* Penanda in-flight: mencegah dua sinkronisasi tumpang tindih dan
        mencegah submit ganda masuk ke server. */
     let isSyncing = false;
+    let isSubmitting = false;
+
+    /* Record yang sedang dikoreksi — dikunci saat sheet koreksi dibuka. */
+    let koreksiTarget = null;
 
     /**
      * INISIALISASI SAAT DOM SIAP
@@ -2141,11 +2097,31 @@
       try {
         const cached = localStorage.getItem('tabungan_real_records');
         if (cached) {
-          APP_DATABASE.records = JSON.parse(cached);
+          const parsed = JSON.parse(cached);
+          /* Bentuk hasil parse tidak divalidasi. Kalau cache rusak atau
+             berisi objek, records.filter / koreksiList.find akan melempar
+             dan mematikan seluruh inisialisasi. */
+          if (Array.isArray(parsed)) {
+            APP_DATABASE.records = parsed.filter(Boolean);
+          } else {
+            console.warn('Cache record bukan array, diabaikan.');
+          }
         }
         const cachedKor = localStorage.getItem('tabungan_real_koreksi');
         if (cachedKor) {
-          APP_DATABASE.koreksiList = JSON.parse(cachedKor);
+          const parsedKor = JSON.parse(cachedKor);
+          if (Array.isArray(parsedKor)) {
+            APP_DATABASE.koreksiList = parsedKor.filter(Boolean);
+          } else {
+            console.warn('Cache koreksi bukan array, diabaikan.');
+          }
+        }
+        const cachedCfg = localStorage.getItem('tabungan_real_config');
+        if (cachedCfg) {
+          const parsedCfg = JSON.parse(cachedCfg);
+          if (parsedCfg && typeof parsedCfg === 'object' && !Array.isArray(parsedCfg)) {
+            APP_DATABASE.config = Object.assign({}, APP_DATABASE.config, parsedCfg);
+          }
         }
       } catch (e) {
         console.warn('Gagal membaca cache lokal:', e);
@@ -2156,8 +2132,23 @@
       try {
         localStorage.setItem('tabungan_real_records', JSON.stringify(APP_DATABASE.records));
         localStorage.setItem('tabungan_real_koreksi', JSON.stringify(APP_DATABASE.koreksiList));
+        /* config ikut disimpan. Sebelumnya hanya records + koreksiList, jadi
+           setelah reload atau saat offline config.nominal kembali ke nilai
+           hardcode 100000 walau server sempat mengirim nominal lain — seluruh
+           total ikut berubah. */
+        localStorage.setItem('tabungan_real_config', JSON.stringify(APP_DATABASE.config));
       } catch (e) {
-        console.warn('Gagal menyimpan cache:', e);
+        /* Kuota penuh = input pengguna hilang tanpa jejak. Record bisa memuat
+           previewUrl base64 berukuran besar, jadi ini nyata terjadi. */
+        const full = e && (e.name === 'QuotaExceededError' || e.code === 22);
+        if (full) {
+          console.warn('Penyimpanan penuh, record terbaru belum tersimpan:', e);
+          if (typeof showToast === 'function') {
+            showToast('penyimpanan perangkat penuh, data terbaru belum aman');
+          }
+        } else {
+          console.warn('Gagal menyimpan cache:', e);
+        }
       }
     }
 
@@ -2820,7 +2811,7 @@
         const isCurrentActiveRole = currentUser.role === role;
 
         if (isDone) {
-          const pendingKor = APP_DATABASE.koreksiList.find(k => k.setoranId === record.id && k.status.toLowerCase() === 'menunggu');
+          const pendingKor = APP_DATABASE.koreksiList.find(k => k.setoranId === record.id && String(k.status || '').toLowerCase() === 'menunggu');
           const hasNote = Boolean(record.note && record.note.length > 0);
 
           // ponytail: heart badge for Saiba (role B) on paid weeks, circle for Faris (role A)
@@ -3188,28 +3179,28 @@
 
     function closeUploadSheet() {
       closeSheetById('uploadSheet');
+      /* targetUploadWeekId harus dibersihkan. Kalau tidak, minggu yang
+         terakhir dibuka ikut terbawa ke submit berikutnya. */
+      targetUploadWeekId = null;
     }
 
     function executeSetoranSubmission() {
       if (!selectedImageBase64) return;
+      if (isSubmitting) return;
 
-      const noteText = document.getElementById('inputDepositNote').value.trim();
+      const noteEl = document.getElementById('inputDepositNote');
+      const noteText = noteEl ? noteEl.value.trim() : '';
       const btn = document.getElementById('btnSubmitProof');
       const spinnerText = document.getElementById('submitBtnText');
       const spinner = document.getElementById('submitBtnSpinner');
-
-      if (btn) {
-        btn.setAttribute('disabled', 'true');
-        if (spinnerText) spinnerText.textContent = 'mengirim...';
-        if (spinner) spinner.classList.remove('hidden');
-      }
 
       const timeline = getMonthTimeline(viewYear, viewMonth);
       let targetWeek = null;
 
       if (targetUploadWeekId) {
-        targetWeek = timeline.find(d => d.id === targetUploadWeekId);
-      } else {
+        targetWeek = timeline.find(d => String(d.id) === String(targetUploadWeekId));
+      }
+      if (!targetWeek) {
         targetWeek = timeline.find(d => !APP_DATABASE.records.some(r =>
           r && String(r.dayId) === String(d.id) &&
           r.user === currentUser.role &&
@@ -3219,8 +3210,29 @@
 
       if (!targetWeek) {
         showToast('semua minggu pada bulan ini telah terisi');
+        return;
+      }
+
+      /* Anti-duplikat berlaku untuk SEMUA cabang. Sebelumnya pemeriksaan
+         "minggu sudah terisi" hanya berjalan di cabang otomatis, sehingga
+         memilih slot yang sudah terisi tetap mengirim record kedua untuk
+         minggu yang sama — total uang dan tahap tanaman ikut naik. */
+      const already = APP_DATABASE.records.some(r =>
+        r && String(r.dayId) === String(targetWeek.id) &&
+        r.user === currentUser.role &&
+        isRecordInMonth(r, viewYear, viewMonth)
+      );
+      if (already) {
+        showToast('minggu ' + targetWeek.id + ' sudah kamu isi');
         resetSubmitBtn();
         return;
+      }
+
+      isSubmitting = true;
+      if (btn) {
+        btn.setAttribute('disabled', 'true');
+        if (spinnerText) spinnerText.textContent = 'mengirim...';
+        if (spinner) spinner.classList.remove('hidden');
       }
 
       const payload = {
@@ -3266,12 +3278,17 @@
         renderAllTimelines();
         renderSummary();
         renderFullHistory();
+        checkPartnerPresence();
+        /* Simpan juga saat rollback. Sebelumnya cache tidak disentuh sehingga
+           record yang sudah dicabut muncul kembali setelah muat ulang. */
+        saveToLocalStorage();
       }
 
       callBackend('submitSetoran', payload,
         function(response) {
+          isSubmitting = false;
           resetSubmitBtn();
-          if (response && response.success) {
+          if (response && response.success && response.record) {
             const i = APP_DATABASE.records.indexOf(optimisticRecord);
             if (i > -1) APP_DATABASE.records[i] = response.record;
             saveToLocalStorage();
@@ -3279,12 +3296,18 @@
             renderSummary();
             renderFullHistory();
             checkPartnerPresence();
+          } else if (response && response.success) {
+            /* Server bilang sukses tanpa record. Kalau dipaksakan, array akan
+               berisi undefined dan membuat render riwayat/detail ikut gagal. */
+            rollbackOptimistic();
+            showToast((response && response.message) || 'server tidak mengirim data setoran');
           } else {
             rollbackOptimistic();
-            showToast(response.message || 'gagal menyimpan setoran');
+            showToast((response && response.message) || 'gagal menyimpan setoran');
           }
         },
         function(err) {
+          isSubmitting = false;
           resetSubmitBtn();
           rollbackOptimistic();
           showToast('kesalahan jaringan: ' + err.toString());
@@ -3359,7 +3382,7 @@
       }
 
       // Cek Pengajuan Koreksi
-      const pendingKor = APP_DATABASE.koreksiList.find(k => k.setoranId === record.id && k.status.toLowerCase() === 'menunggu');
+      const pendingKor = APP_DATABASE.koreksiList.find(k => k.setoranId === record.id && String(k.status || '').toLowerCase() === 'menunggu');
       const btnKoreksi = document.getElementById('btnRequestCorrection');
       const badgePending = document.getElementById('badgePendingCorrection');
       const reviewBox = document.getElementById('correctionReviewBox');
@@ -3397,6 +3420,9 @@
 
     function closeDetailSheet() {
       closeSheetById('detailSheet');
+      /* activeRecordInDetail tidak pernah dikosongkan. Dengan closeSheetById
+         menunda 240ms, aksi koreksi bisa membaca record yang sudah berganti. */
+      activeRecordInDetail = null;
     }
 
     /**
@@ -3404,6 +3430,10 @@
      */
     function openKoreksiSheet() {
       if (!activeRecordInDetail) return;
+      /* Target dikunci di sini, bukan dibaca ulang nanti: closeDetailSheet()
+         menunda sheet tertutup 240ms dan bisa mengubah nilainya, sehingga
+         koreksi risked menempel ke setoran yang salah. */
+      koreksiTarget = activeRecordInDetail;
       closeDetailSheet();
 
       koreksiImageBase64 = null;
@@ -3422,23 +3452,28 @@
       }
       if (promptEl) promptEl.classList.remove('hidden');
       if (btnSubmit) btnSubmit.setAttribute('disabled', 'true');
-      if (labelEl) labelEl.textContent = `minggu ${activeRecordInDetail.dayId} · ${currentUser.name}`;
+      if (labelEl) labelEl.textContent = `minggu ${koreksiTarget.dayId} · ${currentUser.name}`;
 
       openSheetById('koreksiSheet');
     }
 
     function closeKoreksiSheet() {
       closeSheetById('koreksiSheet');
+      koreksiTarget = null;
     }
 
     function executeKoreksiSubmission() {
-      if (!activeRecordInDetail || !koreksiImageBase64) return;
+      if (!koreksiTarget || !koreksiImageBase64) return;
+      if (isSubmitting) return;
+      const target = koreksiTarget;
 
-      const reason = document.getElementById('koreksiReasonInput').value.trim() || 'Salah unggah bukti transfer';
+      const reasonInput = document.getElementById('koreksiReasonInput');
+      const reason = (reasonInput ? reasonInput.value : '').trim() || 'Salah unggah bukti transfer';
       const btn = document.getElementById('btnSubmitKoreksi');
       const spinnerText = document.getElementById('koreksiBtnText');
       const spinner = document.getElementById('koreksiBtnSpinner');
 
+      isSubmitting = true;
       if (btn) {
         btn.setAttribute('disabled', 'true');
         if (spinnerText) spinnerText.textContent = 'mengirim...';
@@ -3446,7 +3481,7 @@
       }
 
       const payload = {
-        setoranId: activeRecordInDetail.id,
+        setoranId: target.id,
         userRole: currentUser.role,
         alasan: reason,
         imageBase64: koreksiImageBase64,
@@ -3455,18 +3490,20 @@
 
       callBackend('submitKoreksi', payload,
         function(response) {
+          isSubmitting = false;
           resetKoreksiBtn();
-          if (response && response.success) {
+          if (response && response.success && response.koreksi) {
             APP_DATABASE.koreksiList.push(response.koreksi);
             saveToLocalStorage();
             closeKoreksiSheet();
             renderAllTimelines();
             showToast('pengajuan koreksi berhasil dicatat');
           } else {
-            showToast(response.message || 'gagal mengajukan koreksi');
+            showToast((response && response.message) || 'gagal mengajukan koreksi');
           }
         },
         function(err) {
+          isSubmitting = false;
           resetKoreksiBtn();
           showToast('kesalahan server: ' + err.toString());
         }
@@ -3484,7 +3521,7 @@
 
     function respondToCorrection(action) {
       if (!activeRecordInDetail) return;
-      const pendingKor = APP_DATABASE.koreksiList.find(k => k.setoranId === activeRecordInDetail.id && k.status.toLowerCase() === 'menunggu');
+      const pendingKor = APP_DATABASE.koreksiList.find(k => k.setoranId === activeRecordInDetail.id && String(k.status || '').toLowerCase() === 'menunggu');
       if (!pendingKor) return;
 
       const payload = {
@@ -3532,7 +3569,7 @@
 
     function openFullscreenNewProof() {
       if (!activeRecordInDetail) return;
-      const pendingKor = APP_DATABASE.koreksiList.find(k => k.setoranId === activeRecordInDetail.id && k.status.toLowerCase() === 'menunggu');
+      const pendingKor = APP_DATABASE.koreksiList.find(k => k.setoranId === activeRecordInDetail.id && String(k.status || '').toLowerCase() === 'menunggu');
       if (!pendingKor) return;
 
       const fullModal = document.getElementById('fullscreenModal');
@@ -4081,36 +4118,6 @@
       if (plantG) plantG.innerHTML = buildBalloonCluster(count, 280.4, 56.0, 1.25);
     }
 
-    let isBalloonFlying = false;
-    function tapUpHouse() {
-      // ponytail: balon terlepas dari cerobong dan terbang ke atas halaman saat diketuk
-      if (isBalloonFlying) return;
-      const balloons = document.getElementById("upBalloonsHome");
-      const house = document.getElementById("upHouseGroupHome");
-      if (!balloons) return;
-
-      isBalloonFlying = true;
-      balloons.classList.remove("up-balloons-sway", "balloon-return");
-      balloons.classList.add("balloon-fly-away");
-
-      // Pantulan lembut rumah saat tarikan balon terlepas
-      if (house) {
-        house.classList.add("translate-y-1");
-        setTimeout(() => house.classList.remove("translate-y-1"), 300);
-      }
-
-      // Balon kembali tertambat rapi setelah terbang melayang hilang
-      setTimeout(() => {
-        balloons.classList.remove("balloon-fly-away");
-        balloons.classList.add("balloon-return");
-        setTimeout(() => {
-          balloons.classList.remove("balloon-return");
-          balloons.classList.add("up-balloons-sway");
-          isBalloonFlying = false;
-        }, 650);
-      }, 2600);
-    }
-
     // Explicit window binding for GAS HtmlService inline handlers
     window.selectUserAndEnter = selectUserAndEnter;
     window.openOpeningScreen = openOpeningScreen;
@@ -4143,7 +4150,6 @@
     window.closeWeeklyFlowerModal = closeWeeklyFlowerModal;
     window.showWeeklyFlowerModal = showWeeklyFlowerModal;
     window.checkWeeklyFlowerPopup = checkWeeklyFlowerPopup;
-    window.tapUpHouse = tapUpHouse;
 
     function bindUserButtonsDirectly() {
       const bFaris = document.getElementById('btnUserFaris');
@@ -4365,17 +4371,10 @@
 #upHouseApprovedHome{filter:drop-shadow(-3px 5px 4px rgba(2,44,34,.30))}
 body.night-theme #upHouseApprovedHome{filter:brightness(.72) contrast(1.16) saturate(.88) hue-rotate(-8deg) drop-shadow(-3px 5px 4px rgba(0,0,0,.5))!important}
 .hx-box{transform-origin:50% 100%}
-.hx-ao{position:absolute;left:50%;bottom:1px;width:84px;height:13px;margin-left:-42px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(2,44,34,.5) 0%,rgba(2,44,34,.18) 55%,transparent 75%);z-index:12;pointer-events:none}
 .hx-lw{position:absolute;pointer-events:none;z-index:25;-webkit-mask-image:linear-gradient(to bottom,#000 86%,transparent 96%);mask-image:linear-gradient(to bottom,#000 86%,transparent 96%)}
 .hx-light{position:absolute;inset:0;-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;background:linear-gradient(255deg,rgba(255,240,190,.4) 0%,rgba(255,240,190,0) 38%,rgba(30,41,90,0) 55%,rgba(30,41,90,.28) 100%)}
 body.night-theme .hx-light{background:linear-gradient(255deg,rgba(147,197,253,.26) 0%,rgba(147,197,253,0) 36%,rgba(2,6,23,0) 50%,rgba(2,6,23,.4) 100%)}
-.hx-grass{position:absolute;left:-2px;bottom:0;width:calc(100% + 4px);height:14px;pointer-events:none;z-index:30}
-body.night-theme .hx-grass{filter:brightness(.55) saturate(.9)}
 .hx-layer{position:fixed;inset:0;z-index:9990;pointer-events:none;overflow:visible}
-@media (prefers-reduced-motion:no-preference){
-  .hx-box{animation:hxBob 3.5s ease-in-out infinite}
-}
-@keyframes hxBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.5px)}}
 </style>
 <script id="house-fx">
 (function(){
@@ -4387,10 +4386,9 @@ body.night-theme .hx-grass{filter:brightness(.55) saturate(.9)}
   var box = img && img.parentElement, busy = false, lastX = .5;
   var AX = '47px 51px'; /* mulut cerobong (koordinat viewBox kartu utama) */
 
-  /* ---------- kedalaman: cahaya, bayangan kontak, rumput penutup ---------- */
-  if (box && !box.querySelector('.hx-grass')) {
+  /* ---------- kedalaman: lapisan cahaya ---------- */
+  if (box && !box.querySelector('.hx-lw')) {
     box.classList.add('hx-box');
-    var ao = document.createElement('div'); ao.className = 'hx-ao'; box.appendChild(ao);
     var lw = document.createElement('div'); lw.className = 'hx-lw';
     var lit = document.createElement('div'); lit.className = 'hx-light'; lw.appendChild(lit); box.appendChild(lw);
     var fit = function(){
@@ -4399,14 +4397,6 @@ body.night-theme .hx-grass{filter:brightness(.55) saturate(.9)}
       var u = 'url("' + img.currentSrc + '")'; lit.style.webkitMaskImage = u; lit.style.maskImage = u;
     };
     if (img.complete) fit(); img.addEventListener('load', fit); addEventListener('resize', fit);
-    var g = '', cols = ['#34D399', '#10B981', '#059669', '#6EE7B7'];
-    for (var i = 0; i < 15; i++) {
-      var x = 3 + i * 6.2 + rnd(-1.8, 1.8), h = rnd(5, 11), l = rnd(-3.2, 3.2);
-      g += '<path d="M' + x.toFixed(1) + ' 14 Q' + (x + l / 2).toFixed(1) + ' ' + (14 - h * .6).toFixed(1) + ' ' + (x + l).toFixed(1) + ' ' + (14 - h).toFixed(1) + '" stroke="' + cols[i % 4] + '" stroke-width="1.7" stroke-linecap="round" fill="none"/>';
-    }
-    var gs = document.createElementNS(NS, 'svg');
-    gs.setAttribute('class', 'hx-grass'); gs.setAttribute('viewBox', '0 0 98 14'); gs.setAttribute('preserveAspectRatio', 'none'); gs.setAttribute('aria-hidden', 'true');
-    gs.innerHTML = g; box.appendChild(gs);
   }
   if (grp) grp.addEventListener('pointerdown', function(e){ var r = grp.getBoundingClientRect(); lastX = (e.clientX - r.left) / r.width; }, { passive: true });
 
@@ -4564,8 +4554,6 @@ body .tabungan-bersama-card span.uppercase,body #historySummaryCard span.upperca
 /* dasar rumah: gambar membawa petak rumput datar, dipotong tegas + bayangan kontak tepat di pagar */
 body #upHouseApprovedHome{-webkit-mask-image:linear-gradient(to bottom,#000 0,#000 84.5%,transparent 88%);mask-image:linear-gradient(to bottom,#000 0,#000 84.5%,transparent 88%)}
 .hx-lw{-webkit-mask-image:linear-gradient(to bottom,#000 0,#000 84.5%,transparent 88%);mask-image:linear-gradient(to bottom,#000 0,#000 84.5%,transparent 88%)}
-.hx-grass,.hx-ao{display:none!important}
-.hx-box{animation:none!important}
 .hx-cs{position:absolute;height:10px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(2,44,34,.55),rgba(2,44,34,.2) 55%,transparent 72%);z-index:12;pointer-events:none}
 
 /* ===== MODE MALAM ===== */
@@ -4624,28 +4612,60 @@ body.night-theme .hx-cs{background:radial-gradient(ellipse at center,rgba(0,0,0,
   };
 
   /* kucing: identitas konsisten (kalung pita + hidung di semua mode), bantal tidur senada sofa */
+  /* Anchor sebelumnya dicocokkan dengan string persis ke markup renderSafaSvg.
+     Begitu satu spasi atau urutan atribut berubah, String.replace jadi no-op
+     senyap dan hiasan hilang tanpa jejak. Sekarang dicocokkan dengan regex
+     yang tahan urutan atribut, dan bila tidak ketemu dilaporkan lewat
+     console.warn supaya tidak bisa hilang diam-diam lagi.
+     Peningatan memakai Set, bukan properti di atas string: pada mode strict
+     menulis properti ke primitive string akan melempar. */
+  var warnedAnchors = new Set();
+  function insertBefore(svg, needle, markup, label){
+    if (typeof svg !== 'string') return svg;
+    if (svg.indexOf(needle) > -1) return svg.replace(needle, markup + needle);
+    if (!warnedAnchors.has(label)) {
+      warnedAnchors.add(label);
+      console.warn('[theme-v2-art] anchor "' + label + '" tidak ditemukan, hiasan dilewati.');
+    }
+    return svg;
+  }
+
   var so = W.renderSafaSvg;
   if (typeof so === 'function') W.renderSafaSvg = function(mode, isLarge){
     var s = so(mode, isLarge);
+    if (typeof s !== 'string' || s.indexOf('<svg') === -1) return s;
     var nose = function(x, y){ return '<path d="M' + (x - 1.1) + ' ' + y + 'Q' + x + ' ' + (y + 1.5) + ' ' + (x + 1.1) + ' ' + y + 'Z" fill="#f9a8d4"/>'; };
     var bow = function(cx, cy){ return '<path d="M' + (cx - 6.5) + ' ' + (cy - 1.6) + 'Q' + cx + ' ' + (cy + 2.6) + ' ' + (cx + 6.5) + ' ' + (cy - 1.6) + '" stroke="#f472b6" stroke-width="1.6" fill="none" stroke-linecap="round"/>'
       + '<path d="M' + (cx - 1.4) + ' ' + (cy + 1.7) + 'C' + (cx - 4) + ' ' + (cy - .3) + ' ' + (cx - 5) + ' ' + (cy + 2.7) + ' ' + (cx - 2.6) + ' ' + (cy + 2.9) + 'Z" fill="#f472b6"/>'
       + '<path d="M' + (cx + 1.4) + ' ' + (cy + 1.7) + 'C' + (cx + 4) + ' ' + (cy - .3) + ' ' + (cx + 5) + ' ' + (cy + 2.7) + ' ' + (cx + 2.6) + ' ' + (cy + 2.9) + 'Z" fill="#f472b6"/><circle cx="' + cx + '" cy="' + (cy + 1.8) + '" r="1.5" fill="#fb7185"/>'; };
-    if (mode === 'walking') return s.replace('<!-- Floating hearts -->', nose(22, 21.9) + '<!-- Floating hearts -->');
+
+    if (mode === 'walking') return insertBefore(s, '<!-- Floating hearts -->', nose(22, 21.9), 'hearts');
+
     var add = { day_idle: nose(26, 22.4) + bow(26, 29.2), night_sleep: nose(26, 22.6) + bow(26, 27.8), waiting: nose(26, 22.3) + bow(26, 30.2) }[mode] || '';
-    if (mode === 'night_sleep') s = s.replace('<ellipse cx="26" cy="38" rx="20" ry="6" fill="#fbcfe8"/>', '<ellipse cx="26" cy="38" rx="20" ry="6" fill="#991B1B"/><ellipse cx="26" cy="37.2" rx="17.5" ry="4.4" fill="#DC2626"/><ellipse cx="26" cy="36.6" rx="12" ry="1" fill="#FCA5A5" opacity=".5"/>');
+
+    if (mode === 'night_sleep') {
+      var pillow = /<ellipse([^>]*?)fill="#fbcfe8"([^>]*?)\/>/;
+      if (pillow.test(s)) {
+        s = s.replace(pillow, '<ellipse$1fill="#991B1B"$2/><ellipse cx="26" cy="37.2" rx="17.5" ry="4.4" fill="#DC2626"/><ellipse cx="26" cy="36.6" rx="12" ry="1" fill="#FCA5A5" opacity=".5"/>');
+      } else if (!warnedAnchors.has('bantal')) {
+        warnedAnchors.add('bantal');
+        console.warn('[theme-v2-art] anchor bantal night_sleep tidak ditemukan.');
+      }
+    }
     return s.replace('</svg>', add + '</svg>');
   };
-  try { renderPlantVisuals(); renderSafaVisuals(); } catch (e) {}
+  /* renderPlantVisuals() sudah memanggil renderSafaVisuals() sendiri;
+     memanggil keduanya membuat SVG sofa dibangun dua kali tiap muat halaman. */
+  try { renderPlantVisuals(); } catch (e) {}
 })();
 </script>
 <script id="theme-v2-house">
 (function(){
   var img = document.getElementById('upHouseApprovedHome'), box = img && img.parentElement;
   if (!box) return;
-  [].forEach.call(box.querySelectorAll('.hx-grass,.hx-ao'), function(n){ n.remove(); });
-  var old = box.querySelector('div.absolute.bottom-1'); if (old) old.style.display = 'none';
-  var cs = document.createElement('div'); cs.className = 'hx-cs'; box.appendChild(cs);
+  /* .hx-cs hanya dibuat sekali supaya tidak berlipat bila blok ini dijalankan lagi */
+  var cs = box.querySelector('.hx-cs');
+  if (!cs) { cs = document.createElement('div'); cs.className = 'hx-cs'; box.appendChild(cs); }
   function fit(){ cs.style.left = (img.offsetLeft + img.offsetWidth * .03) + 'px'; cs.style.width = (img.offsetWidth * .94) + 'px'; cs.style.top = (img.offsetTop + img.offsetHeight * .845) + 'px'; }
   if (img.complete) fit(); img.addEventListener('load', fit); addEventListener('resize', fit);
 })();
