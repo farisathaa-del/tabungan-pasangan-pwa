@@ -671,29 +671,125 @@
       position: relative;
       overflow: hidden;
     }
-    .ribbon-pink {
+    /* C4: sudut pita rose (lipatan sudut), menggantikan pita diagonal 45deg
+       yang sebelumnya melintasi isi card. Sekarang hanya menempati pojok kanan
+       atas, jadi judul dan deretan minggu tidak pernah tertutup. */
+    .saiba-corner-ribbon {
       position: absolute;
-      top: 15px;
-      right: -34px;
-      width: 120px;
-      transform: rotate(45deg);
-      background: linear-gradient(135deg, #fb7185 0%, #f43f5e 50%, #e11d48 100%);
-      color: #ffffff;
-      text-align: center;
-      font-size: 11px;
-      padding: 2px 0;
-      box-shadow: 0 2px 6px rgba(244, 63, 94, 0.4);
-      border-top: 1px dashed rgba(255, 255, 255, 0.7);
-      border-bottom: 1px dashed rgba(255, 255, 255, 0.7);
-      z-index: 20;
+      top: 0;
+      right: 0;
+      width: 44px;
+      height: 44px;
+      display: block;
       pointer-events: none;
-      text-transform: lowercase;
+      z-index: 5;
+      font-size: 13px;
+      line-height: 1;
+      text-align: right;
+      padding: 5px 6px 0 0;
+      color: #fff;
+      background:
+        radial-gradient(circle at 100% 0%, rgba(255,255,255,.34) 0%, rgba(255,255,255,.10) 34%, transparent 58%),
+        linear-gradient(225deg, #fb7185 0%, #f43f5e 46%, #be123c 100%);
+      clip-path: polygon(100% 0, 0 0, 100% 100%);
+      filter: drop-shadow(-1px 2px 3px rgba(190,18,60,.28));
     }
-    body.night-theme .ribbon-pink {
-      background: linear-gradient(135deg, #f43f5e 0%, #e11d48 60%, #be123c 100%);
-      box-shadow: 0 2px 8px rgba(225, 29, 72, 0.5);
-      border-top: 1px dashed rgba(255, 255, 255, 0.5);
-      border-bottom: 1px dashed rgba(255, 255, 255, 0.5);
+    /* garis lipatan tipis di tepi pita */
+    .saiba-corner-ribbon::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(225deg, transparent 0 48%, rgba(255,255,255,.55) 48% 51%, transparent 51%);
+      clip-path: polygon(100% 0, 0 0, 100% 100%);
+    }
+    .saiba-corner-ribbon > * { position: relative; }
+    body.night-theme .saiba-corner-ribbon {
+      background:
+        radial-gradient(circle at 100% 0%, rgba(255,255,255,.22) 0%, rgba(255,255,255,.06) 34%, transparent 58%),
+        linear-gradient(225deg, #e11d48 0%, #be123c 52%, #881337 100%);
+      filter: drop-shadow(-1px 2px 4px rgba(0,0,0,.5));
+    }
+    /* C4: kartu zwei orang dibuat sepadang: pseudo corner ribbon ikut disembunyikan
+       di malam supaya tidak ada segitiga terang di pojok gelap. */
+    body.night-theme .history-card .saiba-corner-ribbon { opacity: .92; }
+    /* Ribbon adalah anak pertama tapi out-of-flow, jadi selector ~ pada
+       space-y-2.5 tetap memberi margin-top ke saudara berikutnya dan card
+       riwayat Saidah jadi lebih tinggi dari card Faris. Kembalikan ke 0;
+       saudara setelahnya tetap memakai space-y-2.5 seperti semula. */
+    .history-card > .saiba-corner-ribbon ~ div:first-of-type { margin-top: 0 !important; }
+
+    /* C4 - semua style ditulis eksplisit di sini, BUKAN lewat utilitas Tailwind.
+      -repo ini tidak memuat CDN Tailwind saat runtime (hanya CSS precompiled di
+       <style>), jadi kelas baru seperti pr-11 / min-h-[30px] / bg-rose-50/60
+       diam-diam tidak punya efek apa pun. Semua yang dipakai di sini harus benar. */
+
+    /* Header card: judul kiri, total kanan, dengan ruang untuk corner ribbon. */
+    .user-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .5rem;
+      min-height: 30px;
+      padding-right: 44px; /* lega untuk pita sudut 44px di card Saidah */
+    }
+    .saiba-card-ribbon #timelineUserB,
+    .saiba-card-ribbon .history-foot { margin-top: .5rem; }
+
+    /* Badge total per pengguna */
+    .user-total {
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: -.01em;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      border: 1px solid rgba(0,0,0,.09);
+      background: rgba(0,0,0,.045);
+      color: #52525b;
+    }
+    @media (min-width: 768px) { .user-total { font-size: 12px; } }
+    .user-total-b {
+      color: #be123c;
+      background: rgba(244,63,94,.09);
+      border-color: rgba(244,63,94,.22);
+    }
+    body.night-theme .user-total-a {
+      color: #D4D4D8;
+      background: rgba(255,255,255,.07);
+      border-color: rgba(255,255,255,.14);
+    }
+    body.night-theme .user-total-b {
+      color: #FDA4AF;
+      background: rgba(244,63,94,.16);
+      border-color: rgba(244,63,94,.32);
+    }
+
+    /* Slot minggu yang belum terisi: pill putus-putus supaya jelas "kosong".
+       Badge hati untuk Saidah yang sudah lunas tetap dipertahankan. */
+    .week-pill-idle {
+      border: 1px dashed rgba(113,113,122,.34);
+      background: rgba(0,0,0,.035);
+      color: #a1a1aa;
+    }
+    .week-pill-idle-b {
+      border-color: rgba(244,63,94,.3);
+      background: rgba(244,63,94,.05);
+      color: #f43f5e;
+    }
+    body.night-theme .week-pill-idle {
+      border-color: rgba(255,255,255,.17);
+      background: rgba(255,255,255,.06);
+      color: #A1A1AA;
+    }
+    body.night-theme .week-pill-idle-b {
+      border-color: rgba(244,63,94,.36);
+      background: rgba(244,63,94,.14);
+      color: #FDA4AF;
     }
 
 
@@ -953,10 +1049,11 @@
 
       <!-- BARIS 1: FARIS -->
       <section class="faris-card-container relative shrink-0 overflow-hidden space-y-2 bg-white/95 p-3 md:p-3.5 rounded-2xl border border-neutral-200/70 shadow-xs">
-        <div>
-          <h2 class="text-xl md:text-2xl font-bold tracking-tight text-neutral-900 lowercase">
+        <div class="user-card-head">
+          <h2 class="text-xl md:text-2xl font-bold tracking-tight text-neutral-900 lowercase leading-none">
             faris
           </h2>
+          <span id="totalSavingsA" class="user-total user-total-a">Rp0</span>
         </div>
 
         <!-- Deretan Lingkaran Minggu Faris -->
@@ -966,14 +1063,15 @@
       </section>
 
       <!-- BARIS 2: SAIBA -->
-      <section class="saiba-card-ribbon relative shrink-0 overflow-hidden space-y-2 bg-rose-50/70 md:bg-rose-50/50 p-3 md:p-3.5 rounded-2xl border border-rose-200/80 shadow-xs">
-        <!-- Pita Pink Melingkar di Sudut Card Saiba -->
-        <div class="ribbon-pink">🎀</div>
+      <section class="saiba-card-ribbon relative shrink-0 overflow-hidden bg-rose-50/70 md:bg-rose-50/50 p-3 md:p-3.5 rounded-2xl border border-rose-200/80 shadow-xs">
+        <!-- Sudut pita rose: lipatan sudut, tidak lagi memotong isi card -->
+        <span class="saiba-corner-ribbon" aria-hidden="true">🎀</span>
 
-        <div>
-          <h2 class="text-xl md:text-2xl font-bold tracking-tight text-neutral-900 lowercase">
-            saiba <span class="text-rose-500 text-lg">♥</span>
+        <div class="user-card-head">
+          <h2 class="text-xl md:text-2xl font-bold tracking-tight text-neutral-900 lowercase leading-none">
+            saiba <span class="text-rose-500 text-lg leading-none align-middle">♥</span>
           </h2>
+          <span id="totalSavingsB" class="user-total user-total-b">Rp0</span>
         </div>
 
         <!-- Deretan Lingkaran Minggu Saiba -->
@@ -2796,7 +2894,7 @@
                 </svg>
                 <span class="relative z-10 text-[11px] md:text-xs font-bold leading-none -mt-0.5">${item.weekNum}</span>
                </div>`
-            : `<div class="w-9 h-9 md:w-11 md:h-11 rounded-full bg-neutral-900 text-white shadow-sm flex items-center justify-center text-xs md:text-sm font-bold">
+            : `<div class="w-9 h-9 md:w-11 md:h-11 rounded-2xl bg-neutral-900 text-white shadow-sm flex items-center justify-center text-xs md:text-sm font-bold">
                 ${item.weekNum}
                </div>`;
 
@@ -2816,7 +2914,7 @@
 
           return `
             <div class="flex flex-col items-center cursor-pointer btn-press" onclick="${clickAction}">
-              <div class="w-9 h-9 md:w-11 md:h-11 rounded-full bg-neutral-100 text-neutral-500 flex items-center justify-center text-xs md:text-sm font-medium hover:bg-neutral-200/70 transition ${activeRingClass}">
+              <div class="week-pill-idle${role === 'B' ? ' week-pill-idle-b' : ''} w-9 h-9 md:w-11 md:h-11 rounded-2xl flex items-center justify-center text-xs md:text-sm font-medium ${activeRingClass}">
                 ${item.weekNum}
               </div>
               <span class="text-[10px] md:text-xs font-semibold ${item.isCurrentActiveWeek ? (role === 'B' ? 'text-rose-700 font-bold' : 'text-neutral-800 font-bold') : 'text-neutral-300'} mt-1.5 uppercase">
@@ -2862,6 +2960,15 @@
       if (valEl) valEl.textContent = 'Rp' + grandTotal.toLocaleString('id-ID');
       const subEl = document.getElementById('monthSubTotal');
       if (subEl) subEl.textContent = 'Bulan ini: Rp' + monthTotal.toLocaleString('id-ID');
+      // C4: total per pengguna (Sepanjang waktu, bukan bulanan) supaya tiap card
+      // punya angka sendiri. Sumbernya tetap APP_DATABASE.records - tidak ada
+      // perubahan ke backend maupun kontrak response.
+      const totalA = sumNominal(APP_DATABASE.records.filter(r => r && r.user === 'A'));
+      const totalB = sumNominal(APP_DATABASE.records.filter(r => r && r.user === 'B'));
+      const aEl = document.getElementById('totalSavingsA');
+      const bEl = document.getElementById('totalSavingsB');
+      if (aEl) aEl.textContent = 'Rp' + totalA.toLocaleString('id-ID');
+      if (bEl) bEl.textContent = 'Rp' + totalB.toLocaleString('id-ID');
       renderPlantVisuals();
       renderUpHouseBalloons();
     }
@@ -2965,10 +3072,7 @@
                 const isSaiba = item.user === 'B';
                 return `
                 <div onclick="openDetailSheet(${jsAttr(item.id)})" class="history-card ${isSaiba ? 'saiba-card-ribbon relative overflow-hidden border-rose-200/90 bg-rose-50/30' : 'border-neutral-200/80 bg-white/95'} rounded-2xl p-4 border flex flex-col space-y-2.5 cursor-pointer btn-press shadow-xs hover:border-neutral-300 transition">
-                  ${isSaiba ? `
-                    <!-- Pita Pink Melingkar di Sudut Card Saiba Riwayat -->
-                    <div class="ribbon-pink">🎀</div>
-                  ` : ''}
+                  ${isSaiba ? '<span class="saiba-corner-ribbon" aria-hidden="true">🎀</span>' : ''}
                   <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
                       <span class="w-8 h-8 rounded-full ${isSaiba ? 'bg-rose-500 text-white shadow-xs shadow-rose-200' : 'bg-neutral-900 text-white shadow-xs'} text-xs font-bold flex items-center justify-center">
