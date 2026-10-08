@@ -133,6 +133,40 @@ selamanya. Ditambahkan juga pengecekan `document.readyState`.
 layar pembuka jadi `inert` setelah masuk; `<label for>` pada alasan koreksi;
 4 `<img src="">` dibuang; tombol Faris/Saiba tidak lagi ter-bind dua kali.
 
+## Perbaikansusul — tampilan terpotong di desktop
+`see git log`
+
+`<main id="tabViewHome">` memakai `flex-1 overflow-hidden` tanpa scroll,
+dan dua kartu minggu tidak punya `shrink-0`. Digabung `html, body { overflow:
+hidden }` yang membuat halaman tidak bisa digulir sama sekali, kartu flex
+dipampatkan saat viewport pendek. Karena `.faris-card-container` dan
+`.saiba-card-ribbon` punya `overflow-hidden` sendiri, isinya terpotong:
+judul tetap terlihat, 5 lingkaran timeline hilang. Di HP kebetulan muat,
+jadi tidak pernah ketahuan.
+
+Ambang clipping di lebar 1893px: aman sampai tinggi ~840px, terpotong mulai
+di bawahnya (kartu faris只剩 30px dari 138px di tinggi 600px).
+
+Perubahan:
+- `#appContainer` dapat `mx-auto max-w-xl`. Lebar kolom 576px ini sudah
+  dipakai app di #bottomNav dan .sheet-content, jadi sekarang konsisten.
+  Sheet dan layar pembuka ikut terkunci ke kolom tanpa disentuh satu per satu.
+- `#tabViewHome`: `overflow-hidden` -> `overflow-y-auto no-scrollbar
+  overscroll-contain min-h-0`, mengikuti pola yang sudah dipakai
+  `#tabViewRiwayat`. `min-h-0` wajib, tanpa itu flex item tidak mau shrink
+  di dalam `#appContainer` yang tingginya tetap.
+- Dua kartu minggu dapat `shrink-0`.
+- `body.lock-active`: selama layar pembuka aktif, area di luar kolom ikut
+  gelap supaya panel pembuka tidak terlihat seperti kotak di atas kertas putih.
+- `sw.js` CACHE_NAME v36 -> v37.
+
+Verifikasi: sweep tinggi 400-1000px pada lebar 430 / 1280 / 1893 (21
+kombinasi) - kartu selalu 140/138 dan 148/146, 5 lingkaran selalu terlihat,
+tidak ada gepeng. Mobile 430x932 tidak berubah sama sekali (123/121 dan
+132/130). Scroll berfungsi (scrollTop 0 -> 146), diorama tidak tertutup nav.
+Regresi Fase 1/2/4 dan audit CSS diulang: semua tetap benar, 0 exception.
+
+
 ---
 
 ## Catatan
