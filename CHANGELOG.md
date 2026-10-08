@@ -22,6 +22,12 @@ benar-benar berjalan.
 | Backdrop lightbox | `rgba(0,0,0,0)` transparan | `rgba(0,0,0,0.85)` |
 | Sheet punya `role="dialog"` | 0 | 8 |
 | Class tanpa rule di CSS | 9 | 5 (sengaja) |
+| Font body | Nunito (rounded) | Plus Jakarta Sans |
+| Heading Fraunces | `WONK 1, SOFT 100` (jambalan) | `WONK 0, SOFT 0` |
+| Aset rumah UP | `house.webp` 188×298 lossy (2× saja) | `house-up.svg` 321×510, tajam tanpa batas |
+| Lapisan garden | 2 bukit | 3 bukit + rumput + bunga liar + kunang-kunang |
+| Pita card Saidah | diagonal 45°, memotong isi | lipatan sudut 44px, tidak menutupi apa pun |
+| Total per pengguna | tidak ada | Faris & Saidah masing-masing |
 | Id duplikat | 0 | 0 |
 | Exception saat dibuka | 0 | 0 |
 
@@ -222,13 +228,120 @@ responsif, Rp200.000 dari 2 record) — semuanya hijau, 0 exception.
 
 ---
 
+## Sesi 3 — perbaikan visual (C1–C4)
+
+Empat permintaan: font terasa kekanak-kanakan, rumah UP bergerigi, garden
+terlihat datar, dan card Saidah belum matang.
+
+### C1 — Typography · `vC1`
+Akar masalahnya spesifik, bukan "`pilih font lain`": Fraunces dipanggil dengan
+`font-variation-settings:'SOFT' 100,'WONK' 1`. Sumbu **WONK** adalah sumbu
+"wonky" milik Fraunces — itulah yang membuat hurufnya terlihat jambalan.
+Body juga memakai Nunito yang ujungnya bulat.
+
+| | Sebelum | Sesudah |
+|---|---|---|
+| Heading | Fraunces `SOFT 100, WONK 1` | Fraunces `SOFT 0, WONK 0` |
+| Body | Nunito (rounded) | Plus Jakarta Sans (netral) |
+| Aturan `Space Grotesk` | 4 aturan | 0 (font itu tidak pernah dimuat, jadi selalu jatuh ke generic) |
+
+Arah `SOFT` bisa dinaikkan ke 20 kalau nanti terasa terlalu tajam.
+
+### C2 — Rumah UP jadi SVG · `vC2`
+**Penyebab artefak tepi adalah keputusan saya di B1**, bukan kualitas gambar
+aslinya. `backup/aset-asli/rumah-up.png` (321×510) sebenarnya sudah tajam. Di
+B1 saya turunkan ke 188×298 lalu lossy q92 — padahal tampilannya cuma 94px, jadi
+2×; layar HP 3× butuh 282px dan 4× butuh 376px. Browser menaikkan sendiri,
+dan atap + tepi pagar jadi bergerigi.
+
+| | Sebelum | Sesudah |
+|---|---|---|
+| Aset | `house.webp` 188×298 lossy q92 (17.640 B) | `house-up.svg` viewBox 321×510 (16.728 B) |
+| Tajam di layar 3× / 4× | tidak (1,5× / 2× upscale) | ya, tanpa batas |
+| Rasio / tinggi tampil | 0,6309 → 149 px | 0,6309 → **149 px, tanpa layout shift** |
+
+Siluet diukur dari aset asli, bukan dikira-kira: puncak gable kanan (238,46),
+gable kiri (86,80), cerobong x=143..182, jendela besar x=205..270 y=127..182,
+jendela gable kiri x=69..102 y=116..170, pagar y=394..431. Jangkar balon
+(`chimney [47,51]` Home dan `[280.4,56]` sheet) tidak bergeser.
+
+`<img>` **tetap** `<img>`, hanya `src` diganti. Ini wajib: `theme-v2-house`
+memakai `img.complete`, `img.load`, `offsetWidth`, dan
+`mask-image:url(currentSrc)` untuk parallax lapisan cahaya. Kalau diganti inline
+`<svg>`, semua itu patah.
+
+Peningkatan sesuai still film: pola sirap ikan (*fish-scale*) pada atap dan
+gable — aset lama hanya garis snsar; pola bata sungguhan di cerobong; trim gable
+biru langit `#57C6E8` (aset lama masih teal `#2E9FB8`); gorden putih di jendela
+bay. `sw.js`: `tabungan-v38` → `v39`.
+
+### C3 — Garden · `vC3`
+Taman itu hanya 2 bukit + 6 bintang, sehingga terasa datar.
+
+- 3 lapis bukit dengan gradasi progressively kaya + pita bayangan dasar.
+- Rumput ~24 rumpun memakai `vector-effect:non-scaling-stroke` supaya tebal
+  garis tetap sama walau SVG di-stretch.
+- Bunga liar kecil memakai palet yang sama dengan weekly flower. Versi pertama
+  memakai petal putih dan di ukuran nyata terbaca sebagai gumpalan putih, jadi
+  dikecilkan jadi titik berwarna dengan pusat krem.
+- Malam: bulan sabit, 12 bintang kelip, kabut biru, 7 kunang-kunang. Di Home
+  bulan pindah ke tengah atas (sebelumnya di kiri **menimpa teks
+  `Rp2.800.000`**); di sheet tanaman bulan pindah dari kanan (sebelumnya
+  **menimpa klaster balon** di x=280).
+- Semua animasi menghormati `prefers-reduced-motion`.
+
+`preserveAspectRatio` sengaja tetap `none`. Sempat direncanakan untuk diganti
+`xMidYMax slice`, tapi slice akan memotong langit pada tablet: card 700×180
+butuh skala 1,79 sehingga hanya 98 dari 190 unit tinggi yang terlihat —
+matahari dan bintang hilang. Semua path dibuat mulus justru supaya aman di-stretch.
+
+### C4 — Card Saidah · `vC4`
+- Pita diagonal 45° (`top:15px right:-34px`, lebar 120px) diganti lipatan
+  sudut 44px di pojok kanan atas. Pita lama melintasi isi card; yang baru tidak
+  pernah menutupi judul maupun deretan minggu. Card riwayat ikut memakai pita
+  yang sama.
+- Badge **total per pengguna** (`#totalSavingsA` / `#totalSavingsB`), dari
+  `sumNominal` record per role, sepanjang waktu supaya konsisten dengan
+  `#totalSavingsValue`. Tanpa perubahan backend maupun kontrak response GAS.
+- Slot minggu yang belum terisi jadi pill putus-putus (abu / rose). Badge hati
+  Saidah yang sudah lunas tetap dipertahankan sebagai identitas rose.
+- Dua card sama tinggi. `space-y-2` memakai selector `~`, jadi pita walau
+  out-of-flow tetap terhitung sebagai saudara dan memberi `margin-top: 8px` ke
+  header — card Saidah jadi 8px lebih tinggi. `space-y-2` dipecah jadi margin
+  eksplisit.
+
+#### Temuan penting — Tailwind CDN tidak termuat
+Repo ini **tidak** memuat `cdn.tailwindcss.com` saat runtime; hanya CSS
+precompiled di dalam `<style>`. Kelas utilitas baru (`pr-11`,
+`min-h-[30px]`, `bg-rose-50/60`, `bg-neutral-100/90`, `border-neutral-300/90`,
+`hover:brightness-95`) **diam-diam tidak punya efek apa pun** — computed
+style-nya tetap nilai default, dan audit CSS mencatat "class tanpa rule".
+
+Akibatnya semua style C4 ditulis eksplisit di blok CSS sendiri, termasuk padan
+warna night theme. Diverifikasi lewat `getComputedStyle`, bukan lewat
+kenampakan.
+
+### Verifikasi sesi 3 (C1–C4)
+
+- Sweep 10 kombinasi (360/390/430/768/1024 × terang/malam): total, total per
+  pengguna, aset rumah, font, dan **paritas tinggi kedua card** — 10/10 lolos,
+  0 exception, 0 overflow-x.
+- Layout sweep 21 kombinasi viewport (3 lebar × 7 tinggi): semua `ok`.
+- XSS: `<img onerror>` dieksekusi 0, `<img>` tersuntik 0.
+- Anti-duplikat: 0 POST dobel, slot tetap 1, toast "minggu 1 sudah kamu isi".
+- `house.webp` → HTTP 404 (asset benar-benar lepas), `house-up.svg` → 200.
+- Ukuran: `index.html` 303.210 → 314.322 B; aset rumah 17.640 → 16.728 B.
+- Semua style C4 dicek lewat `getComputedStyle` karena Tailwind CDN tidak aktif.
+
+---
+
 ## Catatan
 
 **Tidak ikut diperbaiki (di luar cakupan 7 fase)**
 
 1. `timestamp` dari backend ditampilkan apa adanya. Kalau GAS mengirim ISO
    (`2026-08-28T03:15:00.000Z`), itu yang tampil mentah di kartu riwayat.
-   Perlubiesan format tanggal.
+   Perlu perbaikan format tanggal.
 2. Nama pengguna masih hardcode di ~45 titik; `config.namaA`/`namaB` ada
    tapi nol referensi.
 3. `52` (target minggu) masih literal di tiga tempat, padahal
