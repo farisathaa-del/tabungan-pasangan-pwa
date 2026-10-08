@@ -1987,6 +1987,10 @@
     /* Penanda in-flight: mencegah dua sinkronisasi tumpang tindih dan
        mencegah submit ganda masuk ke server. */
     let isSyncing = false;
+    let isSubmitting = false;
+
+    /* Record yang sedang dikoreksi — dikunci saat sheet koreksi dibuka. */
+    let koreksiTarget = null;
 
     /**
      * INISIALISASI SAAT DOM SIAP
@@ -2141,11 +2145,31 @@
       try {
         const cached = localStorage.getItem('tabungan_real_records');
         if (cached) {
-          APP_DATABASE.records = JSON.parse(cached);
+          const parsed = JSON.parse(cached);
+          /* Bentuk hasil parse tidak divalidasi. Kalau cache rusak atau
+             berisi objek, records.filter / koreksiList.find akan melempar
+             dan mematikan seluruh inisialisasi. */
+          if (Array.isArray(parsed)) {
+            APP_DATABASE.records = parsed.filter(Boolean);
+          } else {
+            console.warn('Cache record bukan array, diabaikan.');
+          }
         }
         const cachedKor = localStorage.getItem('tabungan_real_koreksi');
         if (cachedKor) {
-          APP_DATABASE.koreksiList = JSON.parse(cachedKor);
+          const parsedKor = JSON.parse(cachedKor);
+          if (Array.isArray(parsedKor)) {
+            APP_DATABASE.koreksiList = parsedKor.filter(Boolean);
+          } else {
+            console.warn('Cache koreksi bukan array, diabaikan.');
+          }
+        }
+        const cachedCfg = localStorage.getItem('tabungan_real_config');
+        if (cachedCfg) {
+          const parsedCfg = JSON.parse(cachedCfg);
+          if (parsedCfg && typeof parsedCfg === 'object' && !Array.isArray(parsedCfg)) {
+            APP_DATABASE.config = Object.assign({}, APP_DATABASE.config, parsedCfg);
+          }
         }
       } catch (e) {
         console.warn('Gagal membaca cache lokal:', e);
@@ -2156,8 +2180,23 @@
       try {
         localStorage.setItem('tabungan_real_records', JSON.stringify(APP_DATABASE.records));
         localStorage.setItem('tabungan_real_koreksi', JSON.stringify(APP_DATABASE.koreksiList));
+        /* config ikut disimpan. Sebelumnya hanya records + koreksiList, jadi
+           setelah reload atau saat offline config.nominal kembali ke nilai
+           hardcode 100000 walau server sempat mengirim nominal lain — seluruh
+           total ikut berubah. */
+        localStorage.setItem('tabungan_real_config', JSON.stringify(APP_DATABASE.config));
       } catch (e) {
-        console.warn('Gagal menyimpan cache:', e);
+        /* Kuota penuh = input pengguna hilang tanpa jejak. Record bisa memuat
+           previewUrl base64 berukuran besar, jadi ini nyata terjadi. */
+        const full = e && (e.name === 'QuotaExceededError' || e.code === 22);
+        if (full) {
+          console.warn('Penyimpanan penuh, record terbaru belum tersimpan:', e);
+          if (typeof showToast === 'function') {
+            showToast('penyimpanan perangkat penuh, data terbaru belum aman');
+          }
+        } else {
+          console.warn('Gagal menyimpan cache:', e);
+        }
       }
     }
 
@@ -2820,7 +2859,7 @@
         const isCurrentActiveRole = currentUser.role === role;
 
         if (isDone) {
-          const pendingKor = APP_DATABASE.koreksiList.find(k => k.setoranId === record.id && k.status.toLowerCase() === 'menunggu');
+          const pendingKor = APP_DATABASE.koreksiList.find(k => k.setoranId === record.id && String(k.status || '').toLowerCase() === 'menunggu');
           const hasNote = Boolean(record.note && record.note.length > 0);
 
           // ponytail: heart badge for Saiba (role B) on paid weeks, circle for Faris (role A)
@@ -3188,28 +3227,28 @@
 
     function closeUploadSheet() {
       closeSheetById('uploadSheet');
+      /* targetUploadWeekId harus dibersihkan. Kalau tidak, minggu yang
+         terakhir dibuka ikut terbawa ke submit berikutnya. */
+      targetUploadWeekId = null;
     }
 
     function executeSetoranSubmission() {
       if (!selectedImageBase64) return;
+      if (isSubmitting) return;
 
-      const noteText = document.getElementById('inputDepositNote').value.trim();
+      const noteEl = document.getElementById('inputDepositNote');
+      const noteText = noteEl ? noteEl.value.trim() : '';
       const btn = document.getElementById('btnSubmitProof');
       const spinnerText = document.getElementById('submitBtnText');
       const spinner = document.getElementById('submitBtnSpinner');
-
-      if (btn) {
-        btn.setAttribute('disabled', 'true');
-        if (spinnerText) spinnerText.textContent = 'mengirim...';
-        if (spinner) spinner.classList.remove('hidden');
-      }
 
       const timeline = getMonthTimeline(viewYear, viewMonth);
       let targetWeek = null;
 
       if (targetUploadWeekId) {
-        targetWeek = timeline.find(d => d.id === targetUploadWeekId);
-      } else {
+        targetWeek = timeline.find(d => String(d.id) === String(targetUploadWeekId));
+      }
+      if (!targetWeek) {
         targetWeek = timeline.find(d => !APP_DATABASE.records.some(r =>
           r && String(r.dayId) === String(d.id) &&
           r.user === currentUser.role &&
@@ -3219,8 +3258,29 @@
 
       if (!targetWeek) {
         showToast('semua minggu pada bulan ini telah terisi');
+        return;
+      }
+
+      /* Anti-duplikat berlaku untuk SEMUA cabang. Sebelumnya pemeriksaan
+         "minggu sudah terisi" hanya berjalan di cabang otomatis, sehingga
+         memilih slot yang sudah terisi tetap mengirim record kedua untuk
+         minggu yang sama — total uang dan tahap tanaman ikut naik. */
+      const already = APP_DATABASE.records.some(r =>
+        r && String(r.dayId) === String(targetWeek.id) &&
+        r.user === currentUser.role &&
+        isRecordInMonth(r, viewYear, viewMonth)
+      );
+      if (already) {
+        showToast('minggu ' + targetWeek.id + ' sudah kamu isi');
         resetSubmitBtn();
         return;
+      }
+
+      isSubmitting = true;
+      if (btn) {
+        btn.setAttribute('disabled', 'true');
+        if (spinnerText) spinnerText.textContent = 'mengirim...';
+        if (spinner) spinner.classList.remove('hidden');
       }
 
       const payload = {
@@ -3266,12 +3326,17 @@
         renderAllTimelines();
         renderSummary();
         renderFullHistory();
+        checkPartnerPresence();
+        /* Simpan juga saat rollback. Sebelumnya cache tidak disentuh sehingga
+           record yang sudah dicabut muncul kembali setelah muat ulang. */
+        saveToLocalStorage();
       }
 
       callBackend('submitSetoran', payload,
         function(response) {
+          isSubmitting = false;
           resetSubmitBtn();
-          if (response && response.success) {
+          if (response && response.success && response.record) {
             const i = APP_DATABASE.records.indexOf(optimisticRecord);
             if (i > -1) APP_DATABASE.records[i] = response.record;
             saveToLocalStorage();
@@ -3279,12 +3344,18 @@
             renderSummary();
             renderFullHistory();
             checkPartnerPresence();
+          } else if (response && response.success) {
+            /* Server bilang sukses tanpa record. Kalau dipaksakan, array akan
+               berisi undefined dan membuat render riwayat/detail ikut gagal. */
+            rollbackOptimistic();
+            showToast((response && response.message) || 'server tidak mengirim data setoran');
           } else {
             rollbackOptimistic();
-            showToast(response.message || 'gagal menyimpan setoran');
+            showToast((response && response.message) || 'gagal menyimpan setoran');
           }
         },
         function(err) {
+          isSubmitting = false;
           resetSubmitBtn();
           rollbackOptimistic();
           showToast('kesalahan jaringan: ' + err.toString());
@@ -3359,7 +3430,7 @@
       }
 
       // Cek Pengajuan Koreksi
-      const pendingKor = APP_DATABASE.koreksiList.find(k => k.setoranId === record.id && k.status.toLowerCase() === 'menunggu');
+      const pendingKor = APP_DATABASE.koreksiList.find(k => k.setoranId === record.id && String(k.status || '').toLowerCase() === 'menunggu');
       const btnKoreksi = document.getElementById('btnRequestCorrection');
       const badgePending = document.getElementById('badgePendingCorrection');
       const reviewBox = document.getElementById('correctionReviewBox');
@@ -3397,6 +3468,9 @@
 
     function closeDetailSheet() {
       closeSheetById('detailSheet');
+      /* activeRecordInDetail tidak pernah dikosongkan. Dengan closeSheetById
+         menunda 240ms, aksi koreksi bisa membaca record yang sudah berganti. */
+      activeRecordInDetail = null;
     }
 
     /**
@@ -3404,6 +3478,10 @@
      */
     function openKoreksiSheet() {
       if (!activeRecordInDetail) return;
+      /* Target dikunci di sini, bukan dibaca ulang nanti: closeDetailSheet()
+         menunda sheet tertutup 240ms dan bisa mengubah nilainya, sehingga
+         koreksi risked menempel ke setoran yang salah. */
+      koreksiTarget = activeRecordInDetail;
       closeDetailSheet();
 
       koreksiImageBase64 = null;
@@ -3422,23 +3500,28 @@
       }
       if (promptEl) promptEl.classList.remove('hidden');
       if (btnSubmit) btnSubmit.setAttribute('disabled', 'true');
-      if (labelEl) labelEl.textContent = `minggu ${activeRecordInDetail.dayId} · ${currentUser.name}`;
+      if (labelEl) labelEl.textContent = `minggu ${koreksiTarget.dayId} · ${currentUser.name}`;
 
       openSheetById('koreksiSheet');
     }
 
     function closeKoreksiSheet() {
       closeSheetById('koreksiSheet');
+      koreksiTarget = null;
     }
 
     function executeKoreksiSubmission() {
-      if (!activeRecordInDetail || !koreksiImageBase64) return;
+      if (!koreksiTarget || !koreksiImageBase64) return;
+      if (isSubmitting) return;
+      const target = koreksiTarget;
 
-      const reason = document.getElementById('koreksiReasonInput').value.trim() || 'Salah unggah bukti transfer';
+      const reasonInput = document.getElementById('koreksiReasonInput');
+      const reason = (reasonInput ? reasonInput.value : '').trim() || 'Salah unggah bukti transfer';
       const btn = document.getElementById('btnSubmitKoreksi');
       const spinnerText = document.getElementById('koreksiBtnText');
       const spinner = document.getElementById('koreksiBtnSpinner');
 
+      isSubmitting = true;
       if (btn) {
         btn.setAttribute('disabled', 'true');
         if (spinnerText) spinnerText.textContent = 'mengirim...';
@@ -3446,7 +3529,7 @@
       }
 
       const payload = {
-        setoranId: activeRecordInDetail.id,
+        setoranId: target.id,
         userRole: currentUser.role,
         alasan: reason,
         imageBase64: koreksiImageBase64,
@@ -3455,18 +3538,20 @@
 
       callBackend('submitKoreksi', payload,
         function(response) {
+          isSubmitting = false;
           resetKoreksiBtn();
-          if (response && response.success) {
+          if (response && response.success && response.koreksi) {
             APP_DATABASE.koreksiList.push(response.koreksi);
             saveToLocalStorage();
             closeKoreksiSheet();
             renderAllTimelines();
             showToast('pengajuan koreksi berhasil dicatat');
           } else {
-            showToast(response.message || 'gagal mengajukan koreksi');
+            showToast((response && response.message) || 'gagal mengajukan koreksi');
           }
         },
         function(err) {
+          isSubmitting = false;
           resetKoreksiBtn();
           showToast('kesalahan server: ' + err.toString());
         }
@@ -3484,7 +3569,7 @@
 
     function respondToCorrection(action) {
       if (!activeRecordInDetail) return;
-      const pendingKor = APP_DATABASE.koreksiList.find(k => k.setoranId === activeRecordInDetail.id && k.status.toLowerCase() === 'menunggu');
+      const pendingKor = APP_DATABASE.koreksiList.find(k => k.setoranId === activeRecordInDetail.id && String(k.status || '').toLowerCase() === 'menunggu');
       if (!pendingKor) return;
 
       const payload = {
@@ -3532,7 +3617,7 @@
 
     function openFullscreenNewProof() {
       if (!activeRecordInDetail) return;
-      const pendingKor = APP_DATABASE.koreksiList.find(k => k.setoranId === activeRecordInDetail.id && k.status.toLowerCase() === 'menunggu');
+      const pendingKor = APP_DATABASE.koreksiList.find(k => k.setoranId === activeRecordInDetail.id && String(k.status || '').toLowerCase() === 'menunggu');
       if (!pendingKor) return;
 
       const fullModal = document.getElementById('fullscreenModal');
