@@ -1,8 +1,9 @@
-const CACHE_NAME = 'tabungan-v37';
+const CACHE_NAME = 'tabungan-v38';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
+  './assets/house.webp',
   './icons/favicon.png',
   './icons/icon-180.png',
   './icons/icon-192.png',
