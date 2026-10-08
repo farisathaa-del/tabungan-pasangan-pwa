@@ -133,8 +133,8 @@ selamanya. Ditambahkan juga pengecekan `document.readyState`.
 layar pembuka jadi `inert` setelah masuk; `<label for>` pada alasan koreksi;
 4 `<img src="">` dibuang; tombol Faris/Saiba tidak lagi ter-bind dua kali.
 
-## Perbaikansusul — tampilan terpotong di desktop
-`see git log`
+## Perbaikan susul — tampilan terpotong di desktop
+`ca06138` (tag `vFixDesktop`)
 
 `<main id="tabViewHome">` memakai `flex-1 overflow-hidden` tanpa scroll,
 dan dua kartu minggu tidak punya `shrink-0`. Digabung `html, body { overflow:
@@ -145,7 +145,7 @@ judul tetap terlihat, 5 lingkaran timeline hilang. Di HP kebetulan muat,
 jadi tidak pernah ketahuan.
 
 Ambang clipping di lebar 1893px: aman sampai tinggi ~840px, terpotong mulai
-di bawahnya (kartu faris只剩 30px dari 138px di tinggi 600px).
+di bawahnya (kartu faris hanya tersisa 30px dari 138px pada tinggi 600px).
 
 Perubahan:
 - `#appContainer` dapat `mx-auto max-w-xl`. Lebar kolom 576px ini sudah
