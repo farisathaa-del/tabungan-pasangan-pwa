@@ -1984,6 +1984,10 @@
       koreksiList: []
     };
 
+    /* Penanda in-flight: mencegah dua sinkronisasi tumpang tindih dan
+       mencegah submit ganda masuk ke server. */
+    let isSyncing = false;
+
     /**
      * INISIALISASI SAAT DOM SIAP
      */
@@ -2269,12 +2273,53 @@
         return;
       }
 
-      // Standalone / PWA Decoupled fetch
+      /* Standalone / PWA Decoupled fetch
+         Draft: setiap request punya batas waktu. Sebelumnya fetch tanpa
+         AbortController: kalau koneksi menggantung (captive portal, seluler
+         yang drop diam), onFailure tidak pernah terpanggil. Akibatnya record
+         optimistic tetap tampil seolah berhasil padahal tidak pernah
+         tersimpan, dan tombol submit terkunci permanen.
+         res.ok juga wajib dicek: HTTP 500 dengan body JSON akan lolos ke
+         onSuccess lalu dianggap sukses karena response.success undefined. */
+      const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const timeoutMs = action === 'getDashboardData' ? 12000 : 20000;
+      let settled = false;
+      let timer = 0;
+
+      const succeed = (response) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        if (onSuccess) onSuccess(response);
+      };
+      const fail = (err) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        if (onFailure) onFailure(err);
+      };
+
+      if (controller) {
+        timer = setTimeout(() => {
+          controller.abort();
+          fail(new Error('timeout ' + timeoutMs + 'ms pada ' + action));
+        }, timeoutMs);
+      }
+
+      const parseJson = (res, actionName) => {
+        if (!res.ok) {
+          throw new Error('HTTP ' + res.status + ' dari ' + actionName);
+        }
+        return res.json();
+      };
+
+      const opts = controller ? { signal: controller.signal } : undefined;
+
       if (action === 'getDashboardData') {
-        fetch(GAS_API_URL + '?action=getDashboardData')
-          .then(res => res.json())
-          .then(onSuccess)
-          .catch(onFailure);
+        fetch(GAS_API_URL + '?action=getDashboardData', opts)
+          .then(res => parseJson(res, action))
+          .then(succeed)
+          .catch(fail);
         return;
       }
 
@@ -2282,30 +2327,47 @@
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({ action: action, ...(payload || {}) }),
-        redirect: 'follow'
+        redirect: 'follow',
+        ...(controller ? { signal: controller.signal } : {})
       })
-        .then(res => res.json())
-        .then(onSuccess)
-        .catch(onFailure);
+        .then(res => parseJson(res, action))
+        .then(succeed)
+        .catch(fail);
     }
 
     function syncWithGoogleBackend() {
+      /* Cegah dua sinkronisasi tumpang tindih. Tanpa ini, jawaban yang
+         tiba belakangan menimpa data lebih baru lalu memersistnya, sehingga
+         setoran yang baru saja terkirim lenyap dari layar. */
+      if (isSyncing) return;
+      isSyncing = true;
+
       callBackend('getDashboardData', null,
         function(response) {
+          isSyncing = false;
           if (response && response.success) {
-            APP_DATABASE.records = response.records || [];
-            APP_DATABASE.koreksiList = response.koreksiList || [];
-            if (response.config) {
-              APP_DATABASE.config = response.config;
+            const nextRecords = Array.isArray(response.records) ? response.records.filter(Boolean) : [];
+            const nextKoreksi = Array.isArray(response.koreksiList) ? response.koreksiList.filter(Boolean) : [];
+            APP_DATABASE.records = nextRecords;
+            APP_DATABASE.koreksiList = nextKoreksi;
+            if (response.config && typeof response.config === 'object') {
+              APP_DATABASE.config = Object.assign({}, APP_DATABASE.config, response.config);
             }
             saveToLocalStorage();
-            renderAllTimelines();
-            renderSummary();
-            renderFullHistory();
-            checkPartnerPresence();
+            try {
+              renderAllTimelines();
+              renderSummary();
+              renderFullHistory();
+              checkPartnerPresence();
+            } catch (e) {
+              console.error('Gagal render setelah sinkronisasi:', e);
+            }
+          } else {
+            console.warn('Sinkronisasi ditolak server:', response && response.message);
           }
         },
         function(err) {
+          isSyncing = false;
           console.error('Koneksi backend gagal:', err);
         }
       );
@@ -4420,12 +4482,20 @@ body.night-theme .hx-grass{filter:brightness(.55) saturate(.9)}
   'use strict';
   var o = window.callBackend;
   if (typeof o !== 'function') return;
-  var tries = 0, timer = 0, failed = false, warned = false, DELAYS = [3000, 8000, 20000, 45000];
+
+  var tries = 0, timer = 0;
+  var failed = false, warned = false, exhausted = false;
+  var DELAYS = [3000, 8000, 20000, 45000];
 
   function retry(){
     if (timer) return;
     if (tries >= DELAYS.length) {
-      if (typeof showToast === 'function') showToast('server belum bisa dihubungi, menampilkan data tersimpan');
+      /* Toast terminal hanya sekali per rangkaian kegagalan. Sebelumnya
+         tanpa guard sehingga muncul ulang setiap kali retry habis. */
+      if (!exhausted) {
+        exhausted = true;
+        if (typeof showToast === 'function') showToast('server belum bisa dihubungi, menampilkan data tersimpan');
+      }
       return;
     }
     timer = setTimeout(function(){
@@ -4438,22 +4508,49 @@ body.night-theme .hx-grass{filter:brightness(.55) saturate(.9)}
 
   window.callBackend = function(action, payload, ok, fail){
     if (action !== 'getDashboardData') return o.apply(this, arguments);
+
     return o.call(this, action, payload,
       function(r){
+        /* response.success ikut diperiksa. Jalur ini sebelumnya menganggap
+           apa pun yang kembali sebagai "tersambung kembali", membatalkan
+           retry lalu meneruskan response ke onSuccess-nya sendiri — padahal
+           data tidak pernah masuk ke APP_DATABASE karena success undefined.
+           Akibatnya app diam-diam menampilkan data lama selamanya. */
+        if (!r || !r.success) {
+          return onFailure(new Error('sinkronisasi ditolak server'), r);
+        }
         if (failed && typeof showToast === 'function') showToast('tersambung kembali, data diperbarui');
-        failed = warned = false; tries = 0; clearTimeout(timer); timer = 0;
+        failed = warned = exhausted = false;
+        tries = 0;
+        clearTimeout(timer); timer = 0;
         if (ok) ok(r);
       },
-      function(err){
-        failed = true;
-        if (fail) fail(err);
-        if (!warned) { warned = true; setTimeout(function(){ if (typeof showToast === 'function') showToast('belum tersambung ke server, memakai data tersimpan'); }, 2800); }
-        retry();
-      });
+      onFailure);
+
+    function onFailure(err){
+      failed = true;
+      if (fail) fail(err);
+      if (!warned) {
+        warned = true;
+        setTimeout(function(){
+          if (typeof showToast === 'function') showToast('belum tersambung ke server, memakai data tersimpan');
+        }, 2800);
+      }
+      retry();
+    }
   };
 
-  addEventListener('online', function(){ if (failed) { tries = 0; clearTimeout(timer); timer = 0; if (typeof syncWithGoogleBackend === 'function') syncWithGoogleBackend(); } });
-  document.addEventListener('visibilitychange', function(){ if (!document.hidden && failed && !timer && typeof syncWithGoogleBackend === 'function') { tries = 0; syncWithGoogleBackend(); } });
+  addEventListener('online', function(){
+    if (failed) { tries = 0; clearTimeout(timer); timer = 0;
+      if (typeof syncWithGoogleBackend === 'function') syncWithGoogleBackend(); }
+  });
+
+  document.addEventListener('visibilitychange', function(){
+    if (!document.hidden && failed && !timer && typeof syncWithGoogleBackend === 'function') {
+      tries = 0;
+      syncWithGoogleBackend();
+    }
+  });
 })();
 </script>
 <style id="theme-v2">
