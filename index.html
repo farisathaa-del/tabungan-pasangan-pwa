@@ -3686,6 +3686,49 @@
       return { mode: 'walking', title: 'safa jalan keliling pot', badge: 'kompak lunas!', desc: 'faris & saiba kompak lunas! safa aktif berjalan riang mengelilingi pot bunga.' };
     }
 
+/* ── Konstanta & helper bersama untuk kucing Safa ────────────────
+       Bayangan duduk di satu garis (SHADOW_Y) supaya kucing tidak meloncat
+       ke atas atau ke bawah saat mode berganti. Tinggi tubuh yang berbeda
+       antar mode itu disengaja - rebahan lebih pendek dari duduk - jadi
+       TIDAK diseragamkan; yang diseragamkan hanya titik beratnya.
+       Whiskers dan blush diulang di keempat mode; diekstrak agar ada satu
+       sumber kebenaran. */
+    const SHADOW_Y = 42;
+
+    const safaWhiskers = (x, dir) => `
+      <line x1="${x}" y1="23" x2="${x + 6 * dir}" y2="22" stroke="#d1d5db" stroke-width="0.8"/>
+      <line x1="${x}" y1="25" x2="${x + 6 * dir}" y2="26" stroke="#d1d5db" stroke-width="0.8"/>`;
+
+    const safaBlush = (l, r) => `
+      <ellipse cx="${l}" cy="24" rx="2.5" ry="1.5" fill="#fecaca"/>
+      <ellipse cx="${r}" cy="24" rx="2.5" ry="1.5" fill="#fecaca"/>`;
+
+    /* Bintang empat sebagai path, bukan <text>.
+       Glyph seperti ✦ dan ♥ diambil dari font sistem, jadi tampil berbeda
+       di Android, iOS, dan Windows - kadang berwarna, kadang monokrom.
+       Path digambar sendiri selalu sama. */
+    const safaSpark = (x, y, s, c) => {
+      const a = 4.4 * s, b = 1.5 * s;
+      return `<path d="M${x} ${y - a}L${x + b} ${y - b}L${x + a} ${y}L${x + b} ${y + b}L${x} ${y + a}L${x - b} ${y + b}L${x - a} ${y}L${x - b} ${y - b}Z" fill="${c}"/>`;
+    };
+
+    const safaHeart = (x, y, s, c, cls, delay) => {
+      const w = 3.1 * s;
+      return `<path class="${cls || ''}"${delay ? ` style="animation-delay:${delay}"` : ''} d="M${x} ${y + w * .95}C${x - w} ${y - w * .3} ${x - w * .95} ${y - w} ${x} ${y - w * .45}C${x + w * .95} ${y - w} ${x + w} ${y - w * .3} ${x} ${y + w * .95}Z" fill="${c}"/>`;
+    };
+
+    /* Huruf z untuk "tidur", digambar sebagai path agar tidak bergantung font */
+    /* Glyph <text> yang sebelumnya dipakai berukuran font-size 7 dan 5 dalam
+       unit viewBox. Versi path dikecilkan supaya setara tinggi cap-nya, kalau
+       tidak huruf z terlihat jauh lebih besar dari aslinya. */
+    const safaZ = (x, y, s, c) => {
+      const w = 1.8 * s, h = 2.0 * s;
+      return `<path d="M${x - w} ${y - h}H${x + w}L${x - w} ${y + h}H${x + w}" fill="none" stroke="${c}" stroke-width="${Math.max(.45, .62 * s).toFixed(2)}" stroke-linecap="round" stroke-linejoin="round"/>`;
+    };
+
+    const safaShadow = (rx) => `
+      <ellipse cx="26" cy="${SHADOW_Y}" rx="${rx}" ry="3.5" fill="#15803D" opacity="0.25"/>`;
+
     function renderSafaSvg(mode, isLarge) {
       const vw = 52, vh = 48;
       const sz = isLarge ? '56' : '44';
@@ -3694,143 +3737,119 @@
 
       if (mode === 'night_sleep') {
         extra = `
-          <!-- Pink cushion -->
+          <!-- Bantalan merah (dipoles theme-v2) -->
           <ellipse cx="26" cy="38" rx="20" ry="6" fill="#fbcfe8"/>
-          <!-- Chubby sleeping curled body -->
-          <ellipse cx="26" cy="28" rx="16" ry="12" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
-          <!-- Symmetrical Sleeping Ears (seamless, no line cutting head) -->
+          ${safaShadow(16)}
+          <!-- Badan menggulung, gemuk -->
+          <ellipse cx="26" cy="27" rx="16" ry="13" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
+          <!-- Telinga terl symmetris, tanpa garis yang memotong kepala -->
           <path d="M14 18 Q16 8 22 16 Q18 17 14 18 Z" fill="#ffffff"/>
           <path d="M15 17 Q17 10 21 15 Z" fill="#fbcfe8"/>
           <path d="M14 18 Q16 8 22 16" fill="none" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M30 16 Q36 8 38 18 Q34 17 30 16 Z" fill="#ffffff"/>
           <path d="M31 15 Q35 10 37 17 Z" fill="#fbcfe8"/>
           <path d="M30 16 Q36 8 38 18" fill="none" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-          <!-- Sleeping eyes -->
+          <!-- Mata tertutup -->
           <path d="M17 22 Q20 24 23 22" stroke="#374151" stroke-width="1.4" fill="none" stroke-linecap="round"/>
           <path d="M29 22 Q32 24 35 22" stroke="#374151" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-          <!-- Soft blush -->
-          <ellipse cx="16" cy="24" rx="2.5" ry="1.5" fill="#fecaca"/>
-          <ellipse cx="36" cy="24" rx="2.5" ry="1.5" fill="#fecaca"/>
-          <!-- Whiskers -->
-          <line x1="14" y1="23" x2="8" y2="22" stroke="#d1d5db" stroke-width="0.8"/>
-          <line x1="14" y1="25" x2="8" y2="26" stroke="#d1d5db" stroke-width="0.8"/>
-          <line x1="38" y1="23" x2="44" y2="22" stroke="#d1d5db" stroke-width="0.8"/>
-          <line x1="38" y1="25" x2="44" y2="26" stroke="#d1d5db" stroke-width="0.8"/>
-          <!-- Resting tail & zzz -->
+          ${safaBlush(16, 36)}
+          ${safaWhiskers(14, -1)}${safaWhiskers(38, 1)}
+          <!-- Ekor membungkus + zi -->
           <path d="M38 30 Q44 26 42 20" stroke="#9ca3af" stroke-width="2" fill="none" stroke-linecap="round"/>
-          <text x="36" y="16" font-size="7" fill="#a78bfa" font-weight="bold" font-family="sans-serif">z</text>
-          <text x="41" y="11" font-size="5" fill="#c4b5fd" font-weight="bold" font-family="sans-serif">z</text>
+          ${safaZ(36.5, 15, 1, '#a78bfa')}
+          ${safaZ(42, 10.5, .75, '#c4b5fd')}
         `;
       } else if (mode === 'day_idle') {
         extra = `
-          <!-- Ground shadow under resting cat -->
-          <ellipse cx="26" cy="40" rx="16" ry="3.5" fill="#15803D" opacity="0.25"/>
-          <!-- Chubby resting body -->
+          ${safaShadow(16)}
+          <!-- Badan rebahan, gemuk -->
           <ellipse cx="26" cy="30" rx="17" ry="11" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
-          <!-- Symmetrical Resting Ears (seamless, no line cutting head) -->
           <path d="M14 20 Q16 10 22 18 Q18 19 14 20 Z" fill="#ffffff"/>
           <path d="M15 19 Q17 12 21 17 Z" fill="#fbcfe8"/>
           <path d="M14 20 Q16 10 22 18" fill="none" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M30 18 Q36 10 38 20 Q34 19 30 18 Z" fill="#ffffff"/>
           <path d="M31 17 Q35 12 37 19 Z" fill="#fbcfe8"/>
           <path d="M30 18 Q36 10 38 20" fill="none" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-          <!-- Sleepy eyes -->
-          <path d="M17 22 Q20 24 23 22" stroke="#374151" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-          <path d="M29 22 Q32 24 35 22" stroke="#374151" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-          <!-- Open yawn mouth -->
-          <ellipse cx="26" cy="25" rx="2.5" ry="2" fill="#fb7185"/>
-          <!-- Blush -->
-          <ellipse cx="16" cy="24" rx="2.5" ry="1.5" fill="#fecaca"/>
-          <ellipse cx="36" cy="24" rx="2.5" ry="1.5" fill="#fecaca"/>
-          <!-- Whiskers -->
-          <line x1="14" y1="23" x2="8" y2="22" stroke="#d1d5db" stroke-width="0.8"/>
-          <line x1="14" y1="25" x2="8" y2="26" stroke="#d1d5db" stroke-width="0.8"/>
-          <line x1="38" y1="23" x2="44" y2="22" stroke="#d1d5db" stroke-width="0.8"/>
-          <line x1="38" y1="25" x2="44" y2="26" stroke="#d1d5db" stroke-width="0.8"/>
-          <!-- Paws -->
+          <!-- Mata setengah tertutup. Versi sebelumnya mata tertutup
+               penuh padahal mulut menguap, jadi terbaca aneh. -->
+          <path d="M17 22.4 Q20 23.6 23 22" stroke="#374151" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          <path d="M29 22 Q32 23.6 35 22.4" stroke="#374151" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          <!-- Mulut menguap kecil -->
+          <ellipse cx="26" cy="25.6" rx="2.2" ry="1.7" fill="#fb7185"/>
+          ${safaBlush(16, 36)}
+          ${safaWhiskers(14, -1)}${safaWhiskers(38, 1)}
+          <!-- Cakar -->
           <ellipse cx="20" cy="38" rx="3.5" ry="2" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
           <ellipse cx="32" cy="38" rx="3.5" ry="2" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
           <path d="M38 32 Q44 28 42 22" stroke="#9ca3af" stroke-width="2" fill="none" stroke-linecap="round"/>
         `;
       } else if (mode === 'waiting') {
         extra = `
-          <!-- Ground shadow under cat -->
-          <ellipse cx="26" cy="42" rx="16" ry="3.5" fill="#15803D" opacity="0.25"/>
-          <!-- Chubby sitting upright body -->
-          <ellipse cx="26" cy="27" rx="14" ry="15" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
-          <!-- Left Ear (front-facing symmetrical, seamless with head) -->
+          ${safaShadow(16)}
+          <!-- Badan duduk tegak, gemuk -->
+          <ellipse cx="26" cy="27" rx="14" ry="14" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
           <path d="M14 15 Q15 4 21 12 Q17 14 14 15 Z" fill="#ffffff"/>
           <path d="M15 14 Q16 7 20 12 Z" fill="#fbcfe8"/>
           <path d="M14 15 Q15 4 21 12" fill="none" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-          <!-- Right Ear (front-facing symmetrical, seamless with head) -->
           <path d="M31 12 Q37 4 38 15 Q35 14 31 12 Z" fill="#ffffff"/>
           <path d="M32 12 Q36 7 37 14 Z" fill="#fbcfe8"/>
           <path d="M31 12 Q37 4 38 15" fill="none" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-          <!-- Sparkling curious big eyes (symmetrical at 20 & 32) -->
+          <!-- Mata besar yang penuh penasaran -->
           <circle cx="20" cy="20" r="2.8" fill="#1f2937"/>
           <circle cx="32" cy="20" r="2.8" fill="#1f2937"/>
           <circle cx="20.8" cy="19.2" r="1" fill="#ffffff"/>
           <circle cx="32.8" cy="19.2" r="1" fill="#ffffff"/>
-          <!-- Cat cute mouth (3 shape centered at 26) -->
+          <!-- Mulut bentuk jam pasir -->
           <path d="M23 24 Q24.5 25.5 26 24 Q27.5 25.5 29 24" stroke="#4b5563" stroke-width="1" fill="none" stroke-linecap="round"/>
-          <!-- Blush -->
-          <ellipse cx="15" cy="23" rx="2.5" ry="1.5" fill="#fecaca"/>
-          <ellipse cx="37" cy="23" rx="2.5" ry="1.5" fill="#fecaca"/>
-          <!-- Whiskers -->
-          <line x1="14" y1="22" x2="7" y2="21" stroke="#d1d5db" stroke-width="0.8"/>
-          <line x1="14" y1="24" x2="7" y2="25" stroke="#d1d5db" stroke-width="0.8"/>
-          <line x1="38" y1="22" x2="45" y2="21" stroke="#d1d5db" stroke-width="0.8"/>
-          <line x1="38" y1="24" x2="45" y2="25" stroke="#d1d5db" stroke-width="0.8"/>
-          <!-- Front paws together -->
+          ${safaBlush(15, 37)}
+          ${safaWhiskers(14, -1)}${safaWhiskers(38, 1)}
+          <!-- Cakar depan dirangkai -->
           <ellipse cx="23" cy="38" rx="2.8" ry="2" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
           <ellipse cx="29" cy="38" rx="2.8" ry="2" fill="#ffffff" stroke="#9ca3af" stroke-width="1"/>
-          <!-- Golden sparkle -->
-          <text x="37" y="14" font-size="8" fill="#f59e0b">✦</text>
+          ${safaSpark(37, 14, 1, '#f59e0b')}
         `;
       } else if (mode === 'walking') {
+        /* Tidak ada pergeseran di sini. Perkiraan semula menyebut modus ini
+           off-center 1,6px karena bbox diukur termasuk ekor (ke kanan) dan
+           hati melayang (ke kiri). Setelah Itu diukur dari badan saja, pusatnya
+           sudah tepat di 26 seperti modus lain. */
         extra = `
           <g class="safa-walking-anim" style="transform-origin:26px 26px">
-            <!-- Ground shadow under cat -->
-            <ellipse cx="26" cy="42" rx="16" ry="3.5" fill="#15803D" opacity="0.25"/>
-            <!-- Fluffy tail with wag animation -->
-            <g class="safa-tail-wag">
-              <path d="M38 28 Q48 20 46 12 Q43 10 41 15 Q40 22 36 29" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round"/>
+            <g>
+              ${safaShadow(16)}
+              <!-- Ekor fluffy, bergoyang -->
+              <g class="safa-tail-wag">
+                <path d="M38 28 Q48 20 46 12 Q43 10 41 15 Q40 22 36 29" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round"/>
+              </g>
+              <!-- Telinga belakang, di belakang kepala -->
+              <path d="M12 14 Q9 4 17 8 Q17 14 12 14 Z" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2" stroke-linejoin="round"/>
+              <path d="M13 13 Q11 7 16 9 Z" fill="#fbcfe8"/>
+              <!-- Badan bean -->
+              <ellipse cx="27" cy="27" rx="16" ry="13" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
+              <!-- Kepala menutupi pangkal telinga belakang -->
+              <ellipse cx="22" cy="21" rx="13" ry="10" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
+              <!-- Telinga depan, tanpa garis pemisah -->
+              <path d="M21 11 Q26 3 31 11 Q26 12 21 11 Z" fill="#ffffff"/>
+              <path d="M23 11 Q26 6 29 11 Z" fill="#fbcfe8"/>
+              <path d="M21 11 Q26 3 31 11" fill="none" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <!-- Mata tersenyum -->
+              <path d="M15 19 Q18 16 21 19" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <path d="M23 19 Q26 16 29 19" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              ${safaBlush(14, 30)}
+              ${safaWhiskers(12, -1)}${safaWhiskers(32, 1)}
+              <path d="M20 23 Q22 24.5 24 23" stroke="#4b5563" stroke-width="1" fill="none" stroke-linecap="round"/>
+              <!-- Kalung pita & bow -->
+              <path d="M16 30 Q22 33 28 30" stroke="#f472b6" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+              <circle cx="22" cy="32.5" r="1.8" fill="#fb7185"/>
+              <path d="M20.5 32.5 C19 31 18 33 20 33 Z" fill="#f472b6"/>
+              <path d="M23.5 32.5 C25 31 26 33 24 33 Z" fill="#f472b6"/>
+              <!-- Cakar melangkah -->
+              <ellipse cx="17" cy="38" rx="3.5" ry="2.5" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
+              <ellipse cx="31" cy="38" rx="3.5" ry="2.5" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
+              ${safaHeart(3, 14, 1, '#f472b6', 'safa-heart-anim', '')}
+              ${safaHeart(38, 12, .75, '#ec4899', 'safa-heart-anim', '0.7s')}
+              <!-- Floating hearts -->
             </g>
-            <!-- Left Ear (back ear, layered behind head) -->
-            <path d="M12 14 Q9 4 17 8 Q17 14 12 14 Z" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2" stroke-linejoin="round"/>
-            <path d="M13 13 Q11 7 16 9 Z" fill="#fbcfe8"/>
-            <!-- Chubby body bean -->
-            <ellipse cx="27" cy="27" rx="16" ry="13" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
-            <!-- Head ellipse (seamlessly covers back ear base) -->
-            <ellipse cx="22" cy="21" rx="13" ry="10" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
-            <!-- Right Ear (front ear, on top of head with seamless white patch and NO dividing line) -->
-            <path d="M21 11 Q26 3 31 11 Q26 12 21 11 Z" fill="#ffffff"/>
-            <path d="M23 11 Q26 6 29 11 Z" fill="#fbcfe8"/>
-            <path d="M21 11 Q26 3 31 11" fill="none" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <!-- Happy smiling eyes -->
-            <path d="M15 19 Q18 16 21 19" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-            <path d="M23 19 Q26 16 29 19" stroke="#374151" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-            <!-- Blush -->
-            <ellipse cx="14" cy="22" rx="2.5" ry="1.5" fill="#fecaca"/>
-            <ellipse cx="30" cy="22" rx="2.5" ry="1.5" fill="#fecaca"/>
-            <!-- Whiskers -->
-            <line x1="12" y1="21" x2="6" y2="20" stroke="#d1d5db" stroke-width="0.8"/>
-            <line x1="12" y1="23" x2="6" y2="24" stroke="#d1d5db" stroke-width="0.8"/>
-            <line x1="32" y1="21" x2="38" y2="20" stroke="#d1d5db" stroke-width="0.8"/>
-            <line x1="32" y1="23" x2="38" y2="24" stroke="#d1d5db" stroke-width="0.8"/>
-            <!-- Cute cat mouth -->
-            <path d="M20 23 Q22 24.5 24 23" stroke="#4b5563" stroke-width="1" fill="none" stroke-linecap="round"/>
-            <!-- Pink collar band & ribbon bow knot -->
-            <path d="M16 30 Q22 33 28 30" stroke="#f472b6" stroke-width="1.6" stroke-linecap="round" fill="none"/>
-            <circle cx="22" cy="32.5" r="1.8" fill="#fb7185"/>
-            <path d="M20.5 32.5 C19 31 18 33 20 33 Z" fill="#f472b6"/>
-            <path d="M23.5 32.5 C25 31 26 33 24 33 Z" fill="#f472b6"/>
-            <!-- Chubby stepping paws -->
-            <ellipse cx="17" cy="38" rx="3.5" ry="2.5" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
-            <ellipse cx="31" cy="38" rx="3.5" ry="2.5" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
-            <!-- Floating hearts -->
-            <text x="3" y="14" font-size="8" fill="#f472b6" class="safa-heart-anim">♥</text>
-            <text x="38" y="12" font-size="6" fill="#ec4899" class="safa-heart-anim" style="animation-delay:0.7s">♥</text>
           </g>
         `;
       }
