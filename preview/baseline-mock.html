@@ -2157,60 +2157,6 @@
       }
     }
 
-    /* ── Helper perhitungan (Fase 1) ──────────────────────────────────
-       Semua total uang dihitung dari nominal tiap record, bukan jumlah
-       record. Sebelumnya memakai `records.length * config.nominal`, yang
-       salah begitu nominal tidak seragam atau ada record duplikat. */
-
-    function getNominal() {
-      const n = APP_DATABASE.config && Number(APP_DATABASE.config.nominal);
-      return Number.isFinite(n) && n > 0 ? n : 100000;
-    }
-
-    function sumNominal(records) {
-      if (!Array.isArray(records)) return 0;
-      return records.reduce((total, r) => {
-        const n = Number(r && r.nominal);
-        return total + (Number.isFinite(n) ? n : getNominal());
-      }, 0);
-    }
-
-    /** Perbandingan bulan yang tahan beda tipe ("10" vs 10) dari server. */
-    function isRecordInMonth(record, year, month) {
-      return Boolean(record) &&
-        Number(record.year) === Number(year) &&
-        Number(record.monthIndex) === Number(month);
-    }
-
-    function weekKey(record) {
-      return `${record.year}|${record.monthIndex}|${record.dayId}`;
-    }
-
-    /**
-     * Minggu yang sudah lunas: ada setoran dari Faris (A) DAN Saidah (B).
-     * Pengganti Math.floor(records.length / 2) yang ikut naik saat ada
-     * record duplikat dan tidak peduli salah satu belum menyusul.
-     */
-    function countFullyPaidWeeks(records) {
-      if (!Array.isArray(records)) return 0;
-      const slots = new Map();
-      records.forEach(r => {
-        if (!r) return;
-        const key = weekKey(r);
-        if (!slots.has(key)) slots.set(key, { A: false, B: false });
-        if (r.user === 'A') slots.get(key).A = true;
-        else if (r.user === 'B') slots.get(key).B = true;
-      });
-      let count = 0;
-      slots.forEach(slot => { if (slot.A && slot.B) count++; });
-      return count;
-    }
-
-    /** Jumlah minggu lunas di seluruh periode — dasar progres tanaman & balon. */
-    function getTotalPaidWeeks() {
-      return countFullyPaidWeeks(APP_DATABASE.records);
-    }
-
     const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbzFL7OpHVTdM2JBaZtQrwsSQ6f1V6mqCaLCBe92uP9LJPIObS_0vWxVVB_d_qsD6zbD/exec';
 
     function updateThemeColor(color) {
@@ -2711,10 +2657,11 @@
 
     function renderCirclesForUser(role, timeline) {
       return timeline.map(item => {
-        const record = APP_DATABASE.records.find(r =>
-          r && String(r.dayId) === String(item.id) &&
-          r.user === role &&
-          isRecordInMonth(r, viewYear, viewMonth)
+        const record = APP_DATABASE.records.find(r => 
+          r.dayId === item.id && 
+          r.user === role && 
+          r.year === viewYear && 
+          r.monthIndex === viewMonth
         );
         const isDone = Boolean(record);
         const isCurrentActiveRole = currentUser.role === role;
@@ -2769,17 +2716,13 @@
       if (!banner) return;
 
       const timeline = getMonthTimeline(viewYear, viewMonth);
-      const monthRecords = APP_DATABASE.records.filter(r => isRecordInMonth(r, viewYear, viewMonth));
-      // "Komplit" = setiap minggu punya setoran dari KEDUA orang.
-      // Sebelumnya dihitung dari jumlah record, sehingga banner bisa tampil
-      // padahal masih ada lingkaran kosong di layar.
-      const paidWeeks = countFullyPaidWeeks(monthRecords);
-      const totalWeeks = timeline.length;
+      const totalRequired = timeline.length * 2;
+      const filledCount = APP_DATABASE.records.filter(r => r.year === viewYear && r.monthIndex === viewMonth).length;
 
-      if (totalWeeks > 0 && paidWeeks >= totalWeeks) {
+      if (filledCount >= totalRequired && totalRequired > 0) {
         banner.classList.remove('hidden');
         const monthFull = MONTH_FULL_NAMES[viewMonth];
-        const totalRp = sumNominal(monthRecords).toLocaleString('id-ID');
+        const totalRp = (totalRequired * APP_DATABASE.config.nominal).toLocaleString('id-ID');
         if (bannerText) {
           bannerText.textContent = `Bulan ${monthFull} komplit! Faris & Saiba berhasil mengumpulkan Rp${totalRp} bersama.`;
         }
@@ -2789,10 +2732,9 @@
     }
 
     function renderSummary() {
-      const monthRecords = APP_DATABASE.records.filter(r => isRecordInMonth(r, viewYear, viewMonth));
-      // Jumlah rupiah dari nominal tiap record, bukan jumlah record x nominal.
-      const monthTotal = sumNominal(monthRecords);
-      const grandTotal = sumNominal(APP_DATABASE.records);
+      const monthRecords = APP_DATABASE.records.filter(r => r.year === viewYear && r.monthIndex === viewMonth);
+      const monthTotal = monthRecords.length * APP_DATABASE.config.nominal;
+      const grandTotal = APP_DATABASE.records.length * APP_DATABASE.config.nominal;
       const valEl = document.getElementById('totalSavingsValue');
       if (valEl) valEl.textContent = 'Rp' + grandTotal.toLocaleString('id-ID');
       const subEl = document.getElementById('monthSubTotal');
@@ -2846,11 +2788,12 @@
       const farisEl = document.getElementById('historyTotalFaris');
       const saibaEl = document.getElementById('historyTotalSaiba');
       if (summaryCard) {
-        const farisRecords = records.filter(r => r && r.user === 'A');
-        const saibaRecords = records.filter(r => r && r.user === 'B');
-        const totalAll = sumNominal(records);
-        const totalFaris = sumNominal(farisRecords);
-        const totalSaiba = sumNominal(saibaRecords);
+        const nominal = (APP_DATABASE.config && APP_DATABASE.config.nominal) || 100000;
+        const farisCount = records.filter(r => r.user === 'A').length;
+        const saibaCount = records.filter(r => r.user === 'B').length;
+        const totalAll = records.length * nominal;
+        const totalFaris = farisCount * nominal;
+        const totalSaiba = saibaCount * nominal;
         if (totalEl) totalEl.textContent = 'Rp' + totalAll.toLocaleString('id-ID');
         if (farisEl) farisEl.textContent = 'Rp' + totalFaris.toLocaleString('id-ID');
         if (saibaEl) saibaEl.textContent = 'Rp' + totalSaiba.toLocaleString('id-ID');
@@ -3110,10 +3053,11 @@
       if (targetUploadWeekId) {
         targetWeek = timeline.find(d => d.id === targetUploadWeekId);
       } else {
-        targetWeek = timeline.find(d => !APP_DATABASE.records.some(r =>
-          r && String(r.dayId) === String(d.id) &&
+        targetWeek = timeline.find(d => !APP_DATABASE.records.some(r => 
+          r.dayId === d.id && 
           r.user === currentUser.role &&
-          isRecordInMonth(r, viewYear, viewMonth)
+          r.year === viewYear &&
+          r.monthIndex === viewMonth
         ));
       }
 
@@ -3143,7 +3087,7 @@
         labelMinggu: 'Minggu ' + targetWeek.id,
         user: currentUser.role,
         userName: currentUser.name,
-        nominal: getNominal(),
+        nominal: (APP_DATABASE.config && APP_DATABASE.config.nominal) || 100000,
         status: 'Tepat Waktu',
         timestamp: 'baru saja',
         previewUrl: selectedImageBase64,
@@ -3569,7 +3513,7 @@
     }
 
     function renderPlantVisuals() {
-      const totalPaidWeeks = getTotalPaidWeeks();
+      const totalPaidWeeks = Math.floor(APP_DATABASE.records.length / 2);
       const { stage, pct, weeks } = getPlantStage(totalPaidWeeks);
 
       // Mini SVG
@@ -3614,7 +3558,7 @@
       if (!sheet) return;
 
       // Render large SVG with current stage
-      const totalPaidWeeks = getTotalPaidWeeks();
+      const totalPaidWeeks = Math.floor(APP_DATABASE.records.length / 2);
       const { stage } = getPlantStage(totalPaidWeeks);
       const largeEl = document.getElementById('plantSvgLarge');
       if (largeEl) largeEl.innerHTML = renderPlantSvg(stage, true);
@@ -3640,8 +3584,8 @@
       }
       const timeline = getMonthTimeline(viewYear, viewMonth);
       const currentWeek = timeline.find(w => w.isCurrentActiveWeek) || timeline[0];
-      const farisPaid = APP_DATABASE.records.some(r => r && String(r.dayId) === String(currentWeek.id) && r.user === 'A' && isRecordInMonth(r, viewYear, viewMonth));
-      const saibaPaid = APP_DATABASE.records.some(r => r && String(r.dayId) === String(currentWeek.id) && r.user === 'B' && isRecordInMonth(r, viewYear, viewMonth));
+      const farisPaid = APP_DATABASE.records.some(r => r.dayId === currentWeek.id && r.user === 'A' && r.year === viewYear && r.monthIndex === viewMonth);
+      const saibaPaid = APP_DATABASE.records.some(r => r.dayId === currentWeek.id && r.user === 'B' && r.year === viewYear && r.monthIndex === viewMonth);
 
       if (!farisPaid && !saibaPaid) {
         return { mode: 'day_idle', title: 'safa rebahan malas', badge: 'nunggu setoran', desc: 'safa rebahan malas menunggu setoran minggu ini..' };
@@ -3927,9 +3871,9 @@
     ];
 
     function renderUpHouseBalloons() {
-      // 1 Minggu Tabungan Lunas = 1 Balon (Min 1 s.d. 52 Balon Rimbun)
-      const paidWeeks = getTotalPaidWeeks();
-      const count = Math.max(1, Math.min(52, paidWeeks));
+      // 1 Minggu Tabungan = 1 Balon (Min 1 Balon Merah s.d. 52 Balon Rimbun)
+      const paidWeeks = Math.floor(APP_DATABASE.records.length / 2);
+      const count = Math.max(1, Math.min(52, paidWeeks || (APP_DATABASE.records.length > 0 ? 1 : 1)));
       
       const homeG = document.getElementById('upBalloonsHome');
       const plantG = document.getElementById('upBalloonsPlant');
@@ -4093,34 +4037,25 @@
   'use strict';
   var RM = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
   var $ = function(id){ return document.getElementById(id); };
-  var fxDelay = 0, lastTotal = null, raf = 0, tmr = 0, safety = 0;
+  var fxDelay = 0, lastTotal = null, raf = 0, tmr = 0;
 
   function fmt(n){ return 'Rp' + n.toLocaleString('id-ID'); }
   function bump(el){ if (RM || !el) return; el.classList.remove('fx-bump'); void el.offsetWidth; el.classList.add('fx-bump'); setTimeout(function(){ el.classList.remove('fx-bump'); }, 520); }
 
   /* hitung naik untuk total tabungan */
   function countTo(el, to, delay){
-    cancelAnimationFrame(raf); clearTimeout(tmr); clearTimeout(safety);
+    cancelAnimationFrame(raf); clearTimeout(tmr);
     var from = lastTotal == null ? 0 : lastTotal;
     lastTotal = to;
     if (RM || from === to) { el.textContent = fmt(to); return; }
-    var dur = 850;
-    /* Animasi hanya hiasan: angka finalsSelalu ditulis. Sebelumnya elemen
-       diisi nilai lama lalu diserahkan ke requestAnimationFrame; kalau rAF
-       tidak berjalan (tab tidak aktif, browser hemat animasi) total yang
-       tampil macet di nilai lama — bahkan "Rp0" placeholder — tanpa batas
-       waktu. Itu berarti user melihat nominal tabungan yang salah. */
-    var settle = function(){ clearTimeout(safety); el.textContent = fmt(to); };
     el.textContent = fmt(from);
-    safety = setTimeout(settle, (delay || 0) + dur + 250);
     tmr = setTimeout(function(){
-      if (document.hidden) { settle(); return; }
-      var t0 = 0;
+      var t0 = 0, dur = 850;
       (function step(ts){
         if (!t0) t0 = ts;
         var p = Math.min(1, (ts - t0) / dur), e = 1 - Math.pow(1 - p, 3);
         el.textContent = fmt(Math.round(from + (to - from) * e));
-        if (p < 1) raf = requestAnimationFrame(step); else { settle(); bump(el); }
+        if (p < 1) raf = requestAnimationFrame(step); else bump(el);
       })(performance.now());
     }, delay || 0);
   }
@@ -4211,10 +4146,7 @@
 
   /* total: hitung naik; kalau setoran baru, tunggu koin mendarat */
   wrap('renderSummary', function(){
-    /* Angka diambil dari data, bukan dari teks di DOM. Kalau dibaca dari DOM,
-       saat animasi sedang berjalan nilainya antara, sehingga total bisa
-       "meng mundur" ke angka yang lebih kecil. */
-    var el = $('totalSavingsValue'), to = typeof sumNominal === 'function' ? sumNominal(APP_DATABASE.records) : readTotal();
+    var el = $('totalSavingsValue'), to = readTotal();
     if (el && to != null) countTo(el, to, fxDelay);
   });
 
@@ -4244,7 +4176,7 @@
       Array.prototype.forEach.call(t.children, function(c, i){ c.style.setProperty('--i', i); });
     });
     if (home && !RM) { home.classList.remove('fx-enter'); void home.offsetWidth; home.classList.add('fx-enter'); setTimeout(function(){ home.classList.remove('fx-enter'); }, 2200); }
-    var el = $('totalSavingsValue'), to = typeof sumNominal === 'function' ? sumNominal(APP_DATABASE.records) : readTotal();
+    var el = $('totalSavingsValue'), to = readTotal();
     if (el && to != null) { lastTotal = 0; countTo(el, to, 700); }
   });
 
@@ -4515,7 +4447,6 @@ body.night-theme .hx-cs{background:radial-gradient(ellipse at center,rgba(0,0,0,
   if (img.complete) fit(); img.addEventListener('load', fit); addEventListener('resize', fit);
 })();
 </script>
-
 <!-- ============================================================
      MOCK MODE — hanya aktif bila URL memuat ?preview=1
      Men-stub window.callBackend sehingga TIDAK ada request yang
