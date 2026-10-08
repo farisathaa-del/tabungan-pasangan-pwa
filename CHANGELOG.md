@@ -167,6 +167,59 @@ tidak ada gepeng. Mobile 430x932 tidak berubah sama sekali (123/121 dan
 Regresi Fase 1/2/4 dan audit CSS diulang: semua tetap benar, 0 exception.
 
 
+## Sesi 2 — penyempurnaan aset & animasi balon
+
+### Animasi balon (dahulukan)
+
+**A1 — target yang salah.** `tapUpHouse()` selalu memakai klaster balon dan kotak
+rumah **Home**, padahal `#upHouseGroupPlant` di sheet tanaman juga memanggilnya.
+Mengetuk rumah di sheet menyembunyikan balon Home yang ada di belakang modal, dan
+animasinya berjalan di luar layar. Terukur: layer terbang di y=520 sementara
+rumah sheet ada di y=212.
+
+Sekarang `tapUpHouse(target)` menerima `'home'` atau `'plant'`. Klaster balon
+sheet berupa `<g>` di dalam `<svg viewBox="0 0 360 190">` — elemen SVG tidak bisa
+diposisikan dengan `position:fixed`, jadi klonnya dibungkus `<svg>` HTML dengan
+viewBox sama. Squash 3D juga diuji lebih dulu: pada `<g>` SVG `rotateY` hanya
+mengecilkan lebar (−11 px) tanpa mengubah tinggi (0 px), sedangkan `<div>` berubah
+−8 × +12 px, jadi rumah sheet memakai `scale(1.05,.93)` 2D.
+
+**A2 — heartbeat & hembusan.** `vibrate` diubah dari denyut tunggal menjadi pola
+lub-dub, ditambah tiga cincin udara dan lima butir debu yang mengembang dari
+mulut cerobong. Dilewati bila `prefers-reduced-motion` aktif. Cincin diberi
+`drop-shadow` karena putih di atas langit pucat hampir tak terbaca.
+
+### Enam item aset
+
+| Item | Hasil |
+|---|---|
+| **B1** Rumah UP → `assets/house.webp` | PNG 187 KB di-inline **dua kali** (byte identik) → 17,6 KB. `index.html` −500 KB |
+| **B2** Kucing Safa | `<text>` (✦ ♥ z) diganti path — 0 ketergantungan font |
+| **B3** Pot bunga | 87 baris dead code dihapus (4,2 KB) |
+| **B4** Kursi Carl & Ellie | 2 × 118 baris → satu fungsi berparameter |
+| **B5** Weekly flower | Rotasi buket tidak lagi me-reset di pergantian tahun |
+| **B6** Weekly flower | 4 foto WebP → 4 buket SVG (−48,8 KB) |
+
+Rumah UP native 321×510 px tapi hanya tampil 94×149 px, jadi 29% resolusi aslinya
+terpakai. Sekarang 188×298 px (2×, tetap tajam di layar retina). Kompresi lossy
+dipilih setelah membandingkan potongan atap 3×: lossless 55 KB, q92 bersih,
+q88 sudah menunjukkan artefak di tepi atap dan pagar.
+
+### Total
+
+```
+index.html   837.369 → 303.210 B   (64% lebih kecil, hemat 534.159 B)
+```
+
+### Regresi akhir
+
+Fase 1 (total Rp0 → Rp2.800.000), Fase 2 (XSS 1 → 0), Fase 3 (HTTP 500 & timeout),
+Fase 4 (duplikat 1 POST → 0), Fase 7 (Escape, inert, aria), audit CSS (9 → 5 yang
+sengaja), sweep 21 kombinasi viewport (0 gepeng), A1 (layer mengikuti rumah yang
+diketuk), A2 (2 layer per rumah, tidak bocor), dan backend GAS asli (masih
+responsif, Rp200.000 dari 2 record) — semuanya hijau, 0 exception.
+
+
 ---
 
 ## Catatan
