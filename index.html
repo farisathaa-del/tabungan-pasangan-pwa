@@ -4492,12 +4492,16 @@ body.night-theme .hx-light{background:linear-gradient(255deg,rgba(147,197,253,.2
       balloons: function(){ return $('upBalloonsHome'); },
       box: function(){ return img && img.parentElement; },
       origin: AX,
+      viewBox: '0 0 94 48',
+      chimney: [47, 51],
       wrap: null
     },
     plant: {
       balloons: function(){ return $('upBalloonsPlant'); },
       box: function(){ return $('upHouseGroupPlant'); },
       origin: '50% 100%',
+      viewBox: PLANT_VIEWBOX,
+      chimney: [280.4, 56],
       /* Klaster balon sheet tanaman berupa <g> di dalam <svg> 360x190, bukan
          <svg> seperti di Home. Elemen SVG tidak bisa diposisikan dengan
          position:fixed, jadi klonnya perlu dibungkus <svg> HTML dengan
@@ -4552,12 +4556,83 @@ body.night-theme .hx-light{background:linear-gradient(255deg,rgba(147,197,253,.2
     setTimeout(function(){ layer.remove(); }, end + 150);
   }
 
+  /* ---------- hembusan: udara + debu dari mulut cerobong ----------
+     Ditaruh di layer dengan sistem koordinat yang sama persis dengan klon
+     balon, jadi titik emerged pasti berimpit dengan cerobong tanpa perlu
+     menghitung ulang posisi layar.
+     Ukuran dinyatakan dalam PIKSEL LAYAR lalu dikonversi ke unit
+     viewBox memakai k = lebar-ter-render / lebar-viewBox. Kalau tidak, efek
+     di sheet tanaman (viewBox 360px dirender 61px) jadi 6x lebih kecil
+     daripada di Home (viewBox 94px dirender 94px). */
+  function chimneyPuff(cfg, svg){
+    if (RM) return;
+    var r = svg.getBoundingClientRect();
+    if (!r.width) return;
+    var vb = cfg.viewBox.split(' ');
+    var k = r.width / Number(vb[2]);      /* piksel layar per unit viewBox */
+    var px = function(v){ return (v / k).toFixed(2); };  /* px layar -> unit viewBox */
+    var cx = cfg.chimney[0], cy = cfg.chimney[1];
+
+    var layer = document.createElement('div'); layer.className = 'hx-layer';
+    layer.style.cssText = 'position:fixed;left:' + r.left + 'px;top:' + r.top + 'px;width:' +
+      r.width + 'px;height:' + r.height + 'px;overflow:visible;pointer-events:none';
+    var wrap = document.createElementNS(NS, 'svg');
+    wrap.setAttribute('viewBox', cfg.viewBox);
+    wrap.setAttribute('preserveAspectRatio', 'none');
+    wrap.setAttribute('aria-hidden', 'true');
+    wrap.style.cssText = 'position:absolute;inset:0;overflow:visible';
+    layer.appendChild(wrap);
+    document.body.appendChild(layer);
+
+    var g = document.createElementNS(NS, 'g');
+    /* Cincin dan debu berwarna putih. Di atas langit pucat kartu hampir
+       tak terlihat, jadi diberi bayangan tipis agar hembusan terbaca di
+       latar terang maupun gelap (rumah dipakai di mode siang dan malam). */
+    g.setAttribute('filter', 'drop-shadow(0 1px 2px rgba(15,23,42,.45))');
+    wrap.appendChild(g);
+
+    /* tiga cincin udara mengembang ke atas, makin kecil makin pudar */
+    for (var i = 0; i < 3; i++) {
+      var ring = document.createElementNS(NS, 'circle');
+      ring.setAttribute('cx', cx); ring.setAttribute('cy', cy);
+      ring.setAttribute('r', px(4));
+      ring.setAttribute('fill', 'none');
+      ring.setAttribute('stroke', '#FFFFFF');
+      ring.setAttribute('stroke-width', px(1.6));
+      ring.style.transformBox = 'fill-box';
+      ring.style.transformOrigin = 'center';
+      g.appendChild(ring);
+      ring.animate([
+        { transform: 'translateY(0) scale(.35)', opacity: 0 },
+        { transform: 'translateY(' + px(-2) + 'px) scale(1)', opacity: .7, offset: .22 },
+        { transform: 'translateY(' + px(-7) + 'px) scale(3.4)', opacity: 0 }
+      ], { duration: 380 + i * 130, delay: i * 85, easing: 'cubic-bezier(.2,.7,.3,1)', fill: 'none' });
+    }
+
+    /* debu halus ikut terangkat */
+    for (var d = 0; d < 5; d++) {
+      var dot = document.createElementNS(NS, 'circle');
+      dot.setAttribute('cx', (cx + Number(px(rnd(-4, 4)))).toFixed(2));
+      dot.setAttribute('cy', (cy + Number(px(rnd(-2, 1)))).toFixed(2));
+      dot.setAttribute('r', px(rnd(.5, 1.3)));
+      dot.setAttribute('fill', '#FFFFFF');
+      g.appendChild(dot);
+      dot.animate([
+        { transform: 'translate(0,0)', opacity: 0 },
+        { transform: 'translate(' + px(rnd(-3, 3)) + 'px,' + px(-2.5) + 'px)', opacity: .85, offset: .3 },
+        { transform: 'translate(' + px(rnd(-9, 9)) + 'px,' + px(-15) + 'px)', opacity: 0 }
+      ], { duration: 700 + d * 90, delay: d * 55, easing: 'cubic-bezier(.25,.6,.35,1)', fill: 'none' });
+    }
+
+    setTimeout(function(){ layer.remove(); }, 1200);
+  }
+
   /* balon baru "mengembang" keluar dari cerobong */
-  function regrow(svg){
+  function regrow(svg, origin){
     svg.style.visibility = '';
     var ch = [].slice.call(svg.children), N = ch.length / 2 || 1;
     ch.forEach(function(c, k){
-      c.style.transformBox = 'view-box'; c.style.transformOrigin = AX;
+      c.style.transformBox = 'view-box'; c.style.transformOrigin = origin || AX;
       c.animate([
         { transform: 'translateY(6px) scale(.1)', opacity: 0 },
         { transform: 'translateY(0) scale(1.06)', opacity: 1, offset: .7 },
@@ -4599,11 +4674,12 @@ body.night-theme .hx-light{background:linear-gradient(255deg,rgba(147,197,253,.2
     bx.animate(frames, { duration: 780, easing: 'ease-in-out' });
 
     setTimeout(function(){
-      try { launch(svg, cfg.wrap, cfg.origin); } catch (e) { svg.style.visibility = ''; }
-      if (window.playHaptic) playHaptic([12, 30, 8]);
+      try { chimneyPuff(cfg, svg); launch(svg, cfg.wrap, cfg.origin); } catch (e) { svg.style.visibility = ''; }
+      /* detak jantung: pola lub-dub, bukan denyut tunggal */
+      if (window.playHaptic) playHaptic([0, 18, 95, 26]);
       setTimeout(function(){
         var wait = 300;
-        try { wait = regrow(svg); } catch (e) { svg.style.visibility = ''; }
+        try { wait = regrow(svg, cfg.origin); } catch (e) { svg.style.visibility = ''; }
         setTimeout(function(){
           if (svgBox) { bx.style.transformBox = ''; bx.style.transformOrigin = ''; }
           busy = false;
