@@ -30,8 +30,8 @@ assert(html.includes('id="uploadSheet"') && html.includes('class="sheet-content 
 assert(html.includes('id="detailSheet"') && html.includes('class="sheet-content bg-white'), 'Detail sheet must include .sheet-content');
 assert(html.includes('id="koreksiSheet"') && html.includes('class="sheet-content bg-white'), 'Koreksi sheet must include .sheet-content');
 
-// 6. Service worker version bump (v26)
-assert(sw.includes("CACHE_NAME = 'tabungan-v35'"), 'Service worker cache must be bumped to v35');
+// 6. Service worker version bump
+assert(sw.includes("CACHE_NAME = 'tabungan-v58'"), 'Service worker cache must be bumped to v58');
 
 // 7. Plant visual & drawer integration
 assert(html.includes('id="plantSheet"') && html.includes('class="sheet-content bg-white'), 'Plant sheet must exist with safe area');
