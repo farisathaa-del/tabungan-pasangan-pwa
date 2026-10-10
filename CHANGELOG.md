@@ -404,7 +404,25 @@ iOS compact picker. Ditutup oleh tombol "selesai", Escape, atau klik di luar.
 
 ---
 
-### Verifikasi sesi 3 (C1–C6)
+### C7 — Bulan sabit · `vC7`
+
+Laporan: "bentuk bulannya agak aneh". Diperbesar 6×, dua sebabnya:
+
+1. Glow = `circle r=26 fill #FEF08A opacity .07` — itu **cakram datar**, bukan
+   cahaya. Di atas langit gelap jadi lingkaran abu berbatas tegas.
+2. Lingkaran pemotong `r=16.5` di-offset `(5.5,−4.5)` diisi `#0B1A18` opaque —
+   ia **menggambar** cakram gelap di atas bulan, bukan memotongnya.ulfide
+   Terlihat seperti gerhana: cakram gelap penuh yang terpisah dari sabit, dan
+   warnanya pun tidak sama dengan langit sekitarnya.
+
+Diperbaiki: glow jadi `<radialGradient>` 4 stop (`.20 → .09 → .03 → 0`), sabit
+dipotong dengan `<mask>` (putih − hitam) sehingga yang hilang benar-benar
+transparan, dan pusat glow digeser ke sisi sabit — sebelumnya versiyal bright
+terlihat di sisi "gelap". Berlaku di garden Home dan sheet tanaman.
+
+---
+
+### Verifikasi sesi 3 (C1–C7)
 
 - Sweep 10 kombinasi (360/390/430/768/1024 × terang/malam): total, aset rumah,
   font, pita diagonal tanpa menabrak judul, badge `Rp` benar-benar hilang, dan
