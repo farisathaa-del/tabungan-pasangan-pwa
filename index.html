@@ -1944,9 +1944,10 @@
 
     let isWeeklyFlowerOpen = false;
 
-    // ponytail: Weekly Flower only delivers to Saiba (role B) on opening/switching
+    // ponytail: Weekly Flower only delivers to Saiba (role B), Monday only, once per week
     function checkWeeklyFlowerPopup() {
       if (!currentUser || currentUser.role !== 'B') return;
+      if (new Date().getDay() !== 1) return;
       const data = getWeeklyFlowerData();
       const seenKey = localStorage.getItem('tabungan_weekly_flower_received');
       if (seenKey === data.weekKey) return;
