@@ -20,10 +20,14 @@
   <!-- Tailwind CSS CDN -->
   
   
-  <!-- Google Fonts: Fraunces (heading) & Plus Jakarta Sans (body) -->
+  <!-- Google Fonts: Plus Jakarta Sans (body + judul).
+       Fraunces DIHAPUS di C5. Huruf 'a'-nya berupa bundar dengan sengit dan
+       terminal 'f'/'r' bulat, jadi "faris" dan "saiba" terbaca aneh. Bukan
+       soal sumbu WONK/SOFT: WONK 0, WONK 1, dan tanpa font-variation-settings
+       sama sekali menghasilkan glyph yang identik. Summary: mengganti family-nya, bukan menyetel sumbu. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,400..800,0..100,0..1&family=Plus+Jakarta+Sans:wght@400..800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400..800&display=swap" rel="stylesheet">
 
   <style>
     /* tinggi berbasis % — 100vh/100dvh di dalam iframe iOS = viewport parent (bug), salah tinggi */
@@ -4853,7 +4857,7 @@ body.night-theme .hx-light{background:linear-gradient(255deg,rgba(147,197,253,.2
 <style id="theme-v2">
 /* ===== THEME V2 ===== */
 body.font-sans,body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif}
-body h1,body h2,body h3,body h4,body #totalSavingsValue,body #btnUserFaris span,body #btnUserSaiba span{font-family:'Fraunces',Georgia,serif;font-optical-sizing:auto;font-variation-settings:'SOFT' 0,'WONK' 0;letter-spacing:-.015em}
+body h1,body h2,body h3,body h4,body #totalSavingsValue,body #btnUserFaris span,body #btnUserSaiba span{font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;font-weight:700;letter-spacing:-.02em}
 body .font-mono,body #navMonthYearLabel{font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-variant-numeric:tabular-nums}
 body #totalSavingsValue{font-weight:700;letter-spacing:-.02em}
 body .tabungan-bersama-card span.uppercase,body #historySummaryCard span.uppercase{text-transform:none;letter-spacing:.01em;font-weight:800}
