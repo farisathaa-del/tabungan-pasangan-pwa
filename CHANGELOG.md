@@ -411,7 +411,7 @@ Laporan: "bentuk bulannya agak aneh". Diperbesar 6×, dua sebabnya:
 1. Glow = `circle r=26 fill #FEF08A opacity .07` — itu **cakram datar**, bukan
    cahaya. Di atas langit gelap jadi lingkaran abu berbatas tegas.
 2. Lingkaran pemotong `r=16.5` di-offset `(5.5,−4.5)` diisi `#0B1A18` opaque —
-   ia **menggambar** cakram gelap di atas bulan, bukan memotongnya.ulfide
+   ia **menggambar** cakram gelap di atas bulan, bukan memotongnya.
    Terlihat seperti gerhana: cakram gelap penuh yang terpisah dari sabit, dan
    warnanya pun tidak sama dengan langit sekitarnya.
 
