@@ -23,7 +23,7 @@ benar-benar berjalan.
 | Sheet punya `role="dialog"` | 0 | 8 |
 | Class tanpa rule di CSS | 9 | 5 (sengaja) |
 | Font body | Nunito (rounded) | Plus Jakarta Sans |
-| Heading Fraunces | `WONK 1, SOFT 100` (jambalan) | `WONK 0, SOFT 0` |
+| Font judul | Fraunces (`'a'` bundar bersengit) | Plus Jakarta Sans 700 |
 | Aset rumah UP | `house.webp` 188×298 lossy (2× saja) | `house-up.svg` 321×510, tajam tanpa batas |
 | Lapisan garden | 2 bukit | 3 bukit + rumput + bunga liar + kunang-kunang |
 | Pita card Saidah | diagonal 45°, memotong isi | lipatan sudut 44px, tidak menutupi apa pun |
@@ -233,19 +233,22 @@ responsif, Rp200.000 dari 2 record) — semuanya hijau, 0 exception.
 Empat permintaan: font terasa kekanak-kanakan, rumah UP bergerigi, garden
 terlihat datar, dan card Saidah belum matang.
 
-### C1 — Typography · `vC1`
-Akar masalahnya spesifik, bukan "`pilih font lain`": Fraunces dipanggil dengan
-`font-variation-settings:'SOFT' 100,'WONK' 1`. Sumbu **WONK** adalah sumbu
-"wonky" milik Fraunces — itulah yang membuat hurufnya terlihat jambalan.
-Body juga memakai Nunito yang ujungnya bulat.
+### C1 — Typography · `vC1` (sebagian gagal, diperbaiki C5)
+Body memakai Nunito yang ujungnya bulat, dan itu memang berhasil diganti ke
+Plus Jakarta Sans. Untuk judul, C1 hanya menyetel Fraunces dari
+`'SOFT' 100,'WONK' 1` menjadi `'SOFT' 0,'WONK' 0`.
+
+> **Koreksi C5:**Penyebab C1 salah. Fraunces tetap dipakai di semua judul sampai
+> C5, dan penyetelan sumbu itu ternyata **tidak mengubah letterform sama
+> sekali**. Yang yang dikeluhkan pengguna tetap huruf `a`-nya. Lihat bagian C5.
 
 | | Sebelum | Sesudah |
 |---|---|---|
-| Heading | Fraunces `SOFT 100, WONK 1` | Fraunces `SOFT 0, WONK 0` |
-| Body | Nunito (rounded) | Plus Jakarta Sans (netral) |
+| Heading | Fraunces `SOFT 100, WONK 1` | Fraunces `SOFT 0, WONK 0` — **tidak mengubah glyph** |
+| Body | Nunito (rounded) | Plus Jakarta Sans (netral) — berhasil |
 | Aturan `Space Grotesk` | 4 aturan | 0 (font itu tidak pernah dimuat, jadi selalu jatuh ke generic) |
 
-Arah `SOFT` bisa dinaikkan ke 20 kalau nanti terasa terlalu tajam.
+Arah `SOFT` ini terbukti tidak berpengaruh; akar masalahnya diselesaikan di C5 dengan mengganti family.
 
 ### C2 — Rumah UP jadi SVG · `vC2`
 **Penyebab artefak tepi adalah keputusan saya di B1**, bukan kualitas gambar
@@ -321,7 +324,39 @@ Akibatnya semua style C4 ditulis eksplisit di blok CSS sendiri, termasuk padan
 warna night theme. Diverifikasi lewat `getComputedStyle`, bukan lewat
 kenampakan.
 
-### Verifikasi sesi 3 (C1–C4)
+### C5 — Fraunces dihapus · `vC5`
+
+Laporan balik: "font faris dan saiba di card masih aneh". **C1 tidak
+menyelesaikannya, dan klaim C1 soal sumbu WONK ternyata salah.**
+
+Dibuktikan dengan merender `faris saida` dalam 7 konfigurasi berdampingan:
+
+| Konfigurasi | Hasil |
+|---|---|
+| `WONK 0` (yang dipakai C1) | glyph |
+| `WONK 1` | **identik dengan WONK 0** |
+| tanpa `font-variation-settings` sama sekali | **identik** |
+| `opsz` dipaksa 144 | justru lebih distort |
+| `WONK 0` + ligaturasi dimatikan | **identik** |
+
+Jadi WONK/SOFT memang sudah aktif, tapi sumbu itu **tidak mengubah
+letterform sama sekali**. Masalahnya ada di desain Fraunces itu sendiri:
+huruf `a` bundar dengan sengit dan terminal `f`/`r` bulat. Itu tidak bisa
+diperbaiki dengan menyetel sumbu — hanya dengan mengganti family-nya.
+
+- Fraunces dihapus dari link Google Fonts. Semua judul (`h1`–`h4`, tombol
+  splash, `#totalSavingsValue`, `#btnUserFaris span`, `#btnUserSaiba span`)
+  memakai Plus Jakarta Sans 700, sama dengan body.
+- Aturan `theme-v2` disederhanakan: `font-family`, `font-weight: 700`,
+  `letter-spacing: -.02em`. `font-optical-sizing` dan `font-variation-settings`
+  dihapus karena tidak ada gunanya.
+- Efek samping: aplikasi jadi **satu keluarga huruf**, bukan dua. Request
+  Fraunces dengan 4 sumbu variation ikut hilang.
+- Card Faris & Saidah tetap sama tinggi: 125px (mobile), 140px (tablet/desktop).
+
+---
+
+### Verifikasi sesi 3 (C1–C5)
 
 - Sweep 10 kombinasi (360/390/430/768/1024 × terang/malam): total, total per
   pengguna, aset rumah, font, dan **paritas tinggi kedua card** — 10/10 lolos,
