@@ -24,10 +24,11 @@ benar-benar berjalan.
 | Class tanpa rule di CSS | 9 | 5 (sengaja) |
 | Font body | Nunito (rounded) | Plus Jakarta Sans |
 | Font judul | Fraunces (`'a'` bundar bersengit) | Plus Jakarta Sans 700 |
+| Pilihan bulan | bottom sheet, muncul dari bawah | popover roda iOS, fade + scale |
+| Batas navigasi bulan | tak terbatas (sampai 1900) | tahun sekarang −6 … +6 |
 | Aset rumah UP | `house.webp` 188×298 lossy (2× saja) | `house-up.svg` 321×510, tajam tanpa batas |
 | Lapisan garden | 2 bukit | 3 bukit + rumput + bunga liar + kunang-kunang |
-| Pita card Saidah | diagonal 45°, memotong isi | lipatan sudut 44px, tidak menutupi apa pun |
-| Total per pengguna | tidak ada | Faris & Saidah masing-masing |
+| Pita card Saidah | lipatan sudut 44px (C4) | **diagonal 45°, seperti html pertama** |
 | Id duplikat | 0 | 0 |
 | Exception saat dibuka | 0 | 0 |
 
@@ -356,17 +357,68 @@ diperbaiki dengan menyetel sumbu — hanya dengan mengganti family-nya.
 
 ---
 
-### Verifikasi sesi 3 (C1–C5)
+### C6 — Badge, pita, dan month picker · `vC6`
 
-- Sweep 10 kombinasi (360/390/430/768/1024 × terang/malam): total, total per
-  pengguna, aset rumah, font, dan **paritas tinggi kedua card** — 10/10 lolos,
-  0 exception, 0 overflow-x.
+Font **tidak** diubah di sini; C5 (Plus Jakarta Sans) tetap.
+
+**1. Badge `Rp...` di card Faris & Saidah dihapus.** Markup
+`#totalSavingsA`/`#totalSavingsB`, blok `sumNominal` per role di
+`renderSummary()`, dan seluruh CSS `.user-total` dibuang. `.user-card-head`
+kehilangan `padding-right:44px` — ruang itu hanya ada untuk menyingkirkan pita
++ badge. Efek samping: audit "class tanpa rule" turun **15 → 5**.
+
+**2. Pita diagonal 45° dikembalikan persis** seperti sebelum C4. `.ribbon-pink`
+diambil kembali dari `git show 766c802`, dipakai lagi di card utama **dan**
+card riwayat. `.saiba-corner-ribbon` beserta CSS pseudo-nya dihapus total.
+
+`space-y-2` sengaja **tidak** dikembalikan. Pita walau out-of-flow tetap
+terhitung selector `~`, jadi header akan dapat `margin-top: 8px` dan card
+Saidah 8px lebih tinggi dari card Faris. Margin eksplisit
+(`#timelineUserB{margin-top:.5rem}`) dipertahankan.
+
+**3. Month picker: bottom sheet → popover roda iOS.**
+
+| | Sebelum | Sesudah |
+|---|---|---|
+| Wadah | `#monthPickerSheet`, `inset-0`, overlay gelap | popover di bawah label bulan |
+| Gerak | `translateY(102%)` — **muncul dari bawah** | `opacity` + `scale(.94→1)` |
+| Isi | grid 4×3 tombol bulan + panah tahun | 2 roda: bulan \| tahun |
+| Aksesibilitas | `<span onclick>` | `<button>` + `role=listbox`, 5 tombol keyboard |
+
+Silinder dibuat **tanpa JS scroll-math**:
+- `scroll-snap-type: y mandatory`
+- `padding-block: 72px` = `(180−36)/2` supaya item pertama pun bisa naik ke
+  tengah; item ke-`i` center saat `scrollTop = i × 36`
+- `mask-image` gradasi untuk memudarkan tepi
+- skala + blur per item dihitung dari jarak ke tengah (`mpCylinder`)
+
+Terukur di browser: `scrollHeight` 576 / `clientHeight` 180, `okt` (i=9) →
+`scrollTop` 324, `2026` → 216. Persis rumusnya.
+
+Commit saat scroll berhenti (debounce 180 ms) dan saat item diketuk — seperti
+iOS compact picker. Ditutup oleh tombol "selesai", Escape, atau klik di luar.
+
+**Perubahan perilaku:** `changeMonth()` sekarang dijepit ke
+`tahun_sekarang−6 … +6`. Sebelumnya tanpa batas — bisa di-drag ke 1900 atau
+2099. Terukur sekarang berhenti persis di `des 2032` dan `jan 2020`.
+
+---
+
+### Verifikasi sesi 3 (C1–C6)
+
+- Sweep 10 kombinasi (360/390/430/768/1024 × terang/malam): total, aset rumah,
+  font, pita diagonal tanpa menabrak judul, badge `Rp` benar-benar hilang, dan
+  **paritas tinggi kedua card** — 10/10 lolos, 0 exception, 0 overflow-x.
+- Roda bulan diuji interaksi: scroll + snap (`scrollTop = i×36`), ketuk item,
+  5 tombol keyboard (ArrowUp/Down, PageUp/Down, Home, End), Escape, klik-luar,
+  dan clamp batas (`des 2032` / `jan 2020`).
 - Layout sweep 21 kombinasi viewport (3 lebar × 7 tinggi): semua `ok`.
 - XSS: `<img onerror>` dieksekusi 0, `<img>` tersuntik 0.
 - Anti-duplikat: 0 POST dobel, slot tetap 1, toast "minggu 1 sudah kamu isi".
 - `house.webp` → HTTP 404 (asset benar-benar lepas), `house-up.svg` → 200.
 - Ukuran: `index.html` 303.210 → 314.322 B; aset rumah 17.640 → 16.728 B.
-- Semua style C4 dicek lewat `getComputedStyle` karena Tailwind CDN tidak aktif.
+- Semua style C4/C6 dicek lewat `getComputedStyle` karena Tailwind CDN tidak aktif.
+- Audit "class tanpa rule": 15 → **5** (sisanya yang memang disengaja).
 
 ---
 
