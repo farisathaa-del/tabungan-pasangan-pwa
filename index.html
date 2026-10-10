@@ -469,30 +469,19 @@
     body.night-theme #songPickerSheet .sheet-content p.text-\[10px\].font-bold.text-neutral-500 {
       color: #64748B !important;
     }
-    /* ── monthPickerSheet ───────────────────────────────────────────────── */
-    body.night-theme #monthPickerSheet .sheet-content h3 {
-      color: #F8FAFC !important;
+    /* ── popover roda bulan (C6) ─────────────────────────────────────────── */
+    body.night-theme .mp-popover {
+      background: #181B24 !important;
+      border-color: rgba(255,255,255,.1) !important;
+      box-shadow: 0 18px 40px -12px rgba(0,0,0,.7), 0 2px 8px rgba(0,0,0,.4) !important;
     }
-    /* Inactive month buttons (class set via syncMonthPickerUI JS) */
-    body.night-theme #monthPickerSheet .sheet-content .month-picker-btn {
-      background-color: #1E2330 !important;
-      color: #CBD5E1 !important;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    /* Active month button keeps neutral-900 bg — white text stays fine */
-    body.night-theme #monthPickerSheet .sheet-content .month-picker-btn.bg-neutral-900,
-    body.night-theme #monthPickerSheet .sheet-content [class*="bg-neutral-900"] {
-      background-color: #4ADE80 !important;
-      color: #052E16 !important;
-    }
-    /* Year nav buttons */
-    body.night-theme #monthPickerSheet .sheet-content button.bg-neutral-100,
-    body.night-theme #monthPickerSheet .sheet-content button.hover\:bg-neutral-200 {
-      background-color: #1E2330 !important;
-      color: #CBD5E1 !important;
-    }
-    body.night-theme #pickerYearLabel {
-      color: #F8FAFC !important;
+    body.night-theme .mp-band { background: rgba(255,255,255,.09) !important; }
+    body.night-theme .mp-item { color: #64748B !important; }
+    body.night-theme .mp-item.is-sel { color: #F8FAFC !important; }
+    body.night-theme .mp-wheel-year .mp-item.is-sel { color: #4ADE80 !important; }
+    body.night-theme .mp-done {
+      color: #4ADE80 !important;
+      border-top-color: rgba(255,255,255,.08) !important;
     }
     /* ── plantSheet internals ───────────────────────────────────────────── */
     body.night-theme #plantSheet .sheet-content .bg-neutral-50 {
@@ -675,103 +664,168 @@
       position: relative;
       overflow: hidden;
     }
-    /* C4: sudut pita rose (lipatan sudut), menggantikan pita diagonal 45deg
-       yang sebelumnya melintasi isi card. Sekarang hanya menempati pojok kanan
-       atas, jadi judul dan deretan minggu tidak pernah tertutup. */
-    .saiba-corner-ribbon {
+        /* Pita Pink Melingkar di Sudut Card Saber (dipulihkan persis seperti
+       sebelum C4). Sengaja tetap diagonal: pita ini tidak pernah menutupi
+       judul karena-judul berada di sisi kiri, sedangkan pita menyeberang pojok
+       kanan atas. */
+    .ribbon-pink {
       position: absolute;
-      top: 0;
-      right: 0;
-      width: 44px;
-      height: 44px;
-      display: block;
+      top: 15px;
+      right: -34px;
+      width: 120px;
+      transform: rotate(45deg);
+      background: linear-gradient(135deg, #fb7185 0%, #f43f5e 50%, #e11d48 100%);
+      color: #ffffff;
+      text-align: center;
+      font-size: 11px;
+      padding: 2px 0;
+      box-shadow: 0 2px 6px rgba(244, 63, 94, 0.4);
+      border-top: 1px dashed rgba(255, 255, 255, 0.7);
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.7);
+      z-index: 20;
       pointer-events: none;
-      z-index: 5;
-      font-size: 13px;
-      line-height: 1;
-      text-align: right;
-      padding: 5px 6px 0 0;
-      color: #fff;
-      background:
-        radial-gradient(circle at 100% 0%, rgba(255,255,255,.34) 0%, rgba(255,255,255,.10) 34%, transparent 58%),
-        linear-gradient(225deg, #fb7185 0%, #f43f5e 46%, #be123c 100%);
-      clip-path: polygon(100% 0, 0 0, 100% 100%);
-      filter: drop-shadow(-1px 2px 3px rgba(190,18,60,.28));
+      text-transform: lowercase;
     }
-    /* garis lipatan tipis di tepi pita */
-    .saiba-corner-ribbon::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 44px;
-      height: 44px;
-      background: linear-gradient(225deg, transparent 0 48%, rgba(255,255,255,.55) 48% 51%, transparent 51%);
-      clip-path: polygon(100% 0, 0 0, 100% 100%);
+    body.night-theme .ribbon-pink {
+      background: linear-gradient(135deg, #f43f5e 0%, #e11d48 60%, #be123c 100%);
+      box-shadow: 0 2px 8px rgba(225, 29, 72, 0.5);
+      border-top: 1px dashed rgba(255, 255, 255, 0.5);
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.5);
     }
-    .saiba-corner-ribbon > * { position: relative; }
-    body.night-theme .saiba-corner-ribbon {
-      background:
-        radial-gradient(circle at 100% 0%, rgba(255,255,255,.22) 0%, rgba(255,255,255,.06) 34%, transparent 58%),
-        linear-gradient(225deg, #e11d48 0%, #be123c 52%, #881337 100%);
-      filter: drop-shadow(-1px 2px 4px rgba(0,0,0,.5));
-    }
-    /* C4: kartu zwei orang dibuat sepadang: pseudo corner ribbon ikut disembunyikan
-       di malam supaya tidak ada segitiga terang di pojok gelap. */
-    body.night-theme .history-card .saiba-corner-ribbon { opacity: .92; }
     /* Ribbon adalah anak pertama tapi out-of-flow, jadi selector ~ pada
-       space-y-2.5 tetap memberi margin-top ke saudara berikutnya dan card
-       riwayat Saidah jadi lebih tinggi dari card Faris. Kembalikan ke 0;
-       saudara setelahnya tetap memakai space-y-2.5 seperti semula. */
-    .history-card > .saiba-corner-ribbon ~ div:first-of-type { margin-top: 0 !important; }
+       space-y-* tetap memberi margin-top ke saudara berikutnya dan card
+       Saidah jadi lebih tinggi dari card Faris. Kembalikan ke 0; saudara
+       setelahnya tetap memakai space-y-* seperti semula. */
+    .history-card > .ribbon-pink ~ div:first-of-type { margin-top: 0 !important; }
+
 
     /* C4 - semua style ditulis eksplisit di sini, BUKAN lewat utilitas Tailwind.
       -repo ini tidak memuat CDN Tailwind saat runtime (hanya CSS precompiled di
        <style>), jadi kelas baru seperti pr-11 / min-h-[30px] / bg-rose-50/60
        diam-diam tidak punya efek apa pun. Semua yang dipakai di sini harus benar. */
 
-    /* Header card: judul kiri, total kanan, dengan ruang untuk corner ribbon. */
+    /* ===== C6: POPOVER RODA BULAN (gaya iOS UIPickerView) =====
+       Node: pilihan bulan tadinya bottom sheet #monthPickerSheet yang muncul
+       dari bawah (animate .sheet-content translateY(102%)). Sekarang popover
+       kecil di bawah label bulan, hanya fade + scale, tidak menutup layar.
+
+       Silinder dibuat tanpa JS scroll-math:
+       - scroll-snap-type y mandatory supaya roda berhenti di antara item
+       - padding-block = (180-36)/2 = 72px supaya item pertama pun bisa naik
+         tepat ke tengah (scrollTop item ke-i = i * 36)
+       - mask-image gradasiAgar tepi memudar seperti roda iOS
+       Skala/blur tiap item dihitung mpCylinder() dari jarak ke tengah. */
+    .mp-popover {
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%) scale(.94);
+      transform-origin: top center;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      z-index: 60;
+      width: min(238px, 74vw);
+      padding: 6px 4px 0;
+      background: #fff;
+      border: 1px solid rgba(0,0,0,.07);
+      border-radius: 18px;
+      box-shadow: 0 18px 40px -12px rgba(15,23,42,.34), 0 2px 8px rgba(15,23,42,.08);
+      transition: opacity .17s ease, transform .17s cubic-bezier(.32,.72,0,1), visibility .17s;
+    }
+    .mp-popover.is-open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateX(-50%) scale(1);
+    }
+    .mp-wheels {
+      position: relative;
+      display: flex;
+      gap: 2px;
+    }
+    /* pita sorotan di tengah roda */
+    .mp-band {
+      position: absolute;
+      left: 2px; right: 2px;
+      top: 50%;
+      height: 36px;
+      transform: translateY(-50%);
+      border-radius: 10px;
+      background: rgba(15,23,42,.055);
+      pointer-events: none;
+    }
+    .mp-wheel {
+      position: relative;
+      flex: 1 1 0;
+      min-width: 0;
+      height: 180px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scroll-snap-type: y mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-block: 72px;            /* (180 - 36) / 2 */
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 26%, #000 74%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0, #000 26%, #000 74%, transparent 100%);
+      outline: none;
+    }
+    .mp-wheel::-webkit-scrollbar { display: none; }
+    .mp-wheel:focus-visible { box-shadow: 0 0 0 2px rgba(16,185,129,.55); border-radius: 12px; }
+    .mp-item {
+      height: 36px;
+      scroll-snap-align: center;
+      scroll-snap-stop: always;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 600;
+      color: #a1a1aa;
+      cursor: pointer;
+      border-radius: 10px;
+      transform-origin: center;
+      transition: color .12s linear;
+    }
+    .mp-item.is-sel { color: #18181b; font-weight: 800; }
+    .mp-wheel-year .mp-item.is-sel { color: #0f766e; }
+    .mp-item .mp-dot {
+      width: 4px; height: 4px;
+      border-radius: 99px;
+      background: #10b981;
+      margin-left: 6px;
+      display: inline-block;
+      flex: 0 0 auto;
+    }
+    .mp-done {
+      display: block;
+      width: 100%;
+      margin-top: 4px;
+      padding: 9px 0 11px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .02em;
+      color: #0f766e;
+      border-top: 1px solid rgba(0,0,0,.06);
+      border-radius: 0 0 17px 17px;
+    }
+    .mp-done:active { background: rgba(15,23,42,.04); }
+    @media (prefers-reduced-motion: reduce) {
+      .mp-popover { transition: none; }
+    }
+
+    /* Header card: baris judul. Padding-right sengaja 0 supaya judul memakai
+       lebar penuh; pita diagonal menyeberang pojok kanan atas, tidak menabrak. */
     .user-card-head {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: .5rem;
       min-height: 30px;
-      padding-right: 44px; /* lega untuk pita sudut 44px di card Saidah */
     }
+    /* space-y-2 dipecah jadi margin eksplisit: .ribbon-pink Though out-of-flow
+       tetap terhitung sebagai saudara oleh selector ~, jadi kalau space-y-2
+       dibalikkan card Saidah akan 8px lebih tinggi dari card Faris. */
     .saiba-card-ribbon #timelineUserB,
     .saiba-card-ribbon .history-foot { margin-top: .5rem; }
-
-    /* Badge total per pengguna */
-    .user-total {
-      font-size: 11px;
-      font-weight: 700;
-      line-height: 1.4;
-      letter-spacing: -.01em;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-      padding: 2px 8px;
-      border-radius: 9999px;
-      border: 1px solid rgba(0,0,0,.09);
-      background: rgba(0,0,0,.045);
-      color: #52525b;
-    }
-    @media (min-width: 768px) { .user-total { font-size: 12px; } }
-    .user-total-b {
-      color: #be123c;
-      background: rgba(244,63,94,.09);
-      border-color: rgba(244,63,94,.22);
-    }
-    body.night-theme .user-total-a {
-      color: #D4D4D8;
-      background: rgba(255,255,255,.07);
-      border-color: rgba(255,255,255,.14);
-    }
-    body.night-theme .user-total-b {
-      color: #FDA4AF;
-      background: rgba(244,63,94,.16);
-      border-color: rgba(244,63,94,.32);
-    }
 
     /* Slot minggu yang belum terisi: pill putus-putus supaya jelas "kosong".
        Badge hati untuk Saidah yang sudah lunas tetap dipertahankan. */
@@ -985,21 +1039,37 @@
         </svg>
       </button>
 
-      <!-- Navigasi Pemilih Bulan Minimalis: < Bulan Tahun > -->
-      <div class="shrink-0 whitespace-nowrap flex items-center space-x-1.5 bg-neutral-100/80 rounded-full px-2 py-1 border border-neutral-200/40">
+      <!-- Navigasi Pemilih Bulan: < Bulan Tahun >, pilihan dibuka sebagai
+           popover roda iOS (bukan bottom sheet yang slide dari bawah). -->
+      <div id="monthNavWrap" class="shrink-0 whitespace-nowrap flex items-center space-x-1.5 bg-neutral-100/80 rounded-full px-2 py-1 border border-neutral-200/40 relative">
         <button onclick="changeMonth(-1)" title="Bulan Sebelumnya" class="w-6 h-6 rounded-full hover:bg-white text-neutral-600 flex items-center justify-center transition">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
           </svg>
         </button>
-        <span id="navMonthYearLabel" onclick="openMonthPicker()" class="whitespace-nowrap shrink-0 text-xs font-bold text-neutral-800 lowercase px-1.5 font-mono cursor-pointer hover:bg-white/80 rounded transition">
+        <!-- C6: span+onclick diganti <button> supaya bisa difokus keyboard dan
+             dioperasikan sebagai kontrol dialog (aria-haspopup/aria-expanded). -->
+        <button type="button" id="navMonthYearLabel" onclick="openMonthPicker()" aria-haspopup="dialog" aria-expanded="false" aria-controls="monthPicker" class="whitespace-nowrap shrink-0 text-xs font-bold text-neutral-800 lowercase px-1.5 font-mono cursor-pointer hover:bg-white/80 rounded transition">
           -- ----
-        </span>
+        </button>
         <button onclick="changeMonth(1)" title="Bulan Berikutnya" class="w-6 h-6 rounded-full hover:bg-white text-neutral-600 flex items-center justify-center transition">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
           </svg>
         </button>
+
+        <!-- ===== POPOVER RODA iOS (C6) =====
+             Dua roda: bulan (kiri) dan tahun (kanan). Cylinder effect murni CSS
+             (scroll-snap + mask gradasi); skala tiap item dihitung di JS dari
+             jarak ke tengah supaya terasa melengkung seperti UIPickerView. -->
+        <div id="monthPicker" role="dialog" aria-label="pilih bulan dan tahun" class="mp-popover" aria-hidden="true">
+          <div class="mp-wheels">
+            <div class="mp-band" aria-hidden="true"></div>
+            <div class="mp-wheel" id="mpMonthWheel" tabindex="0" role="listbox" aria-label="bulan"></div>
+            <div class="mp-wheel mp-wheel-year" id="mpYearWheel" tabindex="0" role="listbox" aria-label="tahun"></div>
+          </div>
+          <button type="button" onclick="closeMonthPicker()" class="mp-done">selesai</button>
+        </div>
       </div>
 
       <!-- Aksi Kanan: Musik & Tombol Setor -->
@@ -1057,7 +1127,6 @@
           <h2 class="text-xl md:text-2xl font-bold tracking-tight text-neutral-900 lowercase leading-none">
             faris
           </h2>
-          <span id="totalSavingsA" class="user-total user-total-a">Rp0</span>
         </div>
 
         <!-- Deretan Lingkaran Minggu Faris -->
@@ -1068,14 +1137,13 @@
 
       <!-- BARIS 2: SAIBA -->
       <section class="saiba-card-ribbon relative shrink-0 overflow-hidden bg-rose-50/70 md:bg-rose-50/50 p-3 md:p-3.5 rounded-2xl border border-rose-200/80 shadow-xs">
-        <!-- Sudut pita rose: lipatan sudut, tidak lagi memotong isi card -->
-        <span class="saiba-corner-ribbon" aria-hidden="true">🎀</span>
+        <!-- Pita Pink Melingkar di Sudut Card Saiba -->
+        <div class="ribbon-pink">🎀</div>
 
         <div class="user-card-head">
           <h2 class="text-xl md:text-2xl font-bold tracking-tight text-neutral-900 lowercase leading-none">
             saiba <span class="text-rose-500 text-lg leading-none align-middle">♥</span>
           </h2>
-          <span id="totalSavingsB" class="user-total user-total-b">Rp0</span>
         </div>
 
         <!-- Deretan Lingkaran Minggu Saiba -->
@@ -1624,47 +1692,6 @@
     <!-- ====================================================================== -->
     <!-- DRAWER: PEMILIH BULAN (MONTH PICKER SHEET)                            -->
     <!-- ====================================================================== -->
-    <div id="monthPickerSheet" role="dialog" aria-modal="true" aria-label="pilih bulan" class="absolute inset-0 z-50 bg-black/50 hidden flex flex-col justify-end transition-opacity">
-      <div class="sheet-content bg-white rounded-t-3xl px-6 pt-5 pb-8 md:p-8 space-y-4 max-h-[70%] overflow-y-auto no-scrollbar border-t border-neutral-100 shadow-2xl max-w-xl mx-auto w-full">
-        <div class="flex items-center justify-between">
-          <h3 class="text-base md:text-lg font-bold text-neutral-900">pilih bulan &amp; tahun</h3>
-          <button onclick="closeMonthPicker()" class="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 hover:bg-neutral-200 transition">
-            ✕
-          </button>
-        </div>
-
-        <!-- Year Navigator -->
-        <div class="flex items-center justify-center space-x-6">
-          <button type="button" onclick="changePickerYear(-1)" aria-label="tahun sebelumnya" class="btn-press w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 flex items-center justify-center transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-            </svg>
-          </button>
-          <span id="pickerYearLabel" class="text-sm font-bold text-neutral-800 font-mono w-16 text-center">2026</span>
-          <button type="button" onclick="changePickerYear(1)" aria-label="tahun berikutnya" class="btn-press w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 flex items-center justify-center transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-            </svg>
-          </button>
-        </div>
-
-        <!-- Month Grid: 4 cols x 3 rows -->
-        <div class="grid grid-cols-4 gap-3">
-          <button onclick="selectMonthFromPicker(0)" id="mpBtn0" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">jan<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
-          <button onclick="selectMonthFromPicker(1)" id="mpBtn1" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">feb<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
-          <button onclick="selectMonthFromPicker(2)" id="mpBtn2" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">mar<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
-          <button onclick="selectMonthFromPicker(3)" id="mpBtn3" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">apr<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
-          <button onclick="selectMonthFromPicker(4)" id="mpBtn4" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">mei<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
-          <button onclick="selectMonthFromPicker(5)" id="mpBtn5" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">jun<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
-          <button onclick="selectMonthFromPicker(6)" id="mpBtn6" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">jul<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
-          <button onclick="selectMonthFromPicker(7)" id="mpBtn7" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">ags<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
-          <button onclick="selectMonthFromPicker(8)" id="mpBtn8" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">sep<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
-          <button onclick="selectMonthFromPicker(9)" id="mpBtn9" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">okt<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
-          <button onclick="selectMonthFromPicker(10)" id="mpBtn10" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">nov<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
-          <button onclick="selectMonthFromPicker(11)" id="mpBtn11" class="month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition">des<span class="mp-dot hidden w-1.5 h-1.5 rounded-full bg-emerald-500 mx-auto mt-1"></span></button>
-        </div>
-      </div>
-    </div>
 
     <!-- ====================================================================== -->
     <!-- MODAL LIGHTBOX FULLSCREEN BUKTI TRANSFER (ZOOM VIEWER)                 -->
@@ -1788,7 +1815,6 @@
     const today = new Date();
     let viewYear = today.getFullYear();
     let viewMonth = today.getMonth();
-    let pickerYear = viewYear;
 
     const MONTH_SHORT_NAMES = ['jan', 'feb', 'mar', 'apr', 'mei', 'jun', 'jul', 'agu', 'sep', 'okt', 'nov', 'des'];
     const MONTH_FULL_NAMES = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
@@ -2743,73 +2769,254 @@
     }
 
     /**
-     * NAVIGASI ANTAR BULAN
+     * NAVIGASI ANTAR BULAN  +  POPOVER RODA (C6)
+     *
+     * Sebelumnya pilihan bulan berupa bottom sheet #monthPickerSheet: panel
+     * .sheet-content di-animate dari translateY(102%), jadi muncul dari bawah
+     * seperti sheet. Sekarang jadi popover kecil di bawah label bulan, dengan
+     * dua roda bergaya iOS (UIPickerView) yang tetap di tempat.
+     *
+     * Silinder dibuat tanpa JS scroll-math: scroll-snap-y-mandatory +
+     * padding-block separuh tinggi roda supaya item pertama bisa naik ke tengah,
+     * dan mask gradasi untuk memudarkan tepi. Skala tiap item dihitung dari
+     * jarak ke tengah supaya terasa melengkung.
      */
-    function changeMonth(direction) {
-      viewMonth += direction;
-      if (viewMonth > 11) {
-        viewMonth = 0;
-        viewYear += 1;
-      } else if (viewMonth < 0) {
-        viewMonth = 11;
-        viewYear -= 1;
-      }
+    const MP_ITEM_H = 36;   // tinggi satu item roda
+    const MP_VIEW_H = 180;  // tinggi area roda yang terlihat
+    const MP_YEARS_BACK = 6;
+    const MP_YEARS_FWD = 6;
+    let mpPending = { month: 0, year: 0 };
+    let mpCommitTimer = null;
 
+    const MP_REDUCE = window.matchMedia
+      ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+
+    function mpYearRange() {
+      const y = new Date().getFullYear();
+      return [y - MP_YEARS_BACK, y + MP_YEARS_FWD];
+    }
+
+    /* changeMonth dulu tanpa batas: bisa drag ke 1900 atau 2099 lewat tombol
+       panah. Sekarang dijepit ke rentang yang sama dengan roda tahun supaya
+       keduanya tidak bertentangan. */
+    function changeMonth(direction) {
+      let m = viewMonth + direction;
+      let y = viewYear;
+      if (m > 11) { m = 0; y = viewYear + 1; }
+      else if (m < 0) { m = 11; y = viewYear - 1; }
+      const [y0, y1] = mpYearRange();
+      if (y < y0 || y > y1) return;   // sudah di batas, jangan bergerak
+      viewMonth = m;
+      viewYear = y;
       updateMonthDisplay();
       renderAllTimelines();
       renderSummary();
       checkFullMonthCelebration();
+    }
+
+    function buildMonthWheels() {
+      const mw = document.getElementById('mpMonthWheel');
+      const yw = document.getElementById('mpYearWheel');
+      if (!mw || !yw) return;
+      if (mw.children.length !== 12) {
+        mw.dataset.k = 'month';
+        mw.innerHTML = MONTH_SHORT_NAMES.map(function(nm, i) {
+          return '<div class="mp-item" role="option" aria-selected="false" data-i="' + i + '">' +
+                 nm + '<span class="mp-dot" style="display:none"></span></div>';
+        }).join('');
+      }
+      const r = mpYearRange();
+      const key = r[0] + ':' + r[1];
+      if (yw.dataset.range !== key) {
+        yw.dataset.k = 'year';
+        yw.dataset.range = key;
+        let html = '';
+        for (let y = r[0]; y <= r[1]; y++) {
+          html += '<div class="mp-item" role="option" aria-selected="false" data-y="' + y + '">' + y + '</div>';
+        }
+        yw.innerHTML = html;
+      }
+      // titik hijau = bulan yang sudah punya data di tahun terpilih
+      mw.querySelectorAll('.mp-item').forEach(function(el) {
+        const m = Number(el.dataset.i);
+        const has = APP_DATABASE.records.some(function(rec) {
+          return rec.year === mpPending.year && rec.monthIndex === m;
+        });
+        const dot = el.querySelector('.mp-dot');
+        if (dot) dot.style.display = has ? 'inline-block' : 'none';
+      });
+    }
+
+    function markWheelSelection() {
+      const y0 = mpYearRange()[0];
+      document.querySelectorAll('#monthPicker .mp-item').forEach(function(el) {
+        const on = el.dataset.k !== undefined
+          ? false
+          : (el.dataset.i !== undefined ? Number(el.dataset.i) === mpPending.month
+                                        : Number(el.dataset.y) === mpPending.year);
+        el.classList.toggle('is-sel', on);
+        el.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      void y0;
+    }
+
+    /* item ke-i berada di scrollTop = i * MP_ITEM_H, karena padding-block
+       separuh tinggi roda membuat item pertama tepat berada di tengah. */
+    function syncMonthWheels(instant) {
+      const mw = document.getElementById('mpMonthWheel');
+      const yw = document.getElementById('mpYearWheel');
+      if (!mw || !yw) return;
+      const y0 = mpYearRange()[0];
+      const behavior = (instant || MP_REDUCE.matches) ? 'auto' : 'smooth';
+      mw.scrollTo({ top: mpPending.month * MP_ITEM_H, behavior: behavior });
+      yw.scrollTo({ top: (mpPending.year - y0) * MP_ITEM_H, behavior: behavior });
+      markWheelSelection();
+      requestAnimationFrame(function() { mpCylinder(mw); mpCylinder(yw); });
+    }
+
+    /* silinder: item makin jauh dari tengah makin kecil, transparan, dan blur */
+    function mpCylinder(wheel) {
+      if (!wheel) return;
+      const center = wheel.scrollTop + MP_VIEW_H / 2;
+      wheel.querySelectorAll('.mp-item').forEach(function(el) {
+        const d = (el.offsetTop + el.offsetHeight / 2 - center) / MP_ITEM_H;
+        const a = Math.abs(d);
+        if (a > 3) {
+          el.style.transform = ''; el.style.opacity = ''; el.style.filter = '';
+          return;
+        }
+        el.style.transform = 'scale(' + (1 - a * 0.085).toFixed(3) + ')';
+        el.style.opacity = (1 - a * 0.2).toFixed(2);
+        el.style.filter = a > 1.3 ? 'blur(' + ((a - 1.3) * 0.85).toFixed(2) + 'px)' : '';
+      });
+    }
+
+    function mpReadWheels() {
+      const mw = document.getElementById('mpMonthWheel');
+      const yw = document.getElementById('mpYearWheel');
+      const y0 = mpYearRange()[0];
+      const m = mw ? Math.round(mw.scrollTop / MP_ITEM_H) : 0;
+      const y = yw ? y0 + Math.round(yw.scrollTop / MP_ITEM_H) : y0;
+      return { month: Math.max(0, Math.min(11, m)), year: y };
+    }
+
+    function mpCommit() {
+      const next = mpReadWheels();
+      mpPending = next;
+      markWheelSelection();
+      if (next.month === viewMonth && next.year === viewYear) return;
+      viewMonth = next.month;
+      viewYear = next.year;
+      updateMonthDisplay();
+      renderAllTimelines();
+      renderSummary();
+      checkFullMonthCelebration();
+    }
+
+    function scheduleMpCommit() {
+      clearTimeout(mpCommitTimer);
+      mpCommitTimer = setTimeout(mpCommit, 180);
     }
 
     function openMonthPicker() {
-      pickerYear = viewYear;
-      const sheet = document.getElementById('monthPickerSheet');
-      if (!sheet) return;
-      openSheetById('monthPickerSheet');
-      // Sync year label and styling
-      syncMonthPickerUI();
+      const pop = document.getElementById('monthPicker');
+      if (!pop) return;
+      const r = mpYearRange();
+      mpPending = {
+        month: viewMonth,
+        year: Math.max(r[0], Math.min(r[1], viewYear))
+      };
+      buildMonthWheels();
+      pop.classList.add('is-open');
+      pop.setAttribute('aria-hidden', 'false');
+      const lbl = document.getElementById('navMonthYearLabel');
+      if (lbl) lbl.setAttribute('aria-expanded', 'true');
+      syncMonthWheels(true);
+      const mw = document.getElementById('mpMonthWheel');
+      if (mw) mw.focus({ preventScroll: true });
     }
 
     function closeMonthPicker() {
-      closeSheetById('monthPickerSheet');
+      const pop = document.getElementById('monthPicker');
+      if (!pop) return;
+      pop.classList.remove('is-open');
+      pop.setAttribute('aria-hidden', 'true');
+      const lbl = document.getElementById('navMonthYearLabel');
+      if (lbl) lbl.setAttribute('aria-expanded', 'false');
     }
 
-    function changePickerYear(dir) {
-      pickerYear += dir;
-      syncMonthPickerUI();
-    }
+    /* inisialisasi roda: scroll, silinder, ketuk, keyboard, klik-luar */
+    function initMonthWheels() {
+      const pop = document.getElementById('monthPicker');
+      const mw = document.getElementById('mpMonthWheel');
+      const yw = document.getElementById('mpYearWheel');
+      if (!pop || !mw || !yw) return;
 
-    function syncMonthPickerUI() {
-      const yearLabel = document.getElementById('pickerYearLabel');
-      if (yearLabel) yearLabel.textContent = pickerYear;
+      [mw, yw].forEach(function(wheel) {
+        let ticking = false;
+        wheel.addEventListener('scroll', function() {
+          if (ticking) return;
+          ticking = true;
+          requestAnimationFrame(function() { mpCylinder(wheel); ticking = false; });
+          scheduleMpCommit();
+        }, { passive: true });
+      });
 
-      // Style active month, show dot for months with records
-      for (let m = 0; m < 12; m++) {
-        const btn = document.getElementById('mpBtn' + m);
-        if (!btn) continue;
-        const dot = btn.querySelector('.mp-dot');
-        // Active month styling
-        if (m === viewMonth && pickerYear === viewYear) {
-          btn.className = 'month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition bg-neutral-900 text-white font-bold rounded-2xl shadow-xs';
-        } else {
-          btn.className = 'month-picker-btn btn-press py-3 rounded-2xl text-sm font-semibold transition bg-neutral-100 hover:bg-neutral-200 text-neutral-700 font-semibold rounded-2xl transition';
+      pop.addEventListener('click', function(e) {
+        const item = e.target.closest('.mp-item');
+        if (!item) return;
+        if (item.dataset.i !== undefined) mpPending.month = Number(item.dataset.i);
+        else if (item.dataset.y !== undefined) mpPending.year = Number(item.dataset.y);
+        buildMonthWheels();
+        markWheelSelection();
+        mpCommit();
+        const wheel = item.parentElement;
+        const idx = Array.prototype.indexOf.call(wheel.children, item);
+        wheel.scrollTo({ top: idx * MP_ITEM_H, behavior: MP_REDUCE.matches ? 'auto' : 'smooth' });
+      });
+
+      [mw, yw].forEach(function(wheel) {
+        wheel.addEventListener('keydown', function(e) {
+          const isMonth = wheel === mw;
+          const y0 = mpYearRange()[0];
+          const cur = isMonth ? mpPending.month : mpPending.year - y0;
+          const last = wheel.children.length - 1;
+          let next = null;
+          switch (e.key) {
+            case 'ArrowDown': next = cur + 1; break;
+            case 'ArrowUp': next = cur - 1; break;
+            case 'PageDown': next = cur + 3; break;
+            case 'PageUp': next = cur - 3; break;
+            case 'Home': next = 0; break;
+            case 'End': next = last; break;
+            default: return;
+          }
+          e.preventDefault();
+          next = Math.max(0, Math.min(last, next));
+          wheel.scrollTo({ top: next * MP_ITEM_H, behavior: MP_REDUCE.matches ? 'auto' : 'smooth' });
+          if (isMonth) mpPending.month = next; else mpPending.year = y0 + next;
+          buildMonthWheels();
+          markWheelSelection();
+          mpCommit();
+        });
+      });
+
+      document.addEventListener('pointerdown', function(e) {
+        if (!pop.classList.contains('is-open')) return;
+        if (pop.contains(e.target)) return;
+        if (e.target.closest && e.target.closest('#monthNavWrap')) return;
+        closeMonthPicker();
+      }, true);
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key !== 'Escape') return;
+        if (pop.classList.contains('is-open')) {
+          closeMonthPicker();
+          const lbl = document.getElementById('navMonthYearLabel');
+          if (lbl) lbl.focus({ preventScroll: true });
+          e.preventDefault();
         }
-        // Green dot if month has records
-        if (dot) {
-          const hasRecord = APP_DATABASE.records.some(r => r.year === pickerYear && r.monthIndex === m);
-          dot.classList.toggle('hidden', !hasRecord);
-        }
-      }
-    }
-
-    function selectMonthFromPicker(mIndex) {
-      viewMonth = mIndex;
-      viewYear = pickerYear;
-      updateMonthDisplay();
-      renderAllTimelines();
-      renderSummary();
-      checkFullMonthCelebration();
-      closeMonthPicker();
+      });
     }
 
     function updateMonthDisplay() {
@@ -2964,15 +3171,6 @@
       if (valEl) valEl.textContent = 'Rp' + grandTotal.toLocaleString('id-ID');
       const subEl = document.getElementById('monthSubTotal');
       if (subEl) subEl.textContent = 'Bulan ini: Rp' + monthTotal.toLocaleString('id-ID');
-      // C4: total per pengguna (Sepanjang waktu, bukan bulanan) supaya tiap card
-      // punya angka sendiri. Sumbernya tetap APP_DATABASE.records - tidak ada
-      // perubahan ke backend maupun kontrak response.
-      const totalA = sumNominal(APP_DATABASE.records.filter(r => r && r.user === 'A'));
-      const totalB = sumNominal(APP_DATABASE.records.filter(r => r && r.user === 'B'));
-      const aEl = document.getElementById('totalSavingsA');
-      const bEl = document.getElementById('totalSavingsB');
-      if (aEl) aEl.textContent = 'Rp' + totalA.toLocaleString('id-ID');
-      if (bEl) bEl.textContent = 'Rp' + totalB.toLocaleString('id-ID');
       renderPlantVisuals();
       renderUpHouseBalloons();
     }
@@ -3076,7 +3274,10 @@
                 const isSaiba = item.user === 'B';
                 return `
                 <div onclick="openDetailSheet(${jsAttr(item.id)})" class="history-card ${isSaiba ? 'saiba-card-ribbon relative overflow-hidden border-rose-200/90 bg-rose-50/30' : 'border-neutral-200/80 bg-white/95'} rounded-2xl p-4 border flex flex-col space-y-2.5 cursor-pointer btn-press shadow-xs hover:border-neutral-300 transition">
-                  ${isSaiba ? '<span class="saiba-corner-ribbon" aria-hidden="true">🎀</span>' : ''}
+                  ${isSaiba ? `
+                    <!-- Pita Pink Melingkar di Sudut Card Saiba Riwayat -->
+                    <div class="ribbon-pink">🎀</div>
+                  ` : ''}
                   <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
                       <span class="w-8 h-8 rounded-full ${isSaiba ? 'bg-rose-500 text-white shadow-xs shadow-rose-200' : 'bg-neutral-900 text-white shadow-xs'} text-xs font-bold flex items-center justify-center">
@@ -4297,8 +4498,6 @@
     window.closePlantSheet = closePlantSheet;
     window.openMonthPicker = openMonthPicker;
     window.closeMonthPicker = closeMonthPicker;
-    window.selectMonthFromPicker = selectMonthFromPicker;
-    window.changePickerYear = changePickerYear;
     window.changeMonth = changeMonth;
     window.executeSetoranSubmission = executeSetoranSubmission;
     window.openDetailSheet = openDetailSheet;
@@ -4334,6 +4533,7 @@
     }
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', bindUserButtonsDirectly);
+  document.addEventListener('DOMContentLoaded', initMonthWheels);
     } else {
       bindUserButtonsDirectly();
     }
