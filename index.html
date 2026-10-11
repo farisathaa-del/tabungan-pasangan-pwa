@@ -1232,7 +1232,7 @@
                 <div class="up-house-night-glow hidden absolute bottom-0 left-1/2 -translate-x-1/2 w-[98px] h-[20px] bg-[radial-gradient(ellipse_at_center,rgba(254,240,138,0.42)_0%,rgba(245,158,11,0.16)_60%,transparent_100%)] rounded-full blur-[4px] pointer-events-none z-20"></div>
                 
                 <img id="upHouseApprovedHome" 
-                     src="assets/house-up.svg" 
+                     src="assets/house-up.svg?v=65" 
                      alt="Rumah Pixar Up" 
                      class="relative z-20 w-[94px] h-auto object-contain select-none" />
               </div>
@@ -2146,7 +2146,7 @@
       if (!('serviceWorker' in navigator)) return;
       try {
         if (window.location.protocol.startsWith('http') && !window.location.hostname.includes('googleusercontent.com')) {
-          navigator.serviceWorker.register('./sw.js').then((reg) => {
+          navigator.serviceWorker.register('./sw.js?v=65').then((reg) => {
             reg.update();
           }).catch((err) => console.warn('SW:', err));
 

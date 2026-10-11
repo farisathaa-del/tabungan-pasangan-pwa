@@ -1,9 +1,9 @@
-const CACHE_NAME = 'tabungan-v64';
+const CACHE_NAME = 'tabungan-v65';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './assets/house-up.svg',
+  './assets/house-up.svg?v=65',
   './icons/favicon.png',
   './icons/icon-180.png',
   './icons/icon-192.png',
